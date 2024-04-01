@@ -32,8 +32,9 @@ interface FeatureWithColour {
   colour: string
 }
 
-const FEATURE_ID_PROP = "shapeISO";
+const FEATURE_ID_PROP = "shapeID";
 const FEATURE_NAME_PROP = "shapeName";
+const FEATURE_COUNTRY_PROP = "shapeGroup";
 
 const style = {
   className: "geojson"
@@ -50,6 +51,7 @@ const map = ref<typeof LMap | null>(null);
 const featureRefs = ref<typeof LGeoJson[]>([]);
 
 const { selectedFeatures, selectedIndicators, loading, selectedIndicator } = storeToRefs(useAppStore());
+const { selectCountry } = useAppStore();
 
 // TODO: This structure is an inefficient way to get reactivity working, but we can probably do better!
 const featuresWithColours = computed(() => {
@@ -66,7 +68,6 @@ const featuresWithColours = computed(() => {
 });
 
 const { colourScales, getColour } = useColourScale(selectedIndicators);
-
 
 const featureId = (feature: Feature) => feature.properties!![FEATURE_ID_PROP];
 const featureName = (feature: Feature) => feature.properties!![FEATURE_NAME_PROP];
@@ -109,6 +110,11 @@ const tooltipForFeature = (feature: Feature) => {
 const createTooltips = {
     onEachFeature: (feature: Feature, layer: Layer) => {
         layer.bindTooltip(tooltipForFeature(feature)).openTooltip();
+        layer.on({
+            click: async () => { 
+                await selectCountry(feature.properties[FEATURE_COUNTRY_PROP]);
+            }
+        });
     }
 };
 
@@ -120,7 +126,7 @@ const updateMap = () => {
 const updateTooltips = () => {
     // TODO: can we simplify this?
     featuresWithColours.value.forEach((f: FeatureWithColour) => {
-        const geojson = featureRefs.value.find(f => featureId(f.geojson) === featureId(f.feature))
+        const geojson = featureRefs.value.find(fr => featureId(fr.geojson) === featureId(f.feature))
         if (geojson && geojson.geojson && geojson.leafletObject) {
             geojson.leafletObject.eachLayer((layer: Layer) => {
                 layer.setTooltipContent(tooltipForFeature(f.feature));
@@ -129,7 +135,7 @@ const updateTooltips = () => {
     })
 };
 
-watch([selectedFeatures, selectedIndicators], () => {
+watch([selectedFeatures], () => {
     updateBounds();
     updateMap();
 })

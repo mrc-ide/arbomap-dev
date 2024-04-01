@@ -62,7 +62,7 @@ export const useAppStore = defineStore('app', {
               .filter(([countryId, indicators]) => countryId != selectedCountryId)
               .flatMap(([countryId, geojson]) => geojson.features);
 
-            return [...admin2Geojson.features, ...filteredAdmin1]
+            return [...admin2Geojson[selectedCountryId].features, ...filteredAdmin1]
         }
     },
     actions: {
@@ -83,67 +83,28 @@ export const useAppStore = defineStore('app', {
           Object.assign(this.admin1Indicators, allIndicators);
           Object.assign(this.admin1Geojson, allGeojson);
 
-
-
-
-
-          // KEEP THIS
           this.loading = false;
       },
-      async genData() {
+      async selectCountry(countryId: string) {
+          // If countryId is already selected, toggle to 
+          // no selected country
+          if (countryId === this.selectedCountryId) {
+              this.selectedCountryId = "";
+              return;
+          }
+
           this.loading = true;
+          const level = 2;
 
-        // TODO: remove this - generate admin2 indicators
-        const countries = ["MWI", "TZI"];
-        for(const country of countries) {
-          console.log("generating for " + country)
-          const geo = await getGeojson(country, 2);
-          const features = geo.features as Feature[];
-          const data = {};
-          const rnd = (min, max) => ( Math.random() * (max - min) ) + min;
-          features.forEach((f: Feature) => {
-            const id = f.properties.shapeID;
+          if (!(countryId in this.admin2Indicators)) {
+              this.admin2Indicators[countryId] = await getIndicators(countryId, level)
+          }
+          if (!(countryId in this.admin2Geojson)) {
+              this.admin2Geojson[countryId] = await getGeojson(countryId, level)
+          }
 
-            //FOI between 0.01 and 0.03
-            const foi_mean = rnd(0.01, 0.03);
-            //sd between 0.001 and 0.006
-            const foi_sd = rnd(0.001, 0.006);
-            // 9dp
-
-            //p9 between 40 and 70
-            const p9_mean = rnd(40, 70);
-            //sd between 3 and 10
-            const p9_sd = rnd(3, 10);
-            // 9dp
-
-            data[id] = {
-              FOI: {
-                mean: foi_mean,
-                sd: foi_sd
-              },
-              p9: {
-                mean: p9_mean,
-                sd: p9_sd
-              }
-            };
-
-          });
-
-          console.log("writing for " + country)
-          var blob = new Blob([JSON.stringify(data, null, 4)], {type: "application/json"});
-          var a = document.createElement('a');
-          a.href = window.URL.createObjectURL(blob);
-          a.download = `indicators-${country}-ADM2.json`;
-          a.click();
-        } // for each country
-        // TODO: make this an action...
-
-        // TODO: admin 1 indicators - using shapeID, and update Choro code
-
-
-
-
-        this.loading = false;
+          this.selectedCountryId = countryId;
+          this.loading = false;
       }
     }
 })

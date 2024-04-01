@@ -9,7 +9,6 @@
              @click="selectedIndicator = name">{{ name }}
       </v-btn>
     </div>
-    <v-btn @click="genData">gen data</v-btn>
   </div>
 </template>
 
@@ -19,7 +18,6 @@
   import {computed} from "vue";
 
   const { appConfig, selectedIndicator } = storeToRefs(useAppStore());
-  const {genData} = useAppStore();
 
   const indicatorNames = computed(() => appConfig.value ?  Object.keys(appConfig.value.indicators) : {});
 </script>
