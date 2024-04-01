@@ -1,28 +1,28 @@
-import { AppConfig, Ref, computed } from "vue";
-import { FeatureIndicatorValues, IndicatorValue } from "../resourceTypes";
-import { useAppStore } from "../stores/appStore";
+import { Ref, computed } from "vue";
 import { storeToRefs } from "pinia";
 import * as d3ScaleChromatic from "d3-scale-chromatic";
+import { FeatureIndicatorValues, IndicatorValue } from "../resourceTypes";
+import { useAppStore } from "../stores/appStore";
 
 interface IndicatorRange {
-    min: number,
-    max: number,
-    range: number
+    min: number;
+    max: number;
+    range: number;
 }
 
 export const useColourScale = (selectedIndicators: Ref<Dict<FeatureIndicatorValues>>) => {
     // TODO: we currently just scale colours to min and max in data, but
     // we can also provide option to scale to config- or user-provided
     // values
-    const appConfig: Ref<null | AppConfig> = storeToRefs(useAppStore()).appConfig;
+    const { appConfig } = storeToRefs(useAppStore());
 
     const colourScales = computed(() => {
         const result = {};
         if (appConfig.value) {
-            const indicators = appConfig.value.indicators;
+            const { indicators } = appConfig.value;
             Object.keys(indicators).forEach((key) => {
                 const scaleName = indicators[key].colourScale?.name || "interpolateGreens";
-                result[key] = (d3ScaleChromatic as any)[scaleName];
+                result[key] = d3ScaleChromatic[scaleName];
             });
         }
         return result;
@@ -36,20 +36,19 @@ export const useColourScale = (selectedIndicators: Ref<Dict<FeatureIndicatorValu
                 const value = (indicatorValue as IndicatorValue).mean;
                 if (!(indicator in result)) {
                     result[indicator] = { min: value, max: value };
-                } else {
-                    if (value > result[indicator].max) {
-                        result[indicator].max = value;
-                    } else if (value < result[indicator].min) {
-                        result[indicator].min = value
-                    }
+                } else if (value > result[indicator].max) {
+                    result[indicator].max = value;
+                } else if (value < result[indicator].min) {
+                    result[indicator].min = value;
                 }
             });
         });
         Object.keys(result).forEach((key) => {
             const indicatorRange = result[key];
-            indicatorRange.range = (indicatorRange.max != indicatorRange.min) ? //Avoid dividing by zero if only one value...
-                                indicatorRange.max - indicatorRange.min :
-                                1;
+            indicatorRange.range =
+                indicatorRange.max !== indicatorRange.min // Avoid dividing by zero if only one value...
+                    ? indicatorRange.max - indicatorRange.min
+                    : 1;
         });
         return result;
     });
@@ -78,5 +77,5 @@ export const useColourScale = (selectedIndicators: Ref<Dict<FeatureIndicatorValu
     return {
         colourScales,
         getColour
-    }
+    };
 };
