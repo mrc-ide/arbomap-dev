@@ -104,10 +104,6 @@ const initialising = computed(() => {
 });
 
 // TODO: pull out tooltips stuff into composable when fully implement
-// TODO: configure friendly indicator names
-// TODO: format values
-// TODO: include country name (?)
-// TODO: put selected indicator first
 const tooltipForFeature = (feature: Feature) => {
     let indicatorValues = "";
     const fid = featureId(feature);
@@ -135,7 +131,6 @@ const createTooltips = {
 };
 
 const updateTooltips = () => {
-    // TODO: can we simplify this?
     featuresWithColours.value.forEach((f: FeatureWithColour) => {
         const geojson = featureRefs.value.find((fr) => featureId(fr.geojson) === featureId(f.feature));
         if (geojson && geojson.geojson && geojson.leafletObject) {
@@ -147,7 +142,6 @@ const updateTooltips = () => {
 };
 
 const updateMap = () => {
-    // TODO: update colour scales
     updateTooltips();
 };
 

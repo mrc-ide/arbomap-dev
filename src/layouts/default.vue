@@ -22,9 +22,6 @@
 import { storeToRefs } from "pinia";
 import { useAppStore } from "../stores/appStore";
 
-// TODO: Excel and image download also as footer option in footer rhs
-// TODO: auto zoom and lock to selected country on click
-
 const { initialiseData } = useAppStore();
 const { appConfig } = storeToRefs(useAppStore());
 
