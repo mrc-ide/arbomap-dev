@@ -19,6 +19,8 @@ jobs:
   deploy:
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      # Both vite build and vue router need to know the base url relative to the domain
+      # this defaults to "/" for local dev, but is the project name for GitHub pages deployment
       BASE_URL: "/arbomap"
     runs-on: ubuntu-latest
     steps:
