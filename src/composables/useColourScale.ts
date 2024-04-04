@@ -1,7 +1,8 @@
 import { Ref, computed } from "vue";
 import { storeToRefs } from "pinia";
 import * as d3ScaleChromatic from "d3-scale-chromatic";
-import { FeatureIndicatorValues, IndicatorValue } from "../types";
+import { FeatureIndicatorValues, IndicatorValue } from "../types/resourceTypes";
+import { Dict } from "../types/utilTypes";
 import { useAppStore } from "../stores/appStore";
 
 interface IndicatorRange {
@@ -12,8 +13,7 @@ interface IndicatorRange {
 
 export const useColourScale = (selectedIndicators: Ref<Dict<FeatureIndicatorValues>>) => {
     // TODO: we currently just scale colours to min and max in data, but
-    // we can also provide option to scale to config- or user-provided
-    // values
+    // we can also provide option to scale to config
     const { appConfig } = storeToRefs(useAppStore());
 
     const colourScales = computed(() => {

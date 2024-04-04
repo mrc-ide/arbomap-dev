@@ -1,4 +1,4 @@
-import { AppConfig, Geojson, FeatureIndicators } from "../types";
+import { AppConfig, Geojson, FeatureIndicators } from "../types/resourceTypes";
 
 const getResource = async (path: string) => {
     const res = await fetch(`resources/${path}`);
