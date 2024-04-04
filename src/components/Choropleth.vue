@@ -11,7 +11,7 @@
             <LGeoJson
                 v-for="f in featuresWithColours"
                 ref="featureRefs"
-                :key="featureId(f.feature)"
+                :key="getFeatureId(f.feature)"
                 :geojson="f.feature"
                 :options="createTooltips"
                 :options-style="
@@ -62,11 +62,11 @@ const { selectCountry } = useAppStore();
 
 const { colourScales, getColour } = useColourScale(selectedIndicators);
 
-const featureId = (feature: Feature) => feature.properties![FEATURE_ID_PROP];
-const featureName = (feature: Feature) => feature.properties![FEATURE_NAME_PROP];
+const getFeatureId = (feature: Feature) => feature.properties![FEATURE_ID_PROP];
+const getFeatureName = (feature: Feature) => feature.properties![FEATURE_NAME_PROP];
 
 const getColourForFeature = (feature, indicator) => {
-    const featureIndicators = selectedIndicators.value[featureId(feature)];
+    const featureIndicators = selectedIndicators.value[getFeatureId(feature)];
     return getColour(indicator, featureIndicators);
 };
 
@@ -86,7 +86,7 @@ const featuresWithColours = computed(() => {
 
 const updateBounds = () => {
     if (!loading.value) {
-        if (map.value && map.value.leafletObject) {
+        if (map.value?.leafletObject) {
             map.value.leafletObject.fitBounds(
                 featuresWithColours.value.map((f: FeatureWithColour) => new GeoJSON(f.feature).getBounds())
             );
@@ -106,7 +106,7 @@ const initialising = computed(() => {
 // TODO: pull out tooltips stuff into composable when fully implement
 const tooltipForFeature = (feature: Feature) => {
     let indicatorValues = "";
-    const fid = featureId(feature);
+    const fid = getFeatureId(feature);
     if (fid in selectedIndicators.value) {
         const featureValues = selectedIndicators.value[fid];
         indicatorValues = Object.keys(featureValues)
@@ -115,7 +115,7 @@ const tooltipForFeature = (feature: Feature) => {
             })
             .join("");
     }
-    const name = featureName(feature) || featureId(feature);
+    const name = getFeatureName(feature) || getFeatureId(feature);
     return `<div><strong>${name}</strong></div><div>${indicatorValues}</div>`;
 };
 
@@ -132,7 +132,7 @@ const createTooltips = {
 
 const updateTooltips = () => {
     featuresWithColours.value.forEach((f: FeatureWithColour) => {
-        const geojson = featureRefs.value.find((fr) => featureId(fr.geojson) === featureId(f.feature));
+        const geojson = featureRefs.value.find((fr) => getFeatureId(fr.geojson) === getFeatureId(f.feature));
         if (geojson && geojson.geojson && geojson.leafletObject) {
             geojson.leafletObject.eachLayer((layer: Layer) => {
                 layer.setTooltipContent(tooltipForFeature(f.feature));

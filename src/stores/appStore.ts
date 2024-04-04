@@ -1,36 +1,26 @@
 import { defineStore } from "pinia";
 import { Feature } from "geojson";
 import { getAppConfig, getGeojson, getIndicators } from "../resources/utils";
-import { AppConfig, FeatureIndicators } from "../types";
+import { AppState } from "../types/storeTypes";
+import { FeatureIndicators } from "../types/resourceTypes";
 
 export const useAppStore = defineStore("app", {
-    state: () => {
-        const loading = true;
-        const selectedIndicator = "";
+    state: (): AppState => ({
+        loading: true,
+        selectedIndicator: "",
 
         // When a country is selected, we display admin2 data for it.
         // We display admin1 data for all other countries
-        const selectedCountryId = "";
+        selectedCountryId: "",
 
-        const appConfig: AppConfig | null = null;
+        appConfig: null,
 
         // We keep all data in dictionaries with country ids as keys, mirroring the resources on disk
-        const admin1Indicators: Dict<FeatureIndicators> = {};
-        const admin1Geojson: Dict<FeatureGeojson> = {};
-        const admin2Indicators: Dict<FeatureIndicators> = {};
-        const admin2Geojson: Dict<FeatureGeojson> = {};
-
-        return {
-            loading,
-            appConfig,
-            selectedCountryId,
-            selectedIndicator,
-            admin1Indicators,
-            admin1Geojson,
-            admin2Indicators,
-            admin2Geojson
-        };
-    },
+        admin1Indicators: {},
+        admin1Geojson: {},
+        admin2Indicators: {},
+        admin2Geojson: {}
+    }),
     getters: {
         selectedIndicators: (state): FeatureIndicators => {
             const { selectedCountryId, admin1Indicators, admin2Indicators } = state;

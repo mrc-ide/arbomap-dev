@@ -1,4 +1,5 @@
 import { Feature } from "geojson";
+import { Dict } from "./utilTypes";
 
 export interface IndicatorConfig {
     colourScale: {
