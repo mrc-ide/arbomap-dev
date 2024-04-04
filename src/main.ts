@@ -6,7 +6,7 @@
 
 // Plugins
 import { createApp } from "vue";
-import { registerPlugins } from "@/plugins";
+import { registerPlugins } from "./plugins";
 
 // Components
 import App from "./App.vue";

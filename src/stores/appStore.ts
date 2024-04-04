@@ -1,8 +1,7 @@
 import { defineStore } from "pinia";
 import { Feature } from "geojson";
 import { getAppConfig, getGeojson, getIndicators } from "../resources/utils";
-import { AppConfig } from "../resourceTypes";
-import { FeatureGeojson, FeatureIndicators } from "../types";
+import { AppConfig, FeatureIndicators } from "../types";
 
 export const useAppStore = defineStore("app", {
     state: () => {

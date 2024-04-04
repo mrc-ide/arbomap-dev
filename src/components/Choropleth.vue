@@ -30,8 +30,8 @@ import { storeToRefs } from "pinia";
 import { GeoJSON, Layer } from "leaflet";
 import { LGeoJson, LMap, LTileLayer } from "@vue-leaflet/vue-leaflet";
 import { Feature } from "geojson";
-import { useAppStore } from "../stores/appStore";
-import { useColourScale } from "../composables/useColourScale";
+import { useAppStore } from "../stores/appStore.ts";
+import { useColourScale } from "../composables/useColourScale.ts";
 import "leaflet/dist/leaflet.css";
 
 interface FeatureWithColour {

@@ -1,7 +1,7 @@
 import { Ref, computed } from "vue";
 import { storeToRefs } from "pinia";
 import * as d3ScaleChromatic from "d3-scale-chromatic";
-import { FeatureIndicatorValues, IndicatorValue } from "../resourceTypes";
+import { FeatureIndicatorValues, IndicatorValue } from "../types";
 import { useAppStore } from "../stores/appStore";
 
 interface IndicatorRange {
