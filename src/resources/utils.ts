@@ -1,4 +1,4 @@
-import { AppConfig, CountryLevelIndicators, Geojson } from "../resourceTypes";
+import { AppConfig, Geojson, FeatureIndicators } from "../types";
 
 const getResource = async (path: string) => {
     const res = await fetch(`resources/${path}`);
@@ -10,7 +10,7 @@ export const getAppConfig = async () => {
 };
 
 export const getIndicators = async (country: string, level: number) => {
-    return (await getResource(`indicators/indicators-${country}-ADM${level}.json`)) as CountryLevelIndicators;
+    return (await getResource(`indicators/indicators-${country}-ADM${level}.json`)) as FeatureIndicators;
 };
 
 export const getGeojson = async (country: string, level: number) => {
