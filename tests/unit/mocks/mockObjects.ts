@@ -14,4 +14,10 @@ export const MOCK_INDICATORS = {
     }
 };
 
+export const MOCK_GEOJSON = {
+    features: {
+        properties: { shapeID: "321" }
+    }
+};
+
 
