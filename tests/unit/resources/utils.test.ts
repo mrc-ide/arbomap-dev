@@ -12,7 +12,7 @@ describe("resources utils", async ()=> {
         expect(indicators).toStrictEqual(MOCK_INDICATORS);
     });
     test("loads geojson", async () => {
-        const geojson = await getGeojson("MWI");
-        expect(geojson).toStrictEqual(MOCK_GEOJSON);
+        const geojson = await getGeojson("MWI", 1);
+        expect(geojson).toStrictEqual(MOCK_GEOJSON, 1);
     });
 });

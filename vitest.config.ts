@@ -15,6 +15,11 @@ export default mergeConfig(
                 provider: "v8",
                 include: ["src/**/*"],
                 exclude: ["src/types.ts", "src/main.ts"]
+            },
+            server: {
+                deps: {
+                    inline: ["vuetify"]
+                },
             }
         }
     })
