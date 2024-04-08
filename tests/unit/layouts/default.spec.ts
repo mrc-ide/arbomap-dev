@@ -1,20 +1,14 @@
 import { describe, expect, test, vi } from "vitest";
 import {createRouter, createWebHistory} from "vue-router/auto";
-import {defineComponent} from "vue";
-import { render, screen, within } from "@testing-library/vue";
+import {fireEvent, render, screen, within} from "@testing-library/vue";
 import Default from "@/layouts/default.vue";
 import {mockVuetify} from "../mocks/mockVuetify";
 import {mockPinia} from "../mocks/mockPinia";
+import {useAppStore} from "../../../src/stores/appStore";
 
 const router = createRouter({
-    history: createWebHistory(),
-    routes: [
-        { path: "/", component: defineComponent({ template: `<h1>Home</h1>` }) },
-        { path: "/about", component: defineComponent({ template: `<h1>About</div>` }) },
-    ]
+    history: createWebHistory()
 });
-
-global.ResizeObserver = require('resize-observer-polyfill')
 
 const renderLayout = async() => {
     router.push("/");
@@ -22,8 +16,10 @@ const renderLayout = async() => {
 
     return render(Default, {
        global: {
-           router,
-           plugins: [mockVuetify, mockPinia()]
+           plugins: [mockVuetify, mockPinia(), router],
+           stubs: {
+               Choropleth: true
+           }
        }
     });
 };
@@ -33,10 +29,17 @@ describe("default layout", () => {
         await renderLayout();
         expect(await screen.findByText("MockApp")).toBeVisible();
     });
-    /*test("initialises data on load", () => {
-
+    test("initialises data on load", async () => {
+        const appStore = useAppStore();
+        await renderLayout();
+        expect(appStore.initialiseData).toHaveBeenCalledTimes(1);
     });
-    test("menu link navigates to About page", () => {
 
-    });*/
+    test("menu link navigates to About page", async () => {
+        await renderLayout();
+        const link = await screen.findByRole("button", { name: /About/i });
+        await fireEvent.click(link);
+
+        expect(await screen.findByText(/MockApp is in development/)).toBeVisible()
+    });
 });

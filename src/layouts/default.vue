@@ -6,7 +6,7 @@
             </router-link>
             <v-spacer></v-spacer>
             <router-link to="/about">
-                <v-btn icon>
+                <v-btn aria-label="About" icon>
                     <v-icon>mdi-information-outline</v-icon>
                     <v-tooltip activator="parent">About</v-tooltip>
                 </v-btn>
@@ -23,10 +23,7 @@ import { storeToRefs } from "pinia";
 import { useAppStore } from "../stores/appStore";
 
 const store = useAppStore();
-console.log("store:")
-console.log(JSON.stringify(Object.keys(store)))
 const { appConfig } = storeToRefs(useAppStore());
-console.log(`Title is: ${appConfig?.title}`)
 
 store.initialiseData();
 watch(appConfig, () => {
