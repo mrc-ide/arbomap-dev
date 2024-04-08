@@ -26,6 +26,7 @@ const store = useAppStore();
 console.log("store:")
 console.log(JSON.stringify(Object.keys(store)))
 const { appConfig } = storeToRefs(useAppStore());
+console.log(`Title is: ${appConfig?.title}`)
 
 store.initialiseData();
 watch(appConfig, () => {
