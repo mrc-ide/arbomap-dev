@@ -4,6 +4,9 @@ export const MOCK_APP_CONFIG = {
     indicators: {
         "FOI": {
             colourScale: { name: "interpolateReds" }
+        },
+        "p9": {
+            colourScale: { name: "interpolateBlues" }
         }
     }
 };

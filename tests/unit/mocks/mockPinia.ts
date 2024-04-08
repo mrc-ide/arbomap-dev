@@ -6,7 +6,7 @@ export const mockPinia = (appState: Partial<AppState> = {}) => {
     const initialState = {
         app: {
             loading: false,
-            selectedIndicator: "",
+            selectedIndicator: "FOI",
             appConfig: MOCK_APP_CONFIG,
             admin1Indicators: {},
             admin1Geojson: {},

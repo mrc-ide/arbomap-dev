@@ -1,6 +1,6 @@
-import { describe, expect, test, vi } from "vitest";
+import { describe, expect, test } from "vitest";
 import {createRouter, createWebHistory} from "vue-router/auto";
-import {fireEvent, render, screen, within} from "@testing-library/vue";
+import {fireEvent, render, screen} from "@testing-library/vue";
 import Default from "@/layouts/default.vue";
 import {mockVuetify} from "../mocks/mockVuetify";
 import {mockPinia} from "../mocks/mockPinia";
