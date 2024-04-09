@@ -9,6 +9,7 @@ export default mergeConfig(
             globals: true,
             environment: "jsdom",
             include: ["./tests/unit/**/*.{test,spec}.ts"],
+            exclude: ["node_modules"],
             root: fileURLToPath(new URL("./", import.meta.url)),
             setupFiles: [fileURLToPath(new URL("./tests/unit/setupTests.ts", import.meta.url))],
             coverage: {

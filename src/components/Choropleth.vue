@@ -3,6 +3,7 @@
     <div v-else>
         <LMap ref="map" style="height: 100vh; width: 100%" @ready="updateBounds">
             <LTileLayer
+                data-testid="tile-layer"
                 :url="backgroundLayer.url"
                 :attribution="backgroundLayer.attribution"
                 :max-zoom="backgroundLayer.maxZoom"
@@ -12,6 +13,7 @@
                 v-for="f in featuresWithColours"
                 ref="featureRefs"
                 :key="getFeatureId(f.feature)"
+                :data-testid="getFeatureId(f.feature)"
                 :geojson="f.feature"
                 :options="createTooltips"
                 :options-style="
@@ -57,7 +59,7 @@ const backgroundLayer = {
 const map = ref<typeof LMap | null>(null);
 const featureRefs = ref<(typeof LGeoJson)[]>([]);
 
-const { selectedFeatures, selectedIndicators, loading, selectedIndicator } = storeToRefs(useAppStore());
+const { selectedFeatures, selectedIndicators, loading, selectedIndicator, admin1Indicators } = storeToRefs(useAppStore());
 const { selectCountry } = useAppStore();
 
 const { colourScales, getColour } = useColourScale(selectedIndicators);
@@ -76,7 +78,7 @@ const featuresWithColours = computed(() => {
         return [];
     }
     const selectedInd = selectedIndicator.value;
-    return selectedFeatures.value.map((feature) => {
+    return  selectedFeatures.value.map((feature) => {
         return {
             feature,
             colour: getColourForFeature(feature, selectedInd)

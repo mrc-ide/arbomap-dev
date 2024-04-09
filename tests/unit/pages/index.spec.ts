@@ -5,8 +5,8 @@ import {mockVuetify} from "../mocks/mockVuetify";
 import {mockPinia} from "../mocks/mockPinia";
 
 const store = mockPinia();
-const renderPage = () => {
-    return render(Index,  {
+const renderPage = async () => {
+    await render(Index,  {
         global: {
             plugins: [mockVuetify, store],
             stubs: {

@@ -14,7 +14,7 @@ const renderLayout = async() => {
     router.push("/");
     await router.isReady();
 
-    return render(Default, {
+    await render(Default, {
        global: {
            plugins: [mockVuetify, mockPinia(), router],
            stubs: {
