@@ -31,7 +31,7 @@ test.describe("Index page", () => {
         await expect(await allRegions).toHaveCount(33);
         await firstRegion.click();
         await expect(firstRegion).toBeVisible(); // regions are removed before being re-rendered
-        await expect(await allRegions).toHaveCount(58, { timeout: 3000 });
+        await expect(await allRegions).toHaveCount(58, { timeout: 3000 }); // timeout required for Safari
     });
 
     test("changing selected indicator changes colours on map", async ({ page }) => {
