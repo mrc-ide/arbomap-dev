@@ -28,10 +28,10 @@ test.describe("Index page", () => {
         const firstRegion = await getFirstRegion(page);
         const allRegions = await page.locator(".leaflet-pane path.geojson");
         await expect(firstRegion).toBeVisible();
-        const admin1Count = await allRegions.count();
+        await expect(await allRegions).toHaveCount(33);
         await firstRegion.click();
         await expect(firstRegion).toBeVisible(); // regions are removed before being re-rendered
-        await expect(await allRegions.count()).toBeGreaterThan(admin1Count);
+        await expect(await allRegions).toHaveCount(58, { timeout: 3000 });
     });
 
     test("changing selected indicator changes colours on map", async ({ page }) => {
