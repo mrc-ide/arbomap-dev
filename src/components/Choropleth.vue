@@ -2,12 +2,7 @@
     <div v-if="initialising">loading..</div>
     <div v-else>
         <LMap ref="map" style="height: 100vh; width: 100%" @ready="updateBounds">
-            <LTileLayer
-                :url="backgroundLayer.url"
-                :attribution="backgroundLayer.attribution"
-                :max-zoom="backgroundLayer.maxZoom"
-                :min-zoom="backgroundLayer.minZoom"
-            ></LTileLayer>
+            <LTileLayer v-bind="backgroundLayer"></LTileLayer>
             <LGeoJson
                 v-for="f in featuresWithColours"
                 ref="featureRefs"
