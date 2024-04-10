@@ -47,6 +47,12 @@ export default defineConfig({
                   use: {
                       ...devices["Desktop Firefox"]
                   }
+              },
+              {
+                  name: "webkit",
+                  use: {
+                      ...devices["Desktop Safari"]
+                  }
               }
           ]
         : /* Just test on Chrome when running on local dev */
