@@ -66,7 +66,7 @@ export default defineConfig({
          * Use the preview server on CI for more realistic testing.
          * Playwright will re-use the local server if there is already a dev-server running.
          */
-        command: "vite dev",//process.env.CI ? "vite preview --port 3000" : "vite dev",
+        command: process.env.CI ? "vite preview --port 3000" : "vite dev",
         port: 3000,
         reuseExistingServer: true,
         stdout: "pipe"
