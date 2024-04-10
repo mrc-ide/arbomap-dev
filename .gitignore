@@ -23,4 +23,4 @@ pnpm-debug.log*
 
 .eslintrc-auto-import.json
 playwright-report
-
+coverage

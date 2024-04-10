@@ -14,3 +14,7 @@ Build: `npm run build`
 Run in development mode, with hot reloading: `npm run dev`
 
 Lint: `npm run lint` or `npm run lint-fix`
+
+Run unit tests: `npm run test:unit`
+
+Run e2e tests: `npm run test:e2e`
