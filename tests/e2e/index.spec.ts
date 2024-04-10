@@ -2,6 +2,7 @@ import { test, expect, beforeEach } from "@playwright/test";
 
 test.describe("Index page", () => {
     const GEOJSON_SELECTOR = ".leaflet-pane path.geojson";
+    const getFirstRegion = async (page) => await page.locator(`:nth-match(${GEOJSON_SELECTOR}, 1)`);
 
     test.beforeEach(async ({page}) => {
         await page.goto("/");
@@ -24,7 +25,7 @@ test.describe("Index page", () => {
     test("clicking on a geojson element selects country", async ({page}) => {
         // currently just check that clicking to select a country increases the number of rendered regions
         // (drills down to admin2 on selected country)
-        const firstRegion = await page.locator(`:nth-match(${GEOJSON_SELECTOR}, 1)`);
+        const firstRegion = await getFirstRegion(page);
         const allRegions = await page.locator(".leaflet-pane path.geojson");
         await expect(firstRegion).toBeVisible();
         const admin1Count = await allRegions.count();
@@ -33,7 +34,17 @@ test.describe("Index page", () => {
         await expect(await allRegions.count()).toBeGreaterThan(admin1Count);
     });
 
-    //test("changing selected indicator changes colours on map");
+    test("changing selected indicator changes colours on map", async ({page}) => {
+        const firstRegion = await getFirstRegion(page);
+        const colour = await firstRegion.getAttribute("fill");
+        await page.getByText("P9").click();
+        await expect(await firstRegion.getAttribute("fill")).not.toEqual(colour);
+    });
 
-    //test("tooltips are shown");
+    test("tooltips are shown", async ({page}) => {
+        const firstRegion = await getFirstRegion(page);
+        await firstRegion.hover();
+        await expect(await page.innerText(".leaflet-tooltip-pane")).toContain("Central Region");
+        await expect(await page.innerText(".leaflet-tooltip-pane")).toContain("FOI: 0.012805993967005706 (+/- 0.0034409995688380827)");
+    });
 });
