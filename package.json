@@ -8,7 +8,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc --noEmit && vite build",
-    "preview": "vite preview --port 3000",
+    "preview": "vite preview",
     "lint-fix": "eslint . --fix --ignore-path .gitignore",
     "lint": "eslint . --ignore-path .gitignore",
     "test:unit": "vitest",
