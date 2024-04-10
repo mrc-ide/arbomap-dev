@@ -1,26 +1,26 @@
 import { describe, expect, test } from "vitest";
-import {createRouter, createWebHistory} from "vue-router/auto";
-import {fireEvent, render, screen} from "@testing-library/vue";
+import { createRouter, createWebHistory } from "vue-router/auto";
+import { fireEvent, render, screen } from "@testing-library/vue";
 import Default from "@/layouts/default.vue";
-import {mockVuetify} from "../mocks/mockVuetify";
-import {mockPinia} from "../mocks/mockPinia";
-import {useAppStore} from "../../../src/stores/appStore";
+import { mockVuetify } from "../mocks/mockVuetify";
+import { mockPinia } from "../mocks/mockPinia";
+import { useAppStore } from "../../../src/stores/appStore";
 
 const router = createRouter({
     history: createWebHistory()
 });
 
-const renderLayout = async() => {
+const renderLayout = async () => {
     router.push("/");
     await router.isReady();
 
     await render(Default, {
-       global: {
-           plugins: [mockVuetify, mockPinia(), router],
-           stubs: {
-               Choropleth: true
-           }
-       }
+        global: {
+            plugins: [mockVuetify, mockPinia(), router],
+            stubs: {
+                Choropleth: true
+            }
+        }
     });
 };
 
@@ -40,6 +40,6 @@ describe("default layout", () => {
         const link = await screen.findByRole("button", { name: /About/i });
         await fireEvent.click(link);
 
-        expect(await screen.findByText(/MockApp is in development/)).toBeVisible()
+        expect(await screen.findByText(/MockApp is in development/)).toBeVisible();
     });
 });

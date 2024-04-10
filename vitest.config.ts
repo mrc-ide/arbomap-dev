@@ -20,7 +20,7 @@ export default mergeConfig(
             server: {
                 deps: {
                     inline: ["vuetify"]
-                },
+                }
             }
         }
     })

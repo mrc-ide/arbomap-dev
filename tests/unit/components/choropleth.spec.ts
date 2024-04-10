@@ -1,24 +1,19 @@
-import { describe, expect, test } from "vitest";
-import {mockPinia} from "../mocks/mockPinia";
-import {fireEvent, render, screen} from "@testing-library/vue";
-import {vi} from "vitest";
+import { describe, expect, test, vi } from "vitest";
+import { render, screen } from "@testing-library/vue";
+import { mockPinia } from "../mocks/mockPinia";
+import Choropleth from "../../../src/components/Choropleth.vue";
 
 vi.mock("@vue-leaflet/vue-leaflet", () => {
     return {
-        LMap: defineComponent({ template: `<l-map-stub><slot></slot></l-map-stub>` }),
-        LTileLayer: defineComponent({ template: `<l-tile-layer></l-tile-layer>` }),
-        LGeoJson: defineComponent({template: `<l-geo-json></l-geo-json>`})
+        LMap: defineComponent({ template: "<l-map-stub><slot></slot></l-map-stub>" }),
+        LTileLayer: defineComponent({ template: "<l-tile-layer></l-tile-layer>" }),
+        LGeoJson: defineComponent({ template: "<l-geo-json></l-geo-json>" })
     };
 });
 
-import {render} from "@testing-library/vue";
-import Choropleth from "../../../src/components/Choropleth.vue";
-import {useAppStore} from "../../../src/stores/appStore";
-import {nextTick} from "vue";
-
 const store = mockPinia();
 const renderComponent = async () => {
-    const comp = await render(Choropleth,  {
+    const comp = await render(Choropleth, {
         global: {
             plugins: [store],
             stubs: {
@@ -28,7 +23,7 @@ const renderComponent = async () => {
             }
         }
     });
-    console.log(JSON.stringify(comp))
+    console.log(JSON.stringify(comp));
 };
 
 describe("Choropleth", () => {

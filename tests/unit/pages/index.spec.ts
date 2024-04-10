@@ -1,12 +1,12 @@
-import {fireEvent, render, screen} from "@testing-library/vue";
+import { fireEvent, render, screen } from "@testing-library/vue";
 import { describe, expect, test } from "vitest";
 import Index from "@/pages/index.vue";
-import {mockVuetify} from "../mocks/mockVuetify";
-import {mockPinia} from "../mocks/mockPinia";
+import { mockVuetify } from "../mocks/mockVuetify";
+import { mockPinia } from "../mocks/mockPinia";
 
 const store = mockPinia();
 const renderPage = async () => {
-    await render(Index,  {
+    await render(Index, {
         global: {
             plugins: [mockVuetify, store],
             stubs: {

@@ -78,7 +78,7 @@ const featuresWithColours = computed(() => {
         return [];
     }
     const selectedInd = selectedIndicator.value;
-    return  selectedFeatures.value.map((feature) => {
+    return selectedFeatures.value.map((feature) => {
         return {
             feature,
             colour: getColourForFeature(feature, selectedInd)

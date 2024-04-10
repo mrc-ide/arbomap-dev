@@ -1,8 +1,8 @@
 import { describe, expect, test } from "vitest";
-import {getAppConfig, getGeojson, getIndicators} from "../../../src/resources/utils";
-import {MOCK_ADMIN1_GEOJSON, MOCK_ADMIN1_INDICATORS, MOCK_APP_CONFIG} from "../mocks/mockObjects";
+import { getAppConfig, getGeojson, getIndicators } from "../../../src/resources/utils";
+import { MOCK_ADMIN1_GEOJSON, MOCK_ADMIN1_INDICATORS, MOCK_APP_CONFIG } from "../mocks/mockObjects";
 
-describe("resources utils", async ()=> {
+describe("resources utils", async () => {
     test("loads app config", async () => {
         const appConfig = await getAppConfig();
         expect(appConfig).toStrictEqual(MOCK_APP_CONFIG);

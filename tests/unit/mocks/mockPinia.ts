@@ -1,6 +1,6 @@
-import {MOCK_ADMIN1_GEOJSON, MOCK_ADMIN1_INDICATORS, MOCK_APP_CONFIG, MOCK_GEOJSON} from "./mockObjects";
-import {createTestingPinia} from "@pinia/testing";
-import {AppState} from "../../../src/types/storeTypes";
+import { createTestingPinia } from "@pinia/testing";
+import { MOCK_ADMIN1_GEOJSON, MOCK_ADMIN1_INDICATORS, MOCK_APP_CONFIG } from "./mockObjects";
+import { AppState } from "../../../src/types/storeTypes";
 
 export const mockPinia = (appState: Partial<AppState> = {}) => {
     const initialState = {
