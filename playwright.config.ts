@@ -74,6 +74,7 @@ export default defineConfig({
          */
         command: process.env.CI ? "vite preview --port 3000" : "vite dev",
         port: 3000,
-        reuseExistingServer: true
+        reuseExistingServer: true,
+        stdout: "pipe"
     }
 });
