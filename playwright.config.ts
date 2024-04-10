@@ -34,7 +34,7 @@ export default defineConfig({
     },
 
     /* Configure projects for major browsers */
-    projects: [
+    projects: process.env.CI ? [
         {
             name: "chromium",
             use: {
@@ -53,8 +53,16 @@ export default defineConfig({
                 ...devices["Desktop Safari"]
             }
         }
-
-    ],
+        ] :
+        /* Just test on Chrome when running on local dev */
+        [
+            {
+                name: "chromium",
+                use: {
+                    ...devices["Desktop Chrome"]
+                }
+            }
+        ],
 
     /* Run your local dev server before starting the tests */
     webServer: {
