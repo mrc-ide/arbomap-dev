@@ -1,0 +1,28 @@
+/**
+ * src/styles/settings.scss
+ *
+ * Configures SASS variables and Vuetify overwrites
+ */
+
+// https://vuetifyjs.com/features/sass-variables/`
+// @use 'vuetify/settings' with (
+//   $color-pack: false
+// );
+.geojson {
+  stroke-width: 1;
+  fill-opacity: 0.7;
+  stroke: grey;
+  cursor: grab;
+}
+
+// Don't show bounding box on click
+.leaflet-container :focus:not(:focus-visible) {
+  outline: 0;
+}
+
+// TODO: probably do this through theme once we've decided what to do with those
+.v-toolbar a {
+  color: #fff;
+  text-decoration: none;
+}
+

@@ -1,0 +1,48 @@
+# Simple workflow for deploying static content to GitHub Pages
+name: Deploy static content to Pages
+
+on:
+  # Runs on pushes targeting the default branch
+  push:
+    branches: ['main']
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# Allow one concurrent deployment
+concurrency:
+  group: 'pages'
+  cancel-in-progress: true
+
+jobs:
+  # Single deploy job since we're just deploying
+  deploy:
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      # Both vite build and vue router need to know the base url relative to the domain
+      # this defaults to "/" for local dev, but is the project name for GitHub pages deployment
+      BASE_URL: "/arbomap"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci
+      - name: Build
+        run: npm run build
+      - name: Make 404.html
+        # We make a copy of the built index.html file as the 404 page, to support direct navigation to front end (vue
+        # router) routes that the server doesn't know about
+        run: cp dist/index.html dist/404.html
+      - name: Deploy to GitHub pages 🚀
+        if: github.event_name != 'pull_request'
+        uses: JamesIves/github-pages-deploy-action@v4.4.1
+        with:
+          clean: false
+          branch: gh-pages
+          folder: dist
