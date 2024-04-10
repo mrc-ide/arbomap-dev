@@ -59,7 +59,7 @@ const backgroundLayer = {
 const map = ref<typeof LMap | null>(null);
 const featureRefs = ref<(typeof LGeoJson)[]>([]);
 
-const { selectedFeatures, selectedIndicators, loading, selectedIndicator, admin1Indicators } = storeToRefs(useAppStore());
+const { selectedFeatures, selectedIndicators, loading, selectedIndicator } = storeToRefs(useAppStore());
 const { selectCountry } = useAppStore();
 
 const { colourScales, getColour } = useColourScale(selectedIndicators);
