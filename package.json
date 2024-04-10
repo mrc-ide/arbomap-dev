@@ -12,6 +12,7 @@
     "lint-fix": "eslint . --fix --ignore-path .gitignore",
     "lint": "eslint . --ignore-path .gitignore",
     "test:unit": "vitest",
+    "test:coverage": "vitest --coverage",
     "test:e2e": "playwright test"
   },
   "dependencies": {

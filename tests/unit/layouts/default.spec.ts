@@ -29,6 +29,7 @@ describe("default layout", () => {
         await renderLayout();
         expect(await screen.findByText("MockApp")).toBeVisible();
     });
+
     test("initialises data on load", async () => {
         const appStore = useAppStore();
         await renderLayout();

@@ -22,10 +22,10 @@
 import { storeToRefs } from "pinia";
 import { useAppStore } from "../stores/appStore";
 
-const store = useAppStore();
+const { initialiseData } = useAppStore();
 const { appConfig } = storeToRefs(useAppStore());
 
-store.initialiseData();
+initialiseData();
 watch(appConfig, () => {
     window.document.title = appConfig.value.title;
 });

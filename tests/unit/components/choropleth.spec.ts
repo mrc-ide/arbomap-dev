@@ -5,7 +5,7 @@ import Choropleth from "../../../src/components/Choropleth.vue";
 
 const store = mockPinia();
 const renderComponent = async () => {
-    const comp = await render(Choropleth, {
+    return render(Choropleth, {
         global: {
             plugins: [store],
             stubs: {
@@ -15,7 +15,6 @@ const renderComponent = async () => {
             }
         }
     });
-    console.log(JSON.stringify(comp));
 };
 
 describe("Choropleth", () => {
