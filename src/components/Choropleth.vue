@@ -65,7 +65,6 @@ const getColourForFeature = (feature, indicator) => {
     return getColour(indicator, featureIndicators);
 };
 
-// TODO: This structure is an inefficient way to get reactivity working, but we can probably do better!
 const featuresWithColours = computed(() => {
     if (loading.value) {
         return [];
