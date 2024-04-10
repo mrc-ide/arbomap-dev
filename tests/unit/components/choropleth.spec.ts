@@ -1,15 +1,7 @@
-import { describe, expect, test, vi } from "vitest";
 import { render, screen } from "@testing-library/vue";
+import { describe, expect, test } from "vitest";
 import { mockPinia } from "../mocks/mockPinia";
 import Choropleth from "../../../src/components/Choropleth.vue";
-
-vi.mock("@vue-leaflet/vue-leaflet", () => {
-    return {
-        LMap: defineComponent({ template: "<l-map-stub><slot></slot></l-map-stub>" }),
-        LTileLayer: defineComponent({ template: "<l-tile-layer></l-tile-layer>" }),
-        LGeoJson: defineComponent({ template: "<l-geo-json></l-geo-json>" })
-    };
-});
 
 const store = mockPinia();
 const renderComponent = async () => {
