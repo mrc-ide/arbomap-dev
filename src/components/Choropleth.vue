@@ -2,9 +2,7 @@
     <div v-if="initialising">loading..</div>
     <div v-else>
         <LMap ref="map" style="height: 100vh; width: 100%" @ready="updateBounds">
-            <LTileLayer
-                data-testid="tile-layer"
-                v-bind="backgroundLayer"></LTileLayer>
+            <LTileLayer data-testid="tile-layer" v-bind="backgroundLayer"></LTileLayer>
             <LGeoJson
                 v-for="f in featuresWithColours"
                 ref="featureRefs"

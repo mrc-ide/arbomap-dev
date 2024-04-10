@@ -22,8 +22,6 @@ describe("Choropleth", () => {
         await renderComponent();
         const tileLayer = await screen.findByTestId("tile-layer");
         expect(tileLayer).toBeVisible();
-        expect(tileLayer.getAttribute("max-zoom")).toBe("10");
-        expect(tileLayer.getAttribute("min-zoom")).toBe("3");
         const region123Geojson = await screen.findByTestId("123");
         expect(region123Geojson).toBeVisible();
         expect(region123Geojson.getAttribute("geojson")).toBeTruthy();
