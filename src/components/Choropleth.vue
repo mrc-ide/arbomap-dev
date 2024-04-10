@@ -4,11 +4,7 @@
         <LMap ref="map" style="height: 100vh; width: 100%" @ready="updateBounds">
             <LTileLayer
                 data-testid="tile-layer"
-                :url="backgroundLayer.url"
-                :attribution="backgroundLayer.attribution"
-                :max-zoom="backgroundLayer.maxZoom"
-                :min-zoom="backgroundLayer.minZoom"
-            ></LTileLayer>
+                v-bind="backgroundLayer"></LTileLayer>
             <LGeoJson
                 v-for="f in featuresWithColours"
                 ref="featureRefs"
@@ -72,7 +68,6 @@ const getColourForFeature = (feature, indicator) => {
     return getColour(indicator, featureIndicators);
 };
 
-// TODO: This structure is an inefficient way to get reactivity working, but we can probably do better!
 const featuresWithColours = computed(() => {
     if (loading.value) {
         return [];
