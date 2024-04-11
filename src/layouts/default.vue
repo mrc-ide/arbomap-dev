@@ -6,7 +6,7 @@
             </router-link>
             <v-spacer></v-spacer>
             <router-link to="/about">
-                <v-btn icon>
+                <v-btn aria-label="About" icon>
                     <v-icon>mdi-information-outline</v-icon>
                     <v-tooltip activator="parent">About</v-tooltip>
                 </v-btn>

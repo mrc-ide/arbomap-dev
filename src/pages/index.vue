@@ -1,5 +1,5 @@
 <template>
-    <Choropleth />
+    <Choropleth data-testid="choropleth" />
     <div class="sticky-footer">
         <div v-for="name in indicatorNames" :key="name">
             <v-btn
