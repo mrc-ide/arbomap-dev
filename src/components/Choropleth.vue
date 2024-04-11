@@ -1,6 +1,5 @@
 <template>
-    <div v-if="initialising">loading..</div>
-    <div v-else>
+    <div>
         <LMap ref="map" style="height: 100vh; width: 100%" @ready="updateBounds">
             <LTileLayer v-bind="backgroundLayer"></LTileLayer>
             <LGeoJson
@@ -17,6 +16,7 @@
             >
             </LGeoJson>
         </LMap>
+        <v-progress-circular class="spinner" size="100" width="20" v-if="loading" indeterminate color="red"></v-progress-circular>
     </div>
 </template>
 <script setup lang="ts">
@@ -88,15 +88,6 @@ const updateBounds = () => {
     }
 };
 
-const initialising = computed(() => {
-    return (
-        loading.value &&
-        !featuresWithColours.value.length &&
-        !selectedIndicators.value.length &&
-        !Object.keys(colourScales.value).length
-    );
-});
-
 // TODO: pull out tooltips stuff into composable when fully implement
 const tooltipForFeature = (feature: Feature) => {
     let indicatorValues = "";
@@ -144,3 +135,10 @@ watch([selectedFeatures], () => {
     updateMap();
 });
 </script>
+<style lang="scss">
+  .spinner {
+      position: relative;
+      margin: auto;
+      z-index: 999;
+  }
+</style>
