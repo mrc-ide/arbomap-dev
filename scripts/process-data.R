@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 process_country <- function(x) {
-  id <- sprintf("%s-%s-%s", x$IS0, x$ID_0, trimws(x$ID_1))
+  id <- sprintf("%s.%s_1", x$IS0, trimws(x$ID_1))
   g <- function(i) {
     el <- x[i, ]
     list(
