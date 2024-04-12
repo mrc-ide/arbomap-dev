@@ -12,7 +12,8 @@ export const useLoadingSpinner = (target: Ref<typeof LMap | null>, spin: Ref<boo
         corners: 1,
         animation: "spinner-line-shrink",
         color: "#ffffff",
-        shadow: false
+        shadow: false,
+        className: "spinner"
     };
 
     const spinner = new Spinner(options);

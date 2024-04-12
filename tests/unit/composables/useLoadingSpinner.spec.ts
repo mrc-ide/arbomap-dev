@@ -16,7 +16,6 @@ describe("useLoadingSpinner", () => {
     } as HTMLElement;
 
     beforeEach(() => {
-        vi.clearAllMocks;
         target = ref(null);
         spin = ref(false);
         spinner = useLoadingSpinner(target, spin).spinner;
