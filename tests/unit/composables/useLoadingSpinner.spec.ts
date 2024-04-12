@@ -1,13 +1,13 @@
-import { describe, test, expect, beforeAll, beforeEach, vi } from "vitest";
-import {Spinner} from "spin.js";
-import {useLoadingSpinner} from "../../../src/composables/useLoadingSpinner";
-import {Ref, ref, nextTick} from "vue";
+import { describe, test, expect, beforeEach, vi } from "vitest";
+import { Spinner } from "spin.js";
+import { Ref, ref, nextTick } from "vue";
 import { LMap } from "@vue-leaflet/vue-leaflet";
+import { useLoadingSpinner } from "../../../src/composables/useLoadingSpinner";
 
 describe("useLoadingSpinner", () => {
     let target: Ref<typeof LMap | null>;
     let spin: Ref<boolean>;
-    let spinner: Spinner | null = null;
+    const spinner: Spinner | null = null;
     let spinSpy;
     let stopSpy;
 
@@ -18,12 +18,12 @@ describe("useLoadingSpinner", () => {
     beforeEach(() => {
         target = ref(null);
         spin = ref(false);
-        spinner = useLoadingSpinner(target, spin).spinner;
+        ({ spinner }) = useLoadingSpinner(target, spin);
         spinSpy = vi.spyOn(spinner, "spin");
         stopSpy = vi.spyOn(spinner, "stop");
     });
 
-   test("does not spin when only target element or spin flag are set", async () => {
+    test("does not spin when only target element or spin flag are set", async () => {
         target.value = {
             root
         } as any;
@@ -44,13 +44,12 @@ describe("useLoadingSpinner", () => {
             root
         } as any;
         await nextTick();
-        const el = spinner.el;
+        const { el } = spinner;
 
         expect(spinSpy).toHaveBeenCalledWith(root);
         // should also show element
         expect(el.hidden).toBe(false);
     });
-
 
     test("stops spin and hides element when spin flag is unset", async () => {
         target.value = {
@@ -58,7 +57,7 @@ describe("useLoadingSpinner", () => {
         } as any;
         spin.value = true;
         await nextTick();
-        const el = spinner.el;
+        const { el } = spinner;
 
         spin.value = false;
         await nextTick();

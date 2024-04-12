@@ -4,7 +4,7 @@ test.describe("Index page", () => {
     const GEOJSON_SELECTOR = ".leaflet-pane path.geojson";
     const getFirstRegion = async (page) => page.locator(`:nth-match(${GEOJSON_SELECTOR}, 1)`);
 
-    const expectLoadingSpinnerIsShownThenRemoved =  async (page) => {
+    const expectLoadingSpinnerIsShownThenRemoved = async (page) => {
         const locator = await page.locator("div.spinner");
         await expect(locator).toHaveCount(1);
         await expect(locator).toHaveCount(0);

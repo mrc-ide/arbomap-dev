@@ -32,6 +32,14 @@ module.exports = {
         "import/extensions": "off",
         "prefer-destructuring": ["error", { object: true, array: false }]
     },
+    overrides: [
+        {
+            files: ["**/tests/**/*.{j,t}s"],
+            rules: {
+                "@typescript-eslint/no-explicit-any": "off"
+            }
+        }
+    ],
     ignorePatterns: ["index.ts"],
     settings: {
         "import/parsers": {
