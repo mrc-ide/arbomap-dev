@@ -7,7 +7,7 @@ import { useLoadingSpinner } from "../../../src/composables/useLoadingSpinner";
 describe("useLoadingSpinner", () => {
     let target: Ref<typeof LMap | null>;
     let spin: Ref<boolean>;
-    const spinner: Spinner | null = null;
+    let spinner: Spinner | null = null;
     let spinSpy;
     let stopSpy;
 
@@ -18,7 +18,7 @@ describe("useLoadingSpinner", () => {
     beforeEach(() => {
         target = ref(null);
         spin = ref(false);
-        ({ spinner }) = useLoadingSpinner(target, spin);
+        ({ spinner } = useLoadingSpinner(target, spin));
         spinSpy = vi.spyOn(spinner, "spin");
         stopSpy = vi.spyOn(spinner, "stop");
     });
