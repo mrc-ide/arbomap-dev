@@ -31,4 +31,6 @@ export const useLoadingSpinner = (target: Ref<typeof LMap | null>, spin: Ref<boo
     watch([spin, target], updateSpinner);
 
     updateSpinner();
+
+    return { spinner };
 };
