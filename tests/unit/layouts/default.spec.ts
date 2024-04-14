@@ -1,6 +1,7 @@
 import { describe, expect, test } from "vitest";
 import { createRouter, createWebHistory } from "vue-router/auto";
-import { fireEvent, render, screen } from "@testing-library/vue";
+import { render, screen } from "@testing-library/vue";
+import { userEvent } from "@testing-library/user-event";
 import Default from "@/layouts/default.vue";
 import { mockVuetify } from "../mocks/mockVuetify";
 import { mockPinia } from "../mocks/mockPinia";
@@ -39,8 +40,8 @@ describe("default layout", () => {
     test("menu link navigates to About page", async () => {
         await renderLayout();
         const link = await screen.findByRole("button", { name: /About/i });
-        await fireEvent.click(link);
-
+        const user = userEvent.setup();
+        await user.click(link);
         expect(await screen.findByText(/MockApp is in development/)).toBeVisible();
     });
 });

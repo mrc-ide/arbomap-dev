@@ -7,6 +7,7 @@ import {
     MOCK_ADMIN2_GEOJSON
 } from "./mockObjects";
 
+export const defaultHandlers = [http.all("*", () => new HttpResponse(null, { status: 200 }))];
 export const handlers: HttpHandler[] = [
     http.get("resources/config.json", () => HttpResponse.json(MOCK_APP_CONFIG)),
     http.get("resources/indicators/indicators-MWI-ADM1.json", () => HttpResponse.json(MOCK_ADMIN1_INDICATORS.MWI)),
