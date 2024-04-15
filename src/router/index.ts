@@ -9,11 +9,12 @@ const router = createRouter({
     history: createWebHistory(APP_BASE_URL),
     routes: [
         { path: "/", component: index },
-        { path: "/about", component: about }
+        { path: "/about", component: about },
+        { path: "/:indicator", component: index, props: true },
+        { path: "/:indicator/:country", component: index, props: true }
     ]
 });
-// TODO: on browse to /${APP}, if no :indicator, redirect to first indicator
-// TODO: what should we do if indicator is not found? - redirect to 404 - can we route that in advance?
-//router.addRoute({ path: `/:indicator`, alias: `/`, props: true });
+// TODO: what should we do if indicator or country is not found? - redirect to 404 - can we route that in advance?
+// - should get same 404 page for any unknown route
 
 export default router;

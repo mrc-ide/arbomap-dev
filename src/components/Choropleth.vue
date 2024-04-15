@@ -27,6 +27,7 @@ import { useAppStore } from "../stores/appStore.ts";
 import { useColourScale } from "../composables/useColourScale.ts";
 import "leaflet/dist/leaflet.css";
 import { useLoadingSpinner } from "../composables/useLoadingSpinner";
+import router from "../router";
 
 interface FeatureWithColour {
     feature: Feature;
@@ -67,6 +68,7 @@ const getColourForFeature = (feature, indicator) => {
 
 const featuresWithColours = computed(() => {
     const selectedInd = selectedIndicator.value;
+    if (!selectedInd) return [];
     return selectedFeatures.value.map((feature) => {
         return {
             feature,
@@ -106,7 +108,11 @@ const createTooltips = {
         layer.bindTooltip(tooltipForFeature(feature)).openTooltip();
         layer.on({
             click: async () => {
-                await selectCountry(feature.properties[FEATURE_COUNTRY_PROP]);
+                //await selectCountry(feature.properties[FEATURE_COUNTRY_PROP]);
+                // TODO: Manage toggle to unselected here and in default rather than in store - route with country
+                //  should always mean select, route without country should always mean unselect
+                const country = feature.properties[FEATURE_COUNTRY_PROP];
+                router.push(`/${selectedIndicator.value}/${country}`);
             }
         });
     }

@@ -68,7 +68,7 @@ export const useAppStore = defineStore("app", {
                 allGeojson[country] = await getGeojson(country, level);
             }
 
-            this.selectedIndicator = Object.keys(this.appConfig.indicators)[0];
+            //this.selectedIndicator = Object.keys(this.appConfig.indicators)[0];
 
             Object.assign(this.admin1Indicators, allIndicators);
             Object.assign(this.admin1Geojson, allGeojson);
