@@ -3,9 +3,10 @@ import index from "../pages/index.vue";
 import about from "../pages/about.vue";
 
 const APP = "dengue";
+export const APP_BASE_URL = `${import.meta.env.BASE_URL}${APP}`;
 
 const router = createRouter({
-    history: createWebHistory(`${import.meta.env.BASE_URL}${APP}`),
+    history: createWebHistory(APP_BASE_URL),
     routes: [
         { path: "/", component: index },
         { path: "/about", component: about }
