@@ -1,6 +1,7 @@
 import { AppConfig, Geojson, FeatureIndicators } from "../types/resourceTypes";
 
 const getResource = async (path: string) => {
+    console.log(`loading from ${path}`)
     const res = await fetch(`resources/${path}`);
     return res.json();
 };

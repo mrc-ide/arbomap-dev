@@ -55,6 +55,7 @@ export const useAppStore = defineStore("app", {
     },
     actions: {
         async initialiseData() {
+            console.log("initialising data")
             this.appConfig = await getAppConfig();
             const allIndicators = {};
             const allGeojson = {};

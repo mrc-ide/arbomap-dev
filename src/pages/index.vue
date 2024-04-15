@@ -15,6 +15,7 @@
 </template>
 
 <script lang="ts" setup>
+console.log("index")
 import { storeToRefs } from "pinia";
 import { computed } from "vue";
 import { useAppStore } from "../stores/appStore";

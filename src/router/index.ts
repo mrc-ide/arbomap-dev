@@ -1,20 +1,18 @@
-/**
- * router/index.ts
- *
- * Automatic routes for `./src/pages/*.vue`
- */
-
-// Composables
 import { createRouter, createWebHistory } from "vue-router/auto";
-import { setupLayouts } from "virtual:generated-layouts";
+import index from "../pages/index.vue";
+import about from "../pages/about.vue";
 
 const APP = "dengue";
 
 const router = createRouter({
-    history: createWebHistory(`${import.meta.env.BASE_URL}/${APP}`),
-    extendRoutes: setupLayouts
+    history: createWebHistory(`${import.meta.env.BASE_URL}${APP}`),
+    routes: [
+        { path: "/", component: index },
+        { path: "/about", component: about }
+    ]
 });
-// TODO: on browse to /${APP}, if no :indictaor, redirect to first indicator
-router.addRoute({ path: `/${APP}/:indicator`, alias: `/${APP}`, props: true });
+// TODO: on browse to /${APP}, if no :indicator, redirect to first indicator
+// TODO: what should we do if indicator is not found? - redirect to 404 - can we route that in advance?
+//router.addRoute({ path: `/:indicator`, alias: `/`, props: true });
 
 export default router;
