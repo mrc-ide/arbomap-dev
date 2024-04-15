@@ -4,12 +4,22 @@ test.describe("Index page", () => {
     const GEOJSON_SELECTOR = ".leaflet-pane path.geojson";
     const getFirstRegion = async (page) => page.locator(`:nth-match(${GEOJSON_SELECTOR}, 1)`);
 
+    const expectLoadingSpinnerIsShownThenRemoved = async (page) => {
+        const locator = await page.locator("div.spinner");
+        await expect(locator).toHaveCount(1);
+        await expect(locator).toHaveCount(0);
+    };
+
     test.beforeEach(async ({ page }) => {
         await page.goto("/");
     });
 
     test("can see app title", async ({ page }) => {
         await expect(await page.getByText("DengueMap")).toBeVisible();
+    });
+
+    test("loading spinner is shown on page load", async ({ page }) => {
+        await expectLoadingSpinnerIsShownThenRemoved(page);
     });
 
     test("background layer has been rendered", async ({ page }) => {
@@ -30,6 +40,7 @@ test.describe("Index page", () => {
         await expect(firstRegion).toBeVisible();
         await expect(await allRegions).toHaveCount(33);
         await firstRegion.click();
+        await expectLoadingSpinnerIsShownThenRemoved(page);
         await expect(firstRegion).toBeVisible(); // regions are removed before being re-rendered
         await expect(await allRegions).toHaveCount(58, { timeout: 5000 }); // timeout required for Safari
     });

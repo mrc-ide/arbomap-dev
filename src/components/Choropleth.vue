@@ -1,24 +1,21 @@
 <template>
-    <div v-if="initialising">loading..</div>
-    <div v-else>
-        <LMap ref="map" style="height: 100vh; width: 100%" @ready="updateBounds">
-            <LTileLayer data-testid="tile-layer" v-bind="backgroundLayer"></LTileLayer>
-            <LGeoJson
-                v-for="f in featuresWithColours"
-                ref="featureRefs"
-                :key="getFeatureId(f.feature)"
-                :data-testid="getFeatureId(f.feature)"
-                :geojson="f.feature"
-                :options="createTooltips"
-                :options-style="
-                    () => {
-                        return { ...style, fillColor: f.colour };
-                    }
-                "
-            >
-            </LGeoJson>
-        </LMap>
-    </div>
+    <LMap ref="map" style="height: 100vh; width: 100%" @ready="updateBounds">
+        <LTileLayer data-testid="tile-layer" v-bind="backgroundLayer"></LTileLayer>
+        <LGeoJson
+            v-for="f in featuresWithColours"
+            ref="featureRefs"
+            :key="getFeatureId(f.feature)"
+            :data-testid="getFeatureId(f.feature)"
+            :geojson="f.feature"
+            :options="createTooltips"
+            :options-style="
+                () => {
+                    return { ...style, fillColor: f.colour };
+                }
+            "
+        >
+        </LGeoJson>
+    </LMap>
 </template>
 <script setup lang="ts">
 import { ref, computed, watch } from "vue";
@@ -29,6 +26,7 @@ import { Feature } from "geojson";
 import { useAppStore } from "../stores/appStore.ts";
 import { useColourScale } from "../composables/useColourScale.ts";
 import "leaflet/dist/leaflet.css";
+import { useLoadingSpinner } from "../composables/useLoadingSpinner";
 
 interface FeatureWithColour {
     feature: Feature;
@@ -56,7 +54,8 @@ const featureRefs = ref<(typeof LGeoJson)[]>([]);
 const { selectedFeatures, selectedIndicators, loading, selectedIndicator } = storeToRefs(useAppStore());
 const { selectCountry } = useAppStore();
 
-const { colourScales, getColour } = useColourScale(selectedIndicators);
+useLoadingSpinner(map, loading);
+const { getColour } = useColourScale(selectedIndicators);
 
 const getFeatureId = (feature: Feature) => feature.properties![FEATURE_ID_PROP];
 const getFeatureName = (feature: Feature) => feature.properties![FEATURE_NAME_PROP];
@@ -67,9 +66,6 @@ const getColourForFeature = (feature, indicator) => {
 };
 
 const featuresWithColours = computed(() => {
-    if (loading.value) {
-        return [];
-    }
     const selectedInd = selectedIndicator.value;
     return selectedFeatures.value.map((feature) => {
         return {
@@ -88,15 +84,6 @@ const updateBounds = () => {
         }
     }
 };
-
-const initialising = computed(() => {
-    return (
-        loading.value &&
-        !featuresWithColours.value.length &&
-        !selectedIndicators.value.length &&
-        !Object.keys(colourScales.value).length
-    );
-});
 
 // TODO: pull out tooltips stuff into composable when fully implement
 const tooltipForFeature = (feature: Feature) => {
