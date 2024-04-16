@@ -52,8 +52,7 @@ const backgroundLayer = {
 const map = ref<typeof LMap | null>(null);
 const featureRefs = ref<(typeof LGeoJson)[]>([]);
 
-const { selectedFeatures, selectedIndicators, loading, selectedIndicator } = storeToRefs(useAppStore());
-const { selectCountry } = useAppStore();
+const { selectedFeatures, selectedIndicators, loading, selectedIndicator, selectedCountryId } = storeToRefs(useAppStore());
 
 useLoadingSpinner(map, loading);
 const { getColour } = useColourScale(selectedIndicators);
@@ -112,7 +111,9 @@ const createTooltips = {
                 // TODO: Manage toggle to unselected here and in default rather than in store - route with country
                 //  should always mean select, route without country should always mean unselect
                 const country = feature.properties[FEATURE_COUNTRY_PROP];
-                router.push(`/${selectedIndicator.value}/${country}`);
+                // unselect country when if click on it when already selected
+                const selectCountry = country === selectedCountryId.value ? "" : country;
+                router.push(`/${selectedIndicator.value}/${selectCountry}`);
             }
         });
     }

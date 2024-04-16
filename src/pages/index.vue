@@ -2,8 +2,7 @@
     <Choropleth data-testid="choropleth" />
     <div class="sticky-footer">
         <div v-for="name in indicatorNames" :key="name">
-            <!-- TODO: This link should include selected country if any -->
-            <router-link :to="`/${name}`"
+            <router-link :to="`/${name}/${selectedCountryId}`"
                          custom
                          v-slot="{ navigate }">
                 <v-btn
@@ -27,7 +26,7 @@ import { storeToRefs } from "pinia";
 import { computed, watch } from "vue";
 import { useAppStore } from "../stores/appStore";
 
-const { appConfig, selectedIndicator } = storeToRefs(useAppStore());
+const { appConfig, selectedIndicator, selectedCountryId } = storeToRefs(useAppStore());
 const { selectCountry } = useAppStore();
 
 const props = defineProps({
@@ -54,9 +53,8 @@ const selectDataForRoute = async () => {
         if (props.indicator) {
             console.log(`setting si to ${props.indicator}`)
             selectedIndicator.value = props.indicator;
-            if (props.country) {
-                await selectCountry(props.country.toUpperCase());
-            }
+            const country  = props.country ? props.country.toUpperCase() : "";
+            await selectCountry(country);
         } else {
             console.log(`falsy = setting to ${indicatorNames.value[0]}`)
             // No indicator selected on route - default to first indicator and navigate
