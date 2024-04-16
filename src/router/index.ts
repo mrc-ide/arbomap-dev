@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router/auto";
 import index from "../pages/index.vue";
 import about from "../pages/about.vue";
+import notFound from "../pages/notFound.vue";
 
 const APP = "dengue";
 export const APP_BASE_URL = `${import.meta.env.BASE_URL}${APP}`;
@@ -10,8 +11,10 @@ const router = createRouter({
     routes: [
         { path: "/", component: index },
         { path: "/about", component: about },
+        { path: "/notFound", component: notFound },
         { path: "/:indicator", component: index, props: true },
-        { path: "/:indicator/:country", component: index, props: true }
+        { path: "/:indicator/:country", component: index, props: true },
+        { path: "/:pathMatch(.*)", component: notFound}
     ]
 });
 // TODO: what should we do if indicator or country is not found? - redirect to 404 - can we route that in advance?

@@ -46,15 +46,21 @@ const props = defineProps({
 const indicatorNames = computed(() => (appConfig.value ? Object.keys(appConfig.value.indicators) : {}));
 
 const selectDataForRoute = async () => {
-    console.log("calling sdfr")
-    console.log(`type of passed indicator is ${typeof props.indicator}`)
-    console.log("passed indicator is " + props.indicator)
+    if (!appConfig.value) {
+        return;
+    }
     if (appConfig.value) {
         if (props.indicator) {
             console.log(`setting si to ${props.indicator}`)
-            selectedIndicator.value = props.indicator;
-            const country  = props.country ? props.country.toUpperCase() : "";
-            await selectCountry(country);
+            if (!Object.keys(appConfig.value.indicators).includes(props.indicator)) {
+                // TODO: is there a way to do this more nicely, retaining the route in address bar?
+                router.replace("/notFound");
+            } else {
+                console.log("indicator was found")
+                selectedIndicator.value = props.indicator;
+                const country = props.country ? props.country.toUpperCase() : "";
+                await selectCountry(country);
+            }
         } else {
             console.log(`falsy = setting to ${indicatorNames.value[0]}`)
             // No indicator selected on route - default to first indicator and navigate
