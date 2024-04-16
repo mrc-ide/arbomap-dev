@@ -52,12 +52,15 @@ const selectDataForRoute = async () => {
     if (appConfig.value) {
         if (props.indicator) {
             console.log(`setting si to ${props.indicator}`)
-            if (!Object.keys(appConfig.value.indicators).includes(props.indicator)) {
+            // Do case-insensitive match to find indicator from route
+            const pattern = new RegExp(`^${props.indicator}$`, "i");
+            const indicator = Object.keys(appConfig.value.indicators).find(i => pattern.test(i));
+            if (!indicator) {
                 // TODO: is there a way to do this more nicely, retaining the route in address bar?
                 router.replace("/notFound");
             } else {
                 console.log("indicator was found")
-                selectedIndicator.value = props.indicator;
+                selectedIndicator.value = indicator;
                 const country = props.country ? props.country.toUpperCase() : "";
                 await selectCountry(country);
             }

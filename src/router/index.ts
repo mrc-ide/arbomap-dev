@@ -4,7 +4,9 @@ import about from "../pages/about.vue";
 import notFound from "../pages/notFound.vue";
 
 const APP = "dengue";
-export const APP_BASE_URL = `${import.meta.env.BASE_URL}${APP}`;
+const VERSION = "may24";
+// In future iterations we will support non-default pathogens and data versions, but for now we hardcode these
+export const APP_BASE_URL = `${import.meta.env.BASE_URL}${APP}/${VERSION}`;
 
 const router = createRouter({
     history: createWebHistory(APP_BASE_URL),
