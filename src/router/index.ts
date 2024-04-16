@@ -21,4 +21,8 @@ const router = createRouter({
     ]
 });
 
+router.beforeEach((to, from) => {
+    console.log(`routing from ${JSON.stringify(from)} to ${JSON.stringify(to)}`)
+});
+
 export default router;
