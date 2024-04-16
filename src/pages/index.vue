@@ -64,7 +64,7 @@ const selectDataForRoute = async () => {
             unknownIndicator.value = !indicator;
 
             const country = props.country ? props.country.toUpperCase() : "";
-            unknownCountry.value = country && !appConfig.value.countries.includes(props.country);
+            unknownCountry.value = country && !appConfig.value.countries.includes(country);
 
             if (!unknownIndicator.value && !unknownCountry.value) {
                 selectedIndicator.value = indicator;
