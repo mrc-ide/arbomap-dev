@@ -25,11 +25,11 @@ if (import.meta.env.BASE_URL !== "/") {
 }
 
 //TODO: remove this
-router.beforeEach((to, from) => {
-    console.log(`routing from ${JSON.stringify(from)} to ${JSON.stringify(to)}`)
+//router.beforeEach((to, from) => {
+  //  console.log(`routing from ${JSON.stringify(from)} to ${JSON.stringify(to)}`)
     //if (to.fullPath === "/arbomap") {
     //    throw Error("unexpected route")
     //}
-});
+//});
 
 export default router;
