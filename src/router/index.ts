@@ -13,13 +13,10 @@ const router = createRouter({
     routes: [
         { path: "/", component: index },
         { path: "/about", component: about },
-        { path: "/notFound", component: notFound },
         { path: "/:indicator", component: index, props: true },
         { path: "/:indicator/:country", component: index, props: true },
         { path: "/:pathMatch(.*)", component: notFound}
     ]
 });
-// TODO: what should we do if indicator or country is not found? - redirect to 404 - can we route that in advance?
-// - should get same 404 page for any unknown route
 
 export default router;
