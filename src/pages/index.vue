@@ -72,6 +72,7 @@ const selectDataForRoute = async () => {
             }
         } else {
             // No indicator selected on route - default to first indicator and navigate
+            console.log(`Attempting to route to first indicator, which is ${indicatorNames.value[0]}`)
             router.push(`/${indicatorNames.value[0]}`);
         }
     }
