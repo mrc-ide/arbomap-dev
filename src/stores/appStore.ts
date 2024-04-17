@@ -55,7 +55,6 @@ export const useAppStore = defineStore("app", {
     },
     actions: {
         async initialiseData() {
-            console.log("initialising data")
             this.appConfig = await getAppConfig();
             const allIndicators = {};
             const allGeojson = {};
@@ -67,8 +66,6 @@ export const useAppStore = defineStore("app", {
                 allIndicators[country] = await getIndicators(country, level);
                 allGeojson[country] = await getGeojson(country, level);
             }
-
-            //this.selectedIndicator = Object.keys(this.appConfig.indicators)[0];
 
             Object.assign(this.admin1Indicators, allIndicators);
             Object.assign(this.admin1Geojson, allGeojson);

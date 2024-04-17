@@ -1,16 +1,13 @@
 import { describe, expect, test } from "vitest";
-import { createRouter, createWebHistory } from "vue-router/auto";
 import { render, screen } from "@testing-library/vue";
 import { userEvent } from "@testing-library/user-event";
 import Default from "@/layouts/default.vue";
 import { mockVuetify } from "../mocks/mockVuetify";
 import { mockPinia } from "../mocks/mockPinia";
 import { useAppStore } from "../../../src/stores/appStore";
+import {mockRouter} from "../mocks/mockRouter";
 
-const router = createRouter({
-    history: createWebHistory()
-});
-
+const router = mockRouter();
 const renderLayout = async () => {
     router.push("/");
     await router.isReady();

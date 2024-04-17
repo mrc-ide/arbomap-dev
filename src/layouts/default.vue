@@ -19,7 +19,6 @@
 </template>
 
 <script lang="ts" setup>
-console.log("default")
 import { storeToRefs } from "pinia";
 import { useAppStore } from "../stores/appStore";
 

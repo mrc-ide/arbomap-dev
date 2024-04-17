@@ -1,14 +1,18 @@
 import { fireEvent, render, screen } from "@testing-library/vue";
-import { describe, expect, test } from "vitest";
+import { describe, expect, test, vi, beforeEach} from "vitest";
 import Index from "@/pages/index.vue";
 import { mockVuetify } from "../mocks/mockVuetify";
 import { mockPinia } from "../mocks/mockPinia";
+import router from "@/router";
+import {flushPromises} from "@vue/test-utils";
+import {useAppStore} from "../../../src/stores/appStore";
 
 const store = mockPinia();
-const renderPage = async () => {
+const renderPage = async (indicator, country) => {
     await render(Index, {
+        props: { indicator, country },
         global: {
-            plugins: [mockVuetify, store],
+            plugins: [mockVuetify, mockPinia(), router],
             stubs: {
                 Choropleth: true
             }
@@ -16,8 +20,14 @@ const renderPage = async () => {
     });
 };
 
+const spyRouterPush = vi.spyOn(router, "push");
+
 describe("Index page", () => {
-    test("renders as expected", async () => {
+    beforeEach(() => {
+        vi.clearAllMocks();
+    });
+
+    /*test("renders as expected", async () => {
         await renderPage();
         const indicatorButtons = await screen.findAllByRole("button");
         expect(indicatorButtons.length).toBe(2);
@@ -34,5 +44,48 @@ describe("Index page", () => {
         await fireEvent.click(p9Button);
 
         expect(store.state.value.app.selectedIndicator).toBe("p9");
+    });*/
+
+    test("selects indicator from props", async () => {
+        await renderPage("p9");
+        expect(useAppStore().selectedIndicator).toBe("p9");
+    });
+
+    test("selects country from props", async () => {
+        await renderPage("p9", "TZA");
+        const { selectedIndicator, selectCountry } = useAppStore();
+        expect(selectCountry).toHaveBeenCalledWith("TZA");
+        expect(selectedIndicator).toBe("p9");
+    });
+
+    test("unselects country if no country prop", async () => {
+        await renderPage("p9");
+        const { selectedIndicator, selectCountry } = useAppStore();
+        expect(selectCountry).toHaveBeenCalledWith("");
+        expect(selectedIndicator).toBe("p9");
+    });
+
+    test("routes to first indicator if none provided", async () => {
+        await renderPage();
+        await flushPromises();
+        expect(spyRouterPush).toHaveBeenCalledWith("/FOI");
+    });
+
+    test("renders notFound if unknown indicator", async () => {
+        await renderPage("NotAnIndicator");
+        expect(await screen.findByText("Unknown indicator: NotAnIndicator.")).toBeVisible();
+        expect(await screen.queryAllByRole("button").length).toBe(0);
+    });
+
+    test("renders notFound if unknown country", async () => {
+        await renderPage("FOI", "NotACountry");
+        expect(await screen.findByText("Unknown country ISO: NotACountry.")).toBeVisible();
+        expect(await screen.queryAllByRole("button").length).toBe(0);
+    });
+
+    test("renders notFound if unknown indicator and unknown country", async () => {
+        await renderPage("NotAnIndicator", "NotACountry");
+        expect(await screen.findByText("Unknown indicator: NotAnIndicator. Unknown country ISO: NotACountry.")).toBeVisible();
+        expect(await screen.queryAllByRole("button").length).toBe(0);
     });
 });

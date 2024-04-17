@@ -107,11 +107,8 @@ const createTooltips = {
         layer.bindTooltip(tooltipForFeature(feature)).openTooltip();
         layer.on({
             click: async () => {
-                //await selectCountry(feature.properties[FEATURE_COUNTRY_PROP]);
-                // TODO: Manage toggle to unselected here and in default rather than in store - route with country
-                //  should always mean select, route without country should always mean unselect
                 const country = feature.properties[FEATURE_COUNTRY_PROP];
-                // unselect country when if click on it when already selected
+                // select country, or unselect if click on it when already selected
                 const selectCountry = country === selectedCountryId.value ? "" : country;
                 router.push(`/${selectedIndicator.value}/${selectCountry}`);
             }
