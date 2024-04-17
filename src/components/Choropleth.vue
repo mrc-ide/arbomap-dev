@@ -1,21 +1,24 @@
 <template>
-    <LMap ref="map" style="height: 100vh; width: 100%" @ready="updateBounds">
-        <LTileLayer data-testid="tile-layer" v-bind="backgroundLayer"></LTileLayer>
-        <LGeoJson
-            v-for="f in featuresWithColours"
-            ref="featureRefs"
-            :key="getFeatureId(f.feature)"
-            :data-testid="getFeatureId(f.feature)"
-            :geojson="f.feature"
-            :options="createTooltips"
-            :options-style="
-                () => {
-                    return { ...style, fillColor: f.colour };
-                }
-            "
-        >
-        </LGeoJson>
-    </LMap>
+    <div>
+        <LMap ref="map" style="height: 100vh; width: 100%" @ready="updateBounds">
+            <LTileLayer data-testid="tile-layer" v-bind="backgroundLayer"></LTileLayer>
+            <LGeoJson
+                v-for="f in featuresWithColours"
+                ref="featureRefs"
+                :key="getFeatureId(f.feature)"
+                :data-testid="getFeatureId(f.feature)"
+                :geojson="f.feature"
+                :options="createTooltips"
+                :options-style="
+                    () => {
+                        return { ...style, fillColor: f.colour };
+                    }
+                "
+            >
+            </LGeoJson>
+        </LMap>
+        <div style="visibility: hidden;" class="choropleth-data-summary" v-bind="dataSummary"></div>
+    </div>
 </template>
 <script setup lang="ts">
 import { ref, computed, watch } from "vue";
@@ -52,7 +55,7 @@ const backgroundLayer = {
 const map = ref<typeof LMap | null>(null);
 const featureRefs = ref<(typeof LGeoJson)[]>([]);
 
-const { selectedFeatures, selectedIndicators, loading, selectedIndicator, selectedCountryId } = storeToRefs(useAppStore());
+const { selectedFeatures, selectedIndicators, loading, selectedIndicator, selectedCountryId, appConfig } = storeToRefs(useAppStore());
 
 useLoadingSpinner(map, loading);
 const { getColour } = useColourScale(selectedIndicators);
@@ -75,6 +78,15 @@ const featuresWithColours = computed(() => {
         };
     });
 });
+
+// Useful for the e2e tests
+const dataSummary = computed(() => ({
+    "selected-indicator": selectedIndicator.value,
+    "selected-country-id": selectedCountryId.value,
+    "colour-scale": appConfig.value?.indicators[selectedIndicator.value]?.colourScale.name,
+    "feature-count": featuresWithColours.value.length,
+    "selected-country-feature-count": featuresWithColours.value.filter(f => f.feature.properties![FEATURE_COUNTRY_PROP] === selectedCountryId.value).length
+}));
 
 const updateBounds = () => {
     if (!loading.value) {
