@@ -40,15 +40,17 @@ test.describe("Index page", () => {
         await expect(firstRegion).toBeVisible();
         await expect(await allRegions).toHaveCount(33);
         await firstRegion.click();
+        await page.waitForURL(/dengue\/may24\/FOI\/MWI/);
         await expectLoadingSpinnerIsShownThenRemoved(page);
         await expect(firstRegion).toBeVisible(); // regions are removed before being re-rendered
         await expect(await allRegions).toHaveCount(58, { timeout: 5000 }); // timeout required for Safari
     });
 
-    test("changing selected indicator changes colours on map", async ({ page }) => {
+    test("changing selected indicator changes route and colours on map", async ({ page }) => {
         const firstRegion = await getFirstRegion(page);
         const colour = await firstRegion.getAttribute("fill");
         await page.getByText("P9").click();
+        await page.waitForURL(/dengue\/may24\/p9/);
         await expect(await firstRegion.getAttribute("fill")).not.toEqual(colour);
     });
 
