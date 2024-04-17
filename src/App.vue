@@ -7,8 +7,5 @@
 </template>
 
 <script lang="ts" setup>
-//
 import Default from "./layouts/default.vue";
-
-console.log("app");
 </script>
