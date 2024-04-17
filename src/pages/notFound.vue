@@ -7,7 +7,7 @@
             {{ detail }}
         </p>
         <p>
-            Go the <router-link to="/">{{ appConfig.title }} home page</router-link> instead.
+            Go to the <router-link to="/">{{ appConfig.title }} home page</router-link> instead.
         </p>
     </div>
 </template>

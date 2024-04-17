@@ -1,4 +1,5 @@
-import { fireEvent, render, screen } from "@testing-library/vue";
+import { render, screen } from "@testing-library/vue";
+import { userEvent } from "@testing-library/user-event";
 import { describe, expect, test, vi, beforeEach} from "vitest";
 import Index from "@/pages/index.vue";
 import { mockVuetify } from "../mocks/mockVuetify";
@@ -7,7 +8,6 @@ import router from "@/router";
 import {flushPromises} from "@vue/test-utils";
 import {useAppStore} from "../../../src/stores/appStore";
 
-const store = mockPinia();
 const renderPage = async (indicator, country) => {
     await render(Index, {
         props: { indicator, country },
@@ -27,9 +27,9 @@ describe("Index page", () => {
         vi.clearAllMocks();
     });
 
-    /*test("renders as expected", async () => {
-        await renderPage();
-        const indicatorButtons = await screen.findAllByRole("button");
+    test("renders as expected", async () => {
+        await renderPage("FOI");
+        const indicatorButtons = await screen.findAllByRole("link");
         expect(indicatorButtons.length).toBe(2);
         expect((indicatorButtons[0] as HTMLButtonElement).textContent).toBe("FOI");
         expect((indicatorButtons[0] as HTMLButtonElement).classList).toContain("bg-blue");
@@ -38,13 +38,14 @@ describe("Index page", () => {
         expect(await screen.findByTestId("choropleth")).toBeVisible();
     });
 
-    test("button click updates selected indicator", async () => {
-        await renderPage();
-        const p9Button = (await screen.findAllByRole("button"))[1];
-        await fireEvent.click(p9Button);
+    test("button click routes to selected indicator", async () => {
+        await renderPage("FOI");
+        const p9Button = (await screen.findAllByRole("link"))[1];
+        const user = userEvent.setup();
+        await user.click(p9Button);
 
-        expect(store.state.value.app.selectedIndicator).toBe("p9");
-    });*/
+        expect(spyRouterPush).toHaveBeenCalledWith("/p9/");
+    })
 
     test("selects indicator from props", async () => {
         await renderPage("p9");
