@@ -2,12 +2,7 @@ import { createRouter, createWebHistory } from "vue-router/auto";
 import index from "../pages/index.vue";
 import about from "../pages/about.vue";
 import notFound from "../pages/notFound.vue";
-
-const baseUrl = import.meta.env.BASE_URL;
-const APP = "dengue";
-const VERSION = "may24";
-// In future iterations we will support non-default pathogens and data versions, but for now we hardcode these
-export const APP_BASE_URL = `${baseUrl}${APP}/${VERSION}`;
+import {baseUrl, APP_BASE_URL} from "./utils";
 
 const router = createRouter({
     history: createWebHistory(APP_BASE_URL),

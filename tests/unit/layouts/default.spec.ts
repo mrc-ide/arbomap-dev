@@ -5,7 +5,7 @@ import Default from "@/layouts/default.vue";
 import { mockVuetify } from "../mocks/mockVuetify";
 import { mockPinia } from "../mocks/mockPinia";
 import { useAppStore } from "../../../src/stores/appStore";
-import {mockRouter} from "../mocks/mockRouter";
+import { mockRouter } from "../mocks/mockRouter";
 
 const router = mockRouter();
 const renderLayout = async () => {

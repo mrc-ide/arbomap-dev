@@ -1,8 +1,6 @@
 <template>
     <div v-if="appConfig" class="not-found ma-4 text-body-1">
-        <p>
-            Sorry, this page does not exist!
-        </p>
+        <p>Sorry, this page does not exist!</p>
         <p v-if="detail">
             {{ detail }}
         </p>
@@ -15,10 +13,11 @@
 import { storeToRefs } from "pinia";
 import { useAppStore } from "../stores/appStore";
 
-const props = defineProps({
+defineProps({
     detail: {
         type: String,
-        required: false
+        required: false,
+        default: ""
     }
 });
 

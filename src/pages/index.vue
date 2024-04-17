@@ -3,9 +3,7 @@
         <Choropleth data-testid="choropleth" />
         <div class="sticky-footer">
             <div v-for="name in indicatorNames" :key="name">
-                <router-link :to="`/${name}/${selectedCountryId}`"
-                             custom
-                             v-slot="{ navigate }">
+                <router-link :to="`/${name}/${selectedCountryId}`" custom v-slot="{ navigate }">
                     <v-btn
                         @click="navigate"
                         role="link"
@@ -22,33 +20,38 @@
 </template>
 
 <script lang="ts" setup>
-import router from "../router";
 import { storeToRefs } from "pinia";
-import {computed, Ref, watch, ref} from "vue";
+import { computed, Ref, watch, ref } from "vue";
+import { useRouter } from "vue-router";
 import { useAppStore } from "../stores/appStore";
 import NotFound from "./notFound.vue";
 
+const router = useRouter();
 const { appConfig, selectedIndicator, selectedCountryId } = storeToRefs(useAppStore());
 const { selectCountry } = useAppStore();
 
 const props = defineProps({
     indicator: {
         type: String,
-        required: false
+        required: false,
+        default: ""
     },
     country: {
         type: String,
-        required: false
+        required: false,
+        default: ""
     }
-})
+});
 
 const indicatorNames = computed(() => (appConfig.value ? Object.keys(appConfig.value.indicators) : {}));
-const unknownCountry:  Ref<boolean> = ref(false);
+const unknownCountry: Ref<boolean> = ref(false);
 const unknownIndicator: Ref<boolean> = ref(false);
 
 const notFoundDetail = computed(() => {
-    return (unknownIndicator.value ? `Unknown indicator: ${props.indicator}. ` : "") +
-        (unknownCountry.value ? `Unknown country ISO: ${props.country}.` : "");
+    return (
+        (unknownIndicator.value ? `Unknown indicator: ${props.indicator}. ` : "") +
+        (unknownCountry.value ? `Unknown country ISO: ${props.country}.` : "")
+    );
 });
 
 const selectDataForRoute = async () => {
@@ -60,7 +63,7 @@ const selectDataForRoute = async () => {
         if (props.indicator) {
             // Do case-insensitive match to find indicator from route
             const pattern = new RegExp(`^${props.indicator}$`, "i");
-            const indicator = Object.keys(appConfig.value.indicators).find(i => pattern.test(i));
+            const indicator = Object.keys(appConfig.value.indicators).find((i) => pattern.test(i));
             unknownIndicator.value = !indicator;
 
             const country = props.country ? props.country.toUpperCase() : "";
@@ -75,12 +78,11 @@ const selectDataForRoute = async () => {
             router.push(`/${indicatorNames.value[0]}`);
         }
     }
-}
+};
 
 watch([appConfig, () => props.indicator, () => props.country], selectDataForRoute);
 
 selectDataForRoute();
-
 </script>
 <style lang="scss">
 .sticky-footer {

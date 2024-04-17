@@ -1,5 +1,5 @@
 import { AppConfig, Geojson, FeatureIndicators } from "../types/resourceTypes";
-import {APP_BASE_URL} from "../router";
+import { APP_BASE_URL } from "../router/utils";
 
 const getResource = async (path: string) => {
     const location = `${APP_BASE_URL}/resources/${path}`;

@@ -1,12 +1,12 @@
 import { render, screen } from "@testing-library/vue";
 import { userEvent } from "@testing-library/user-event";
-import { describe, expect, test, vi, beforeEach} from "vitest";
+import { describe, expect, test, vi, beforeEach } from "vitest";
 import Index from "@/pages/index.vue";
+import router from "@/router";
+import { flushPromises } from "@vue/test-utils";
 import { mockVuetify } from "../mocks/mockVuetify";
 import { mockPinia } from "../mocks/mockPinia";
-import router from "@/router";
-import {flushPromises} from "@vue/test-utils";
-import {useAppStore} from "../../../src/stores/appStore";
+import { useAppStore } from "../../../src/stores/appStore";
 
 const renderPage = async (indicator, country) => {
     await render(Index, {
@@ -45,7 +45,7 @@ describe("Index page", () => {
         await user.click(p9Button);
 
         expect(spyRouterPush).toHaveBeenCalledWith("/p9/");
-    })
+    });
 
     test("selects indicator from props", async () => {
         await renderPage("p9");
@@ -86,7 +86,9 @@ describe("Index page", () => {
 
     test("renders notFound if unknown indicator and unknown country", async () => {
         await renderPage("NotAnIndicator", "NotACountry");
-        expect(await screen.findByText("Unknown indicator: NotAnIndicator. Unknown country ISO: NotACountry.")).toBeVisible();
+        expect(
+            await screen.findByText("Unknown indicator: NotAnIndicator. Unknown country ISO: NotACountry.")
+        ).toBeVisible();
         expect(await screen.queryAllByRole("button").length).toBe(0);
     });
 });

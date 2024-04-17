@@ -17,7 +17,7 @@
             >
             </LGeoJson>
         </LMap>
-        <div style="visibility: hidden;" class="choropleth-data-summary" v-bind="dataSummary"></div>
+        <div style="visibility: hidden" class="choropleth-data-summary" v-bind="dataSummary"></div>
     </div>
 </template>
 <script setup lang="ts">
@@ -26,11 +26,11 @@ import { storeToRefs } from "pinia";
 import { GeoJSON, Layer } from "leaflet";
 import { LGeoJson, LMap, LTileLayer } from "@vue-leaflet/vue-leaflet";
 import { Feature } from "geojson";
+import { useRouter } from "vue-router";
 import { useAppStore } from "../stores/appStore.ts";
 import { useColourScale } from "../composables/useColourScale.ts";
 import "leaflet/dist/leaflet.css";
 import { useLoadingSpinner } from "../composables/useLoadingSpinner";
-import router from "../router";
 
 interface FeatureWithColour {
     feature: Feature;
@@ -55,7 +55,9 @@ const backgroundLayer = {
 const map = ref<typeof LMap | null>(null);
 const featureRefs = ref<(typeof LGeoJson)[]>([]);
 
-const { selectedFeatures, selectedIndicators, loading, selectedIndicator, selectedCountryId, appConfig } = storeToRefs(useAppStore());
+const router = useRouter();
+const { selectedFeatures, selectedIndicators, loading, selectedIndicator, selectedCountryId, appConfig } =
+    storeToRefs(useAppStore());
 
 useLoadingSpinner(map, loading);
 const { getColour } = useColourScale(selectedIndicators);
@@ -85,7 +87,9 @@ const dataSummary = computed(() => ({
     "selected-country-id": selectedCountryId.value,
     "colour-scale": appConfig.value?.indicators[selectedIndicator.value]?.colourScale.name,
     "feature-count": featuresWithColours.value.length,
-    "selected-country-feature-count": featuresWithColours.value.filter(f => f.feature.properties![FEATURE_COUNTRY_PROP] === selectedCountryId.value).length
+    "selected-country-feature-count": featuresWithColours.value.filter(
+        (f) => f.feature.properties![FEATURE_COUNTRY_PROP] === selectedCountryId.value
+    ).length
 }));
 
 const updateBounds = () => {

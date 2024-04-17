@@ -1,16 +1,16 @@
-import { describe, expect, test} from "vitest";
-import {render, screen} from "@testing-library/vue";
-import {mockVuetify} from "../mocks/mockVuetify";
-import {mockPinia} from "../mocks/mockPinia";
+import { describe, expect, test } from "vitest";
+import { render, screen } from "@testing-library/vue";
+import { mockVuetify } from "../mocks/mockVuetify";
+import { mockPinia } from "../mocks/mockPinia";
 import NotFound from "../../../src/pages/notFound.vue";
-import {mockRouter} from "../mocks/mockRouter";
+import { mockRouter } from "../mocks/mockRouter";
 
 describe("NotFound page", () => {
     test("renders as expected", async () => {
         await render(NotFound, {
-            props: {detail: "test detail"},
+            props: { detail: "test detail" },
             global: {
-                plugins: [mockVuetify, mockPinia(), mockRouter()],
+                plugins: [mockVuetify, mockPinia(), mockRouter()]
             }
         });
 
