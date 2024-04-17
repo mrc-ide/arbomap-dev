@@ -6,10 +6,9 @@ import {
     MOCK_ADMIN2_INDICATORS,
     MOCK_ADMIN2_GEOJSON
 } from "./mockObjects";
-import {APP_BASE_URL} from "../../../src/router";
 
 export const defaultHandlers = [http.all("*", () => new HttpResponse(null, { status: 200 }))];
-const resourcesBase = `${APP_BASE_URL}/resources`;
+const resourcesBase = `/dengue/may24/resources`;
 export const handlers: HttpHandler[] = [
     http.get(`${resourcesBase}/config.json`, () => HttpResponse.json(MOCK_APP_CONFIG)),
     http.get(`${resourcesBase}/indicators/indicators-MWI-ADM1.json`, () => HttpResponse.json(MOCK_ADMIN1_INDICATORS.MWI)),
