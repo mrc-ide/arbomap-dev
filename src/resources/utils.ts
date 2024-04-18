@@ -16,11 +16,12 @@ export const getIndicators = async (country: string, level: number) => {
     return (await getResource(`indicators/admin${level}/${country}.json`)) as FeatureIndicators;
 };
 
-export const getGeojson = async (country: string, level: number) => {
-    return (await getResource(`geojson/geoBoundaries-${country}-ADM${level}_simplified.geojson`)) as Geojson;
+export const getGeojsonFeatures = async (country: string, level: number) => {
+    const coll = (await getResource(`geojson/admin${level}/gadm41_${country}_${level}.json`)) as Geojson;
+    return coll.features;
 };
 
-export const getGlobalGeojson = async (level: number) => {
+export const getGlobalGeojsonFeatures = async (level: number) => {
     const coll = (await getResource(`geojson/all_adm${level}_0_5pc.json`)) as FeatureCollection;
     return coll.features;
 };

@@ -1,6 +1,13 @@
 import { defineStore } from "pinia";
 import { Feature } from "geojson";
-import { getAppConfig, getGeojson, getGlobalGeojson, getIndicators } from "../resources/utils";
+import {
+    getAppConfig,
+    getGeojson,
+    getGeojsonFeatures,
+    getGlobalGeojson,
+    getGlobalGeojsonFeatures,
+    getIndicators
+} from "../resources/utils";
 import { AppState } from "../types/storeTypes";
 import { FeatureIndicators } from "../types/resourceTypes";
 
@@ -50,7 +57,7 @@ export const useAppStore = defineStore("app", {
                 .filter(([countryId]) => countryId !== selectedCountryId)
                 .flatMap(([, geojson]) => geojson);
 
-            return [...admin2Geojson[selectedCountryId].features, ...filteredAdmin1];
+            return [...admin2Geojson[selectedCountryId], ...filteredAdmin1];
         }
     },
     actions: {
@@ -62,13 +69,12 @@ export const useAppStore = defineStore("app", {
             // eslint-disable-next-line no-restricted-syntax
             for (const country of this.appConfig.countries) {
                 allIndicators[country] = await getIndicators(country, level);
-                //allGeojson[country] = await getGeojson(country, level);
             }
 
             // Load all admin1 geojson - load simplified boundaries only, from a
             // single file, then transform to country-keyed dictionary
-            // TODO: save this dict! Better than regenerating it on every user's browser!
-            const allGeojsonArr = await getGlobalGeojson(1);
+            // TODO: Should be in dict form in resource file
+            const allGeojsonArr = await getGlobalGeojsonFeatures(1);
             const allGeojson = {};
             allGeojsonArr.forEach((feature) => {
                 const country = feature.properties["GID_0"]; // TODO: put these prop keys into app config
@@ -100,8 +106,18 @@ export const useAppStore = defineStore("app", {
                 this.admin2Indicators[countryId] = await getIndicators(countryId, level);
             }
             if (!(countryId in this.admin2Geojson)) {
-                this.admin2Geojson[countryId] = await getGeojson(countryId, level);
+                this.admin2Geojson[countryId] = await getGeojsonFeatures(countryId, level);
             }
+
+            // TODO: take this out when we're more confident of  matching admin2 ids!
+            // Do a quick audit
+            const geojsonFeatureIds = this.admin2Geojson[countryId].map((feature) => feature.properties["GID_2"]);
+            const indicatorFeatureIds = Object.keys(this.admin2Indicators[countryId]);
+            console.log(`geo id count: ${geojsonFeatureIds.length}  ind id count: ${indicatorFeatureIds.length}`)
+            const unfoundInd = indicatorFeatureIds.filter((id) => !geojsonFeatureIds.includes(id));
+            const unFoundGeo = geojsonFeatureIds.filter((id) => !indicatorFeatureIds.includes(id));
+            console.log("geojson ids which are not in indicators: " + JSON.stringify(unFoundGeo));
+            console.log("indicator ids which are not in geogson: " + JSON.stringify(unfoundInd));
 
             this.selectedCountryId = countryId;
             this.loading = false;

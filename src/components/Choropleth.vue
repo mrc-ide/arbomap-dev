@@ -37,8 +37,10 @@ interface FeatureWithColour {
     colour: string;
 }
 
-const FEATURE_ID_PROP = "GID_1"; // TODO: load from config instead, and distinguish levels
-const FEATURE_NAME_PROP = "NAME_1"; // TODO: same for name
+const FEATURE_ID_1_PROP = "GID_1"; // TODO: load from config instead
+const FEATURE_ID_2_PROP = "GID_2"
+const FEATURE_NAME_1_PROP = "NAME_1"; // TODO: same for name
+const FEATURE_NAME_2_PROP = "NAME_2";
 const FEATURE_COUNTRY_PROP = "GID_0";
 
 const style = {
@@ -61,22 +63,24 @@ const { selectedFeatures, selectedIndicators, loading, selectedIndicator, select
 
 useLoadingSpinner(map, loading);
 const { getColour } = useColourScale(selectedIndicators);
+const featureInSelectedCountry = (feature: Feature, selectedCountry) => feature.properties[FEATURE_COUNTRY_PROP] === selectedCountry;
+const getFeatureId = (feature: Feature, selectedCountry: string) =>  featureInSelectedCountry(feature, selectedCountry) ? feature.properties![FEATURE_ID_2_PROP] : feature.properties![FEATURE_ID_1_PROP];
+const getFeatureName = (feature: Feature, selectedCountry: string) => featureInSelectedCountry(feature, selectedCountry) ? feature.properties![FEATURE_NAME_2_PROP] : feature.properties![FEATURE_NAME_1_PROP];
 
-const getFeatureId = (feature: Feature) => feature.properties![FEATURE_ID_PROP];
-const getFeatureName = (feature: Feature) => feature.properties![FEATURE_NAME_PROP];
-
-const getColourForFeature = (feature, indicator) => {
-    const featureIndicators = selectedIndicators.value[getFeatureId(feature)];
+const getColourForFeature = (feature, indicator, selectedCountry) => {
+    const featureId = getFeatureId(feature, selectedCountry);
+    const featureIndicators = selectedIndicators.value[featureId];
     return getColour(indicator, featureIndicators);
 };
 
 const featuresWithColours = computed(() => {
     const selectedInd = selectedIndicator.value;
     if (!selectedInd) return [];
+    const selectedCountry = selectedCountryId.value;
     return selectedFeatures.value.map((feature) => {
         return {
             feature,
-            colour: getColourForFeature(feature, selectedInd)
+            colour: getColourForFeature(feature, selectedInd, selectedCountry)
         };
     });
 });
