@@ -38,12 +38,6 @@ interface FeatureWithColour {
     colour: string;
 }
 
-const FEATURE_ID_1_PROP = "GID_1"; // TODO: load from config instead
-const FEATURE_ID_2_PROP = "GID_2"
-const FEATURE_NAME_1_PROP = "NAME_1"; // TODO: same for name
-const FEATURE_NAME_2_PROP = "NAME_2";
-const FEATURE_COUNTRY_PROP = "GID_0";
-
 const style = {
     className: "geojson"
 };
@@ -55,6 +49,8 @@ const backgroundLayer = {
     minZoom: 3
 };
 
+// TODO: sort out issue with duplicate key ids - it's happening because not passing a level to getFeatureId
+
 const map = ref<typeof LMap | null>(null);
 const featureRefs = ref<(typeof LGeoJson)[]>([]);
 
@@ -64,9 +60,9 @@ const { selectedFeatures, selectedIndicators, loading, selectedIndicator, select
 
 useLoadingSpinner(map, loading);
 const { getColour } = useColourScale(selectedIndicators);
-const featureInSelectedCountry = (feature: Feature, selectedCountry) => feature.properties[FEATURE_COUNTRY_PROP] === selectedCountry;
-const getFeatureId = (feature: Feature, selectedCountry: string) =>  featureInSelectedCountry(feature, selectedCountry) ? feature.properties![FEATURE_ID_2_PROP] : feature.properties![FEATURE_ID_1_PROP];
-const getFeatureName = (feature: Feature, selectedCountry: string) => featureInSelectedCountry(feature, selectedCountry) ? feature.properties![FEATURE_NAME_2_PROP] : feature.properties![FEATURE_NAME_1_PROP];
+const featureInSelectedCountry = (feature: Feature, selectedCountry) => feature.properties[featureProps.value.country] === selectedCountry;
+const getFeatureId = (feature: Feature, selectedCountry: string) =>  featureInSelectedCountry(feature, selectedCountry) ? feature.properties![featureProps.value.idAdm2] : feature.properties![featureProps.value.idAdm1];
+const getFeatureName = (feature: Feature, selectedCountry: string) => featureInSelectedCountry(feature, selectedCountry) ? feature.properties![featureProps.value.nameAdm2] : feature.properties![featureProps.value.nameAdm1];
 
 const getColourForFeature = (feature, indicator, selectedCountry) => {
     const featureId = getFeatureId(feature, selectedCountry);
@@ -86,6 +82,8 @@ const featuresWithColours = computed(() => {
     });
 });
 
+const featureProps = computed(() => appConfig.value?.geoJsonFeatureProperties);
+
 // Useful for the e2e tests
 const dataSummary = computed(() => ({
     "selected-indicator": selectedIndicator.value,
@@ -93,7 +91,7 @@ const dataSummary = computed(() => ({
     "colour-scale": appConfig.value?.indicators[selectedIndicator.value]?.colourScale.name,
     "feature-count": featuresWithColours.value.length,
     "selected-country-feature-count": featuresWithColours.value.filter(
-        (f) => f.feature.properties![FEATURE_COUNTRY_PROP] === selectedCountryId.value
+        (f) => f.feature.properties![featureProps.value.country] === selectedCountryId.value
     ).length
 }));
 
@@ -128,7 +126,7 @@ const createTooltips = {
         layer.bindTooltip(tooltipForFeature(feature)).openTooltip();
         layer.on({
             click: async () => {
-                const country = feature.properties[FEATURE_COUNTRY_PROP];
+                const country = feature.properties[featureProps.value.country];
                 // select country, or unselect if click on it when already selected
                 const selectCountry = country === selectedCountryId.value ? "" : country;
                 router.push(`/${selectedIndicator.value}/${selectCountry}`);

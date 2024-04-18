@@ -2,9 +2,7 @@ import { defineStore } from "pinia";
 import { Feature } from "geojson";
 import {
     getAppConfig,
-    getGeojson,
     getGeojsonFeatures,
-    getGlobalGeojson,
     getGlobalGeojsonFeatures,
     getIndicators
 } from "../resources/utils";
