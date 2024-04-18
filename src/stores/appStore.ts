@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { Feature } from "geojson";
-import { getAppConfig, getGeojson, getIndicators } from "../resources/utils";
+import { getAppConfig, getGeojson, getGlobalGeojson, getIndicators } from "../resources/utils";
 import { AppState } from "../types/storeTypes";
 import { FeatureIndicators } from "../types/resourceTypes";
 
@@ -43,12 +43,12 @@ export const useAppStore = defineStore("app", {
             const { selectedCountryId, admin1Geojson, admin2Geojson } = state;
             // get single array of all selected features
             if (!selectedCountryId) {
-                return Object.values(admin1Geojson).flatMap((geojson) => geojson.features);
+                return Object.values(admin1Geojson).flatMap((geojson) => geojson);
             }
 
             const filteredAdmin1 = Object.entries(admin1Geojson)
                 .filter(([countryId]) => countryId !== selectedCountryId)
-                .flatMap(([, geojson]) => geojson.features);
+                .flatMap(([, geojson]) => geojson);
 
             return [...admin2Geojson[selectedCountryId].features, ...filteredAdmin1];
         }
@@ -57,15 +57,26 @@ export const useAppStore = defineStore("app", {
         async initialiseData() {
             this.appConfig = await getAppConfig();
             const allIndicators = {};
-            const allGeojson = {};
             const level = 1;
 
-            // Load all admin1 level data
             // eslint-disable-next-line no-restricted-syntax
             for (const country of this.appConfig.countries) {
                 allIndicators[country] = await getIndicators(country, level);
-                allGeojson[country] = await getGeojson(country, level);
+                //allGeojson[country] = await getGeojson(country, level);
             }
+
+            // Load all admin1 geojson - load simplified boundaries only, from a
+            // single file, then transform to country-keyed dictionary
+            // TODO: save this dict! Better than regenerating it on every user's browser!
+            const allGeojsonArr = await getGlobalGeojson(1);
+            const allGeojson = {};
+            allGeojsonArr.forEach((feature) => {
+                const country = feature.properties["GID_0"]; // TODO: put these prop keys into app config
+                if (!Object.keys(allGeojson).includes(country)) {
+                    allGeojson[country] = [];
+                }
+                allGeojson[country].push(feature);
+            });
 
             Object.assign(this.admin1Indicators, allIndicators);
             Object.assign(this.admin1Geojson, allGeojson);

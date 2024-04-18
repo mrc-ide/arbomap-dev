@@ -37,9 +37,9 @@ interface FeatureWithColour {
     colour: string;
 }
 
-const FEATURE_ID_PROP = "shapeID";
-const FEATURE_NAME_PROP = "shapeName";
-const FEATURE_COUNTRY_PROP = "shapeGroup";
+const FEATURE_ID_PROP = "GID_1"; // TODO: load from config instead, and distinguish levels
+const FEATURE_NAME_PROP = "NAME_1"; // TODO: same for name
+const FEATURE_COUNTRY_PROP = "GID_0";
 
 const style = {
     className: "geojson"

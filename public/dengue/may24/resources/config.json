@@ -1,15 +1,15 @@
 {
     "title": "DengueMap",
-    "countries": ["MWI", "TZA"],
+    "countries": ["AGO","ATG","ARG","AUS","BHS","BGD","BRB","BLZ","BEN","BTN","BOL","BWA","BRA","BFA","BDI","KHM","CMR","CPV","CAF","TCD","CHN","COL","COM","CRI","CIV","CUB","COD","DJI","DOM","ECU","SLV","GNQ","ERI","ETH","FJI","GUF","PYF","GAB","GMB","GHA","GRD","GLP","GTM","GNB","GIN","GUY","HTI","HND","HKG","IND","IDN","JAM","KEN","LAO","LBR","MDG","MWI","MYS","MLI","MTQ","MRT","MUS","MYT","MEX","MOZ","MMR","NAM","NPL","NCL","NIC","NER","NGA","OMN","PAN","PNG","PRY","PER","PHL","PRI","COG","REU","RWA","LCA","VCT","WSM","SEN","SYC","SLE","SGP","SLB","SOM","SSD","LKA","SDN","SUR","TWN","TZA","THA","TLS","TGO","TON","TTO","UGA","URY","VUT","VEN","VNM","VIR","YEM","ZMB","ZWE"],
     "indicators": {
         "FOI": {
             "colourScale": {
-                "name": "interpolateReds"
+                "name": "interpolateRdYlBu"
             }
         },
-        "p9": {
+        "serop9": {
             "colourScale": {
-                "name": "interpolateBlues"
+                "name": "interpolateGreens"
             }
         }
     }
