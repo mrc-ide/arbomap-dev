@@ -11,7 +11,7 @@
                 :options="createTooltips"
                 :options-style="
                     () => {
-                        return { ...style, fillColor: f.colour };
+                        return { ...style, fillColor: f.colour, color: borderColor(f.colour) };
                     }
                 "
             >
@@ -31,6 +31,7 @@ import { useAppStore } from "../stores/appStore.ts";
 import { useColourScale } from "../composables/useColourScale.ts";
 import "leaflet/dist/leaflet.css";
 import { useLoadingSpinner } from "../composables/useLoadingSpinner";
+import Color from "color";
 
 interface FeatureWithColour {
     feature: Feature;
@@ -134,6 +135,13 @@ const createTooltips = {
             }
         });
     }
+};
+
+const borderColor = (fillColor: string) => {
+    // for drawing borders more subtly, desaturate and fade the
+    // color returned from color scale in rgb format
+    const c = Color(fillColor);
+    return c.desaturate(0.7).fade(0.7).rgb();
 };
 
 const updateTooltips = () => {
