@@ -40,11 +40,21 @@ describe("default layout", () => {
         expect(appStore.initialiseData).toHaveBeenCalledTimes(1);
     });
 
-    test("menu link navigates to About page", async () => {
+    test("Menu links navigate to correct pages", async () => {
         await renderLayout();
-        const link = await screen.findByRole("button", { name: /About/i });
+
         const user = userEvent.setup();
-        await user.click(link);
-        expect(await screen.findByText(/MockApp is in development/)).toBeVisible();
+
+        const aboutLink = await screen.findByRole("link", { name: /about/i });
+        await user.click(aboutLink);
+        expect(await screen.findByText(/About this site/)).toBeVisible();
+
+        const accessibilityLink = await screen.findByRole("link", { name: /accessibility/i });
+        await user.click(accessibilityLink);
+        expect(await screen.findByText(/WCAG/)).toBeVisible();
+
+        const privacyLink = await screen.findByRole("link", { name: /privacy policy/i });
+        await user.click(privacyLink);
+        expect(await screen.findByText(/Privacy notice for arbomap.org/)).toBeVisible();
     });
 });

@@ -1,6 +1,8 @@
 import { createRouter, createWebHistory } from "vue-router/auto";
 import index from "../pages/index.vue";
 import about from "../pages/about.vue";
+import accessibility from "../pages/accessibility.vue";
+import privacy from "../pages/privacy.vue";
 import notFound from "../pages/notFound.vue";
 
 const router = createRouter({
@@ -8,6 +10,8 @@ const router = createRouter({
     routes: [
         { path: "/:pathogen?/:version?/:indicator?/:country?", component: index, props: true },
         { path: `/about`, component: about },
+        { path: "/accessibility", component: accessibility },
+        { path: "/privacy", component: privacy },
         { path: "/:pathMatch(.*)", component: notFound}
     ]
 });
