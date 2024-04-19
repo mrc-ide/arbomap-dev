@@ -5,13 +5,14 @@
             {{ detail }}
         </p>
         <p>
-            Go to the <router-link to="/">{{ appConfig.title }} home page</router-link> instead.
+            Go to the <router-link :to="`/${APP_BASE_ROUTE}`">{{ appConfig.title }} home page</router-link> instead.
         </p>
     </div>
 </template>
 <script setup>
 import { storeToRefs } from "pinia";
 import { useAppStore } from "../stores/appStore";
+import {APP_BASE_ROUTE} from "../router/utils.ts";
 
 defineProps({
     detail: {
