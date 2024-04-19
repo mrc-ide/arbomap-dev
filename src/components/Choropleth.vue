@@ -31,6 +31,7 @@ import { useAppStore } from "../stores/appStore.ts";
 import { useColourScale } from "../composables/useColourScale.ts";
 import "leaflet/dist/leaflet.css";
 import { useLoadingSpinner } from "../composables/useLoadingSpinner";
+import {APP_BASE_ROUTE} from "../router/utils";
 
 interface FeatureWithColour {
     feature: Feature;
@@ -126,7 +127,7 @@ const createTooltips = {
                 const country = feature.properties[FEATURE_COUNTRY_PROP];
                 // select country, or unselect if click on it when already selected
                 const selectCountry = country === selectedCountryId.value ? "" : country;
-                router.push(`/${selectedIndicator.value}/${selectCountry}`);
+                router.push(`/${APP_BASE_ROUTE}/${selectedIndicator.value}/${selectCountry}`);
             }
         });
     }
