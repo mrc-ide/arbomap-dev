@@ -1,14 +1,23 @@
+import { Feature } from "geojson";
+
 export const MOCK_APP_CONFIG = {
     title: "MockApp",
     countries: ["MWI", "TZA"],
     indicators: {
         FOI: {
-            colourScale: { name: "interpolateReds" }
+            colourScale: { name: "interpolateReds" },
+            humanReadableName: "Force of infection",
+            unit: ""
         },
         p9: {
-            colourScale: { name: "interpolateBlues" }
+            colourScale: { name: "interpolateBlues" },
+            humanReadableName: "Seroprevalence at 9 years of age",
+            unit: "%"
         }
-    }
+    },
+    featureIdProp: "shapeID",
+    featureNameProp: "shapeName",
+    featureCountryProp: "shapeGroup"
 };
 
 export const MOCK_ADMIN1_GEOJSON = {
@@ -64,4 +73,20 @@ export const MOCK_ADMIN2_INDICATORS = {
             p9: { mean: 0.2, sd: 0.02 }
         }
     }
+};
+
+export const MOCK_FEATURE: Feature = {
+    type: "Feature",
+    geometry: {
+        type: "Polygon",
+        coordinates: [
+            [
+                [0, 0],
+                [1, 1],
+                [1, 0],
+                [0, 0]
+            ]
+        ]
+    },
+    properties: MOCK_ADMIN1_GEOJSON.MWI.features[0].properties
 };

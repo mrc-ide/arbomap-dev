@@ -2,15 +2,20 @@ import { Feature } from "geojson";
 import { Dict } from "./utilTypes";
 
 export interface IndicatorConfig {
+    humanReadableName: string;
     colourScale: {
         name: string;
     };
+    unit: string;
 }
 
 export interface AppConfig {
     title: string;
     countries: string[];
     indicators: Dict<IndicatorConfig>;
+    featureIdProp: string;
+    featureNameProp: string;
+    featureCountryProp: string;
 }
 
 export interface IndicatorValue {
@@ -27,3 +32,9 @@ export interface Geojson {
 
 // Dictionary of feature ids to indicator values
 export type FeatureIndicators = Dict<FeatureIndicatorValues>;
+
+export interface FeatureWithColour {
+    feature: Feature;
+    colour: string;
+    id: string;
+}

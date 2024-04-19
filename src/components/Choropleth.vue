@@ -5,8 +5,8 @@
             <LGeoJson
                 v-for="f in featuresWithColours"
                 ref="featureRefs"
-                :key="getFeatureId(f.feature)"
-                :data-testid="getFeatureId(f.feature)"
+                :key="f.id"
+                :data-testid="f.id"
                 :geojson="f.feature"
                 :options="createTooltips"
                 :options-style="
@@ -23,24 +23,16 @@
 <script setup lang="ts">
 import { ref, computed, watch } from "vue";
 import { storeToRefs } from "pinia";
-import { GeoJSON, Layer } from "leaflet";
+import { GeoJSON } from "leaflet";
 import { LGeoJson, LMap, LTileLayer } from "@vue-leaflet/vue-leaflet";
-import { Feature } from "geojson";
-import { useRouter } from "vue-router";
-import { useAppStore } from "../stores/appStore.ts";
-import { useColourScale } from "../composables/useColourScale.ts";
+import { useAppStore } from "../stores/appStore";
+import { useColourScale } from "../composables/useColourScale";
 import "leaflet/dist/leaflet.css";
 import { useLoadingSpinner } from "../composables/useLoadingSpinner";
-import { APP_BASE_ROUTE } from "../router/utils";
 
-interface FeatureWithColour {
-    feature: Feature;
-    colour: string;
-}
-
-const FEATURE_ID_PROP = "shapeID";
-const FEATURE_NAME_PROP = "shapeName";
-const FEATURE_COUNTRY_PROP = "shapeGroup";
+import { useTooltips } from "../composables/useTooltips";
+import { FeatureWithColour } from "../types/resourceTypes";
+import { getFeatureId } from "../resources/utils";
 
 const style = {
     className: "geojson"
@@ -56,18 +48,21 @@ const backgroundLayer = {
 const map = ref<typeof LMap | null>(null);
 const featureRefs = ref<(typeof LGeoJson)[]>([]);
 
-const router = useRouter();
 const { selectedFeatures, selectedIndicators, loading, selectedIndicator, selectedCountryId, appConfig } =
     storeToRefs(useAppStore());
 
 useLoadingSpinner(map, loading);
 const { getColour } = useColourScale(selectedIndicators);
+const { updateTooltips, createTooltips } = useTooltips(
+    appConfig,
+    featureRefs,
+    selectedIndicator,
+    selectedIndicators,
+    selectedCountryId
+);
 
-const getFeatureId = (feature: Feature) => feature.properties![FEATURE_ID_PROP];
-const getFeatureName = (feature: Feature) => feature.properties![FEATURE_NAME_PROP];
-
-const getColourForFeature = (feature, indicator) => {
-    const featureIndicators = selectedIndicators.value[getFeatureId(feature)];
+const getColourForFeature = (featureId, indicator) => {
+    const featureIndicators = selectedIndicators.value[featureId];
     return getColour(indicator, featureIndicators);
 };
 
@@ -75,9 +70,11 @@ const featuresWithColours = computed(() => {
     const selectedInd = selectedIndicator.value;
     if (!selectedInd) return [];
     return selectedFeatures.value.map((feature) => {
+        const id = getFeatureId(feature, appConfig.value);
         return {
             feature,
-            colour: getColourForFeature(feature, selectedInd)
+            colour: getColourForFeature(id, selectedInd),
+            id
         };
     });
 });
@@ -89,7 +86,7 @@ const dataSummary = computed(() => ({
     "colour-scale": appConfig.value?.indicators[selectedIndicator.value]?.colourScale.name,
     "feature-count": featuresWithColours.value.length,
     "selected-country-feature-count": featuresWithColours.value.filter(
-        (f) => f.feature.properties![FEATURE_COUNTRY_PROP] === selectedCountryId.value
+        (f) => f.feature.properties![appConfig.value?.featureCountryProp] === selectedCountryId.value
     ).length
 }));
 
@@ -103,55 +100,13 @@ const updateBounds = () => {
     }
 };
 
-// TODO: pull out tooltips stuff into composable when fully implement
-const tooltipForFeature = (feature: Feature) => {
-    let indicatorValues = "";
-    const fid = getFeatureId(feature);
-    if (fid in selectedIndicators.value) {
-        const featureValues = selectedIndicators.value[fid];
-        indicatorValues = Object.keys(featureValues)
-            .map((key) => {
-                return `${key}: ${featureValues[key].mean} (+/- ${featureValues[key].sd})<br/>`;
-            })
-            .join("");
-    }
-    const name = getFeatureName(feature) || getFeatureId(feature);
-    return `<div><strong>${name}</strong></div><div>${indicatorValues}</div>`;
-};
-
-const createTooltips = {
-    onEachFeature: (feature: Feature, layer: Layer) => {
-        layer.bindTooltip(tooltipForFeature(feature)).openTooltip();
-        layer.on({
-            click: async () => {
-                const country = feature.properties[FEATURE_COUNTRY_PROP];
-                // select feature's country, or unselect if click on it when already selected
-                let countryToSelect: string;
-                if (country === selectedCountryId.value) {
-                    countryToSelect = "";
-                } else {
-                    countryToSelect = country;
-                }
-                router.push(`/${APP_BASE_ROUTE}/${selectedIndicator.value}/${countryToSelect}`);
-            }
-        });
-    }
-};
-
-const updateTooltips = () => {
-    featuresWithColours.value.forEach((f: FeatureWithColour) => {
-        const geojson = featureRefs.value.find((fr) => getFeatureId(fr.geojson) === getFeatureId(f.feature));
-        if (geojson && geojson.geojson && geojson.leafletObject) {
-            geojson.leafletObject.eachLayer((layer: Layer) => {
-                layer.setTooltipContent(tooltipForFeature(f.feature));
-            });
-        }
-    });
-};
-
 const updateMap = () => {
-    updateTooltips();
+    updateTooltips(featuresWithColours.value);
 };
+
+watch([selectedIndicator], () => {
+    updateMap();
+});
 
 watch([selectedFeatures], () => {
     updateBounds();

@@ -1,3 +1,4 @@
+import { Feature } from "geojson";
 import { AppConfig, Geojson, FeatureIndicators } from "../types/resourceTypes";
 import { APP_BASE_URL } from "../router/utils";
 
@@ -17,4 +18,9 @@ export const getIndicators = async (country: string, level: number) => {
 
 export const getGeojson = async (country: string, level: number) => {
     return (await getResource(`geojson/geoBoundaries-${country}-ADM${level}_simplified.geojson`)) as Geojson;
+};
+
+// Pass in appConfig to save having to re-read the config file
+export const getFeatureId = (feature: Feature, appConfig: AppConfig) => {
+    return feature.properties![appConfig.featureIdProp];
 };
