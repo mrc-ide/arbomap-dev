@@ -12,12 +12,19 @@
         "FOI": {
             "colourScale": {
                 "name": "interpolateRdYlBu"
-            }
+            },
+            "humanReadableName": "Force of infection",
+            "unit": ""
         },
         "serop9": {
             "colourScale": {
                 "name": "interpolateGreens"
-            }
+            },
+            "humanReadableName": "Seroprevalence at 9 years of age",
+            "unit": "%"
         }
-    }
+    },
+    "featureIdProp": "shapeID",
+    "featureNameProp": "shapeName",
+    "featureCountryProp": "shapeGroup"
 }

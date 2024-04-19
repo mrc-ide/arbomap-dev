@@ -2,9 +2,11 @@ import { Feature } from "geojson";
 import { Dict } from "./utilTypes";
 
 export interface IndicatorConfig {
+    humanReadableName: string;
     colourScale: {
         name: string;
     };
+    unit: string;
 }
 
 export interface AppConfig {
@@ -18,6 +20,9 @@ export interface AppConfig {
         country: string
     },
     indicators: Dict<IndicatorConfig>;
+    featureIdProp: string;
+    featureNameProp: string;
+    featureCountryProp: string;
 }
 
 export interface IndicatorValue {
@@ -37,3 +42,9 @@ export type FeatureIndicators = Dict<FeatureIndicatorValues>;
 
 // Country bounding boxes are numeric arrays with order West, East, North, South
 export type BoundingBox = [number, number, number, number];
+
+export interface FeatureWithColour {
+    feature: Feature;
+    colour: string;
+    id: string;
+}
