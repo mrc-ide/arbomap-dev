@@ -28,6 +28,12 @@ describe("default layout", () => {
         expect(await screen.findByText("MockApp")).toBeVisible();
     });
 
+    test("renders router view component", async () => {
+        // root component in mock router is index page, which shows indicator buttons
+        await renderLayout();
+        expect(await screen.findByText("FOI")).toBeVisible();
+    } );
+
     test("initialises data on load", async () => {
         const appStore = useAppStore();
         await renderLayout();

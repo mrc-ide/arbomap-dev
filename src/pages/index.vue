@@ -1,5 +1,5 @@
 <template>
-    <template v-if="!Object.keys(unknownProps).length">
+    <template v-if="!unknownProps.length">
         <Choropleth v-if="selectedIndicator" data-testid="choropleth" />
         <div class="sticky-footer">
             <div v-for="name in indicatorNames" :key="name">
@@ -56,61 +56,48 @@ const props = defineProps({
 });
 
 const indicatorNames = computed(() => (appConfig.value ? Object.keys(appConfig.value.indicators) : {}));
-const unknownProps: Ref<Dict<string>> = ref({}); // TODO: this would be better as an array!
+const unknownProps: Ref<string[]> = ref([]);
 
 const notFoundMsg = (valueType, value) => `Unknown ${valueType}: ${value}.`;
 
 const notFoundDetail = computed(() => {
-    return Object.keys(unknownProps.value).map(prop => notFoundMsg(prop, unknownProps.value[prop])).join(" ");
+    return unknownProps.value.map(propName => notFoundMsg(propName, props[propName])).join(" ");
 });
 
 const selectDataForRoute = async () => {
-
-    console.log("selecting data for route with pathogen " +  props.pathogen)
-
     if (!appConfig.value) {
         return;
     }
 
-    if (appConfig.value) {
-        if (props.pathogen && props.version && props.indicator) {
-            const unknown = {};
-            const checkRouteProp = (propName: "pathogen" | "version" | "indicator" | "country", candidates: string[]) => {
-                // Do case-insensitive check against route prop - add to unknown dict if not found
-                const pattern = new RegExp(`^${props[propName]}$`, "i");
-                const result =  candidates.find((i) => pattern.test(i));
-                if (!result) {
-                    unknown[propName] = props[propName];
-                }
-                return result;
-            };
-
-            checkRouteProp("pathogen", [PATHOGEN]);
-            checkRouteProp("version", [VERSION]);
-            const indicator = checkRouteProp("indicator", Object.keys(appConfig.value.indicators));
-            let country = "";
-            if (props.country) {
-                country = checkRouteProp("country", appConfig.value.countries)
+    if (props.pathogen && props.version && props.indicator) {
+        const unknown = [];
+        const checkRouteProp = (propName: "pathogen" | "version" | "indicator" | "country", candidates: string[]) => {
+            // Do case-insensitive check against route prop - add to unknown props if not found
+            const pattern = new RegExp(`^${props[propName]}$`, "i");
+            const result =  candidates.find((i) => pattern.test(i));
+            if (!result) {
+                unknown.push(propName);
             }
+            return result;
+        };
 
-            /*ttern = new RegExp(`^${props.indicator}$`, "i");
-            const indicator = Object.keys(appConfig.value.indicators).find((i) => pattern.test(i));
-            unknownIndicator.value = !indicator;
-
-            const country = props.country ? props.country.toUpperCase() : "";
-            unknownCountry.value = country && !appConfig.value.countries.includes(country);*/
-
-            unknownProps.value = unknown;
-
-            if (!Object.keys(unknownProps.value).length) {
-                selectedIndicator.value = indicator;
-                await selectCountry(country);
-            }
-        } else {
-            console.log("pushing to default")
-            // No indicator selected on route - default to first indicator and navigate
-            router.push(`/${APP_BASE_ROUTE}/${indicatorNames.value[0]}`);
+        checkRouteProp("pathogen", [PATHOGEN]);
+        checkRouteProp("version", [VERSION]);
+        const indicator = checkRouteProp("indicator", Object.keys(appConfig.value.indicators));
+        let country = "";
+        if (props.country) {
+            country = checkRouteProp("country", appConfig.value.countries)
         }
+
+        unknownProps.value = unknown;
+
+        if (!unknownProps.value.length) {
+            selectedIndicator.value = indicator;
+            await selectCountry(country);
+        }
+    } else {
+        // No indicator selected on route - default to first indicator and navigate
+        router.push(`/${APP_BASE_ROUTE}/${indicatorNames.value[0]}`);
     }
 };
 

@@ -1,5 +1,5 @@
 <template>
-    <div v-if="appConfig" class="not-found ma-4 text-body-1">
+    <div v-if="appConfig" class="not-found page-text ma-4 text-body-1">
         <p>Sorry, this page does not exist!</p>
         <p v-if="detail">
             {{ detail }}

@@ -125,9 +125,14 @@ const createTooltips = {
         layer.on({
             click: async () => {
                 const country = feature.properties[FEATURE_COUNTRY_PROP];
-                // select country, or unselect if click on it when already selected
-                const selectCountry = country === selectedCountryId.value ? "" : country;
-                router.push(`/${APP_BASE_ROUTE}/${selectedIndicator.value}/${selectCountry}`);
+                // select feature's country, or unselect if click on it when already selected
+                let countryToSelect: string;
+                if (country === selectedCountryId.value) {
+                    countryToSelect = "";
+                } else {
+                    countryToSelect = country;
+                }
+                router.push(`/${APP_BASE_ROUTE}/${selectedIndicator.value}/${countryToSelect}`);
             }
         });
     }
