@@ -69,35 +69,36 @@ const selectDataForRoute = async () => {
         return;
     }
 
-    if (props.pathogen && props.version && props.indicator) {
-        const unknown = [];
-        const checkRouteProp = (propName: "pathogen" | "version" | "indicator" | "country", candidates: string[]) => {
-            // Do case-insensitive check against route prop - add to unknown props if not found
-            const pattern = new RegExp(`^${props[propName]}$`, "i");
-            const result =  candidates.find((i) => pattern.test(i));
-            if (!result) {
-                unknown.push(propName);
-            }
-            return result;
-        };
-
-        checkRouteProp("pathogen", [PATHOGEN]);
-        checkRouteProp("version", [VERSION]);
-        const indicator = checkRouteProp("indicator", Object.keys(appConfig.value.indicators));
-        let country = "";
-        if (props.country) {
-            country = checkRouteProp("country", appConfig.value.countries)
+    const unknown = [];
+    const checkRouteProp = (propName: "pathogen" | "version" | "indicator" | "country", candidates: string[]) => {
+        if (!props[propName]) {
+            return "";
         }
 
-        unknownProps.value = unknown;
+        // Do case-insensitive check against route prop - add to unknown props if not found
+        const pattern = new RegExp(`^${props[propName]}$`, "i");
+        const result =  candidates.find((i) => pattern.test(i));
+        if (!result) {
+            unknown.push(propName);
+        }
+        return result;
+    };
 
-        if (!unknownProps.value.length) {
+    checkRouteProp("pathogen", [PATHOGEN]);
+    checkRouteProp("version", [VERSION]);
+    const indicator = checkRouteProp("indicator", Object.keys(appConfig.value.indicators));
+    const country = checkRouteProp("country", appConfig.value.countries);
+
+    unknownProps.value = unknown;
+
+    if (!unknownProps.value.length) {
+        if (indicator) {
             selectedIndicator.value = indicator;
             await selectCountry(country);
+        } else {
+            // No indicator selected on route - default to first indicator and navigate
+            router.push(`/${APP_BASE_ROUTE}/${indicatorNames.value[0]}`);
         }
-    } else {
-        // No indicator selected on route - default to first indicator and navigate
-        router.push(`/${APP_BASE_ROUTE}/${indicatorNames.value[0]}`);
     }
 };
 
