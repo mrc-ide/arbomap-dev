@@ -32,7 +32,7 @@ describe("default layout", () => {
         // root component in mock router is index page, which shows indicator buttons
         await renderLayout();
         expect(await screen.findByText("FOI")).toBeVisible();
-    } );
+    });
 
     test("initialises data on load", async () => {
         const appStore = useAppStore();

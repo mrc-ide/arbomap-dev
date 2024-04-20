@@ -12,7 +12,7 @@
 <script setup>
 import { storeToRefs } from "pinia";
 import { useAppStore } from "../stores/appStore";
-import {APP_BASE_ROUTE} from "../router/utils.ts";
+import { APP_BASE_ROUTE } from "../router/utils.ts";
 
 defineProps({
     detail: {

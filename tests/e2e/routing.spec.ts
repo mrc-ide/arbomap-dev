@@ -22,7 +22,7 @@ const expectIndexPage = async (
     );
 };
 
-const expectDefaultView  = async (page) => {
+const expectDefaultView = async (page) => {
     await expectIndexPage(page, "/FOI", "FOI", "", "interpolateReds", 33, 0);
 };
 
@@ -75,7 +75,7 @@ test.describe("Router", () => {
         await expect(await page.getByText("Unknown country: notAnISO.")).toBeVisible();
     });
 
-    test("shows not found details when non-existent pathogen", async ({page}) => {
+    test("shows not found details when non-existent pathogen", async ({ page }) => {
         // Try for pathogen only, and when other route props specified
         await page.goto("/malaria");
         await expect(await page.getByText("Unknown pathogen: malaria.")).toBeVisible();
@@ -84,7 +84,7 @@ test.describe("Router", () => {
         await expect(await page.getByText("Unknown pathogen: malaria.")).toBeVisible();
     });
 
-    test("shows not found details when non-existent version", async ({page}) => {
+    test("shows not found details when non-existent version", async ({ page }) => {
         // Try for version only, and when other route props specified
         await page.goto("/dengue/may23");
         await expect(await page.getByText("Unknown version: may23.")).toBeVisible();

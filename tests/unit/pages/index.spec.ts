@@ -8,7 +8,7 @@ import { mockVuetify } from "../mocks/mockVuetify";
 import { mockPinia } from "../mocks/mockPinia";
 import { useAppStore } from "../../../src/stores/appStore";
 
-const renderPage = async (indicator, country, pathogen="dengue", version="may24") => {
+const renderPage = async (indicator, country, pathogen = "dengue", version = "may24") => {
     await render(Index, {
         props: { pathogen, version, indicator, country },
         global: {

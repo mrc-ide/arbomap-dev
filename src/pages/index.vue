@@ -25,8 +25,7 @@ import { computed, Ref, watch, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useAppStore } from "../stores/appStore";
 import NotFound from "./notFound.vue";
-import {Dict} from "../types/utilTypes";
-import {APP_BASE_ROUTE, APP_BASE_URL, PATHOGEN, VERSION} from "../router/utils";
+import { APP_BASE_ROUTE, PATHOGEN, VERSION } from "../router/utils";
 
 const router = useRouter();
 const { appConfig, selectedIndicator, selectedCountryId } = storeToRefs(useAppStore());
@@ -61,7 +60,7 @@ const unknownProps: Ref<string[]> = ref([]);
 const notFoundMsg = (valueType, value) => `Unknown ${valueType}: ${value}.`;
 
 const notFoundDetail = computed(() => {
-    return unknownProps.value.map(propName => notFoundMsg(propName, props[propName])).join(" ");
+    return unknownProps.value.map((propName) => notFoundMsg(propName, props[propName])).join(" ");
 });
 
 const selectDataForRoute = async () => {
@@ -77,7 +76,7 @@ const selectDataForRoute = async () => {
 
         // Do case-insensitive check against route prop - add to unknown props if not found
         const pattern = new RegExp(`^${props[propName]}$`, "i");
-        const result =  candidates.find((i) => pattern.test(i));
+        const result = candidates.find((i) => pattern.test(i));
         if (!result) {
             unknown.push(propName);
         }
@@ -102,7 +101,10 @@ const selectDataForRoute = async () => {
     }
 };
 
-watch([appConfig, () => props.pathogen, () => props.version, () => props.indicator, () => props.country], selectDataForRoute);
+watch(
+    [appConfig, () => props.pathogen, () => props.version, () => props.indicator, () => props.country],
+    selectDataForRoute
+);
 
 selectDataForRoute();
 </script>

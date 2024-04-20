@@ -31,7 +31,7 @@ import { useAppStore } from "../stores/appStore.ts";
 import { useColourScale } from "../composables/useColourScale.ts";
 import "leaflet/dist/leaflet.css";
 import { useLoadingSpinner } from "../composables/useLoadingSpinner";
-import {APP_BASE_ROUTE} from "../router/utils";
+import { APP_BASE_ROUTE } from "../router/utils";
 
 interface FeatureWithColour {
     feature: Feature;
