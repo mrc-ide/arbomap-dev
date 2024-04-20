@@ -8,9 +8,9 @@ import { mockVuetify } from "../mocks/mockVuetify";
 import { mockPinia } from "../mocks/mockPinia";
 import { useAppStore } from "../../../src/stores/appStore";
 
-const renderPage = async (indicator, country) => {
+const renderPage = async (indicator, country, pathogen="dengue", version="may24") => {
     await render(Index, {
-        props: { indicator, country },
+        props: { pathogen, version, indicator, country },
         global: {
             plugins: [mockVuetify, mockPinia(), router],
             stubs: {
@@ -44,7 +44,7 @@ describe("Index page", () => {
         const user = userEvent.setup();
         await user.click(p9Button);
 
-        expect(spyRouterPush).toHaveBeenCalledWith("/p9/");
+        expect(spyRouterPush).toHaveBeenCalledWith("/dengue/may24/p9/");
     });
 
     test("selects indicator from props", async () => {
@@ -69,7 +69,7 @@ describe("Index page", () => {
     test("routes to first indicator if none provided", async () => {
         await renderPage();
         await flushPromises();
-        expect(spyRouterPush).toHaveBeenCalledWith("/FOI");
+        expect(spyRouterPush).toHaveBeenCalledWith("/dengue/may24/FOI");
     });
 
     test("renders notFound if unknown indicator", async () => {
@@ -80,14 +80,26 @@ describe("Index page", () => {
 
     test("renders notFound if unknown country", async () => {
         await renderPage("FOI", "NotACountry");
-        expect(await screen.findByText("Unknown country ISO: NotACountry.")).toBeVisible();
+        expect(await screen.findByText("Unknown country: NotACountry.")).toBeVisible();
+        expect(await screen.queryAllByRole("button").length).toBe(0);
+    });
+
+    test("renders notFound if unknown pathogen", async () => {
+        await renderPage("FOI", "", "malaria");
+        expect(await screen.findByText("Unknown pathogen: malaria.")).toBeVisible();
+        expect(await screen.queryAllByRole("button").length).toBe(0);
+    });
+
+    test("renders notFound if unknown version", async () => {
+        await renderPage("FOI", "", "dengue", "may23");
+        expect(await screen.findByText("Unknown version: may23.")).toBeVisible();
         expect(await screen.queryAllByRole("button").length).toBe(0);
     });
 
     test("renders notFound if unknown indicator and unknown country", async () => {
         await renderPage("NotAnIndicator", "NotACountry");
         expect(
-            await screen.findByText("Unknown indicator: NotAnIndicator. Unknown country ISO: NotACountry.")
+            await screen.findByText("Unknown indicator: NotAnIndicator. Unknown country: NotACountry.")
         ).toBeVisible();
         expect(await screen.queryAllByRole("button").length).toBe(0);
     });

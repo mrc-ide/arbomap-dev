@@ -6,7 +6,7 @@ export const mockRouter = () =>
     createRouter({
         history: createWebHistory(),
         routes: [
-            { path: "/", componenth: index },
+            { path: "/", component: index },
             { path: "/about", component: about }
         ]
     });

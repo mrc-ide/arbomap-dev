@@ -17,6 +17,6 @@ describe("NotFound page", () => {
         expect(await screen.findByText("Sorry, this page does not exist!")).toBeVisible();
         expect(await screen.findByText("test detail")).toBeVisible();
         const link = await screen.findByText("MockApp home page");
-        expect((link as HTMLElement).getAttribute("href")).toBe("/");
+        expect((link as HTMLElement).getAttribute("href")).toBe("/dengue/may24");
     });
 });
