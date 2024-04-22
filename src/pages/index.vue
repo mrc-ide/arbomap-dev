@@ -1,9 +1,9 @@
 <template>
-    <template v-if="!unknownIndicator && !unknownCountry">
-        <Choropleth data-testid="choropleth" />
+    <template v-if="!unknownProps.length">
+        <Choropleth v-if="selectedIndicator" data-testid="choropleth" />
         <div class="sticky-footer">
             <div v-for="name in indicatorNames" :key="name">
-                <router-link :to="`/${name}/${selectedCountryId}`" custom v-slot="{ navigate }">
+                <router-link :to="`/${APP_BASE_ROUTE}/${name}/${selectedCountryId}`" custom v-slot="{ navigate }">
                     <v-btn
                         @click="navigate"
                         role="link"
@@ -25,12 +25,23 @@ import { computed, Ref, watch, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useAppStore } from "../stores/appStore";
 import NotFound from "./notFound.vue";
+import { APP_BASE_ROUTE, PATHOGEN, VERSION } from "../router/utils";
 
 const router = useRouter();
 const { appConfig, selectedIndicator, selectedCountryId } = storeToRefs(useAppStore());
 const { selectCountry } = useAppStore();
 
 const props = defineProps({
+    pathogen: {
+        type: String,
+        required: false,
+        default: ""
+    },
+    version: {
+        type: String,
+        required: false,
+        default: ""
+    },
     indicator: {
         type: String,
         required: false,
@@ -44,14 +55,12 @@ const props = defineProps({
 });
 
 const indicatorNames = computed(() => (appConfig.value ? Object.keys(appConfig.value.indicators) : {}));
-const unknownCountry: Ref<boolean> = ref(false);
-const unknownIndicator: Ref<boolean> = ref(false);
+const unknownProps: Ref<string[]> = ref([]);
+
+const notFoundMsg = (valueType, value) => `Unknown ${valueType}: ${value}.`;
 
 const notFoundDetail = computed(() => {
-    return (
-        (unknownIndicator.value ? `Unknown indicator: ${props.indicator}. ` : "") +
-        (unknownCountry.value ? `Unknown country ISO: ${props.country}.` : "")
-    );
+    return unknownProps.value.map((propName) => notFoundMsg(propName, props[propName])).join(" ");
 });
 
 const selectDataForRoute = async () => {
@@ -59,28 +68,43 @@ const selectDataForRoute = async () => {
         return;
     }
 
-    if (appConfig.value) {
-        if (props.indicator) {
-            // Do case-insensitive match to find indicator from route
-            const pattern = new RegExp(`^${props.indicator}$`, "i");
-            const indicator = Object.keys(appConfig.value.indicators).find((i) => pattern.test(i));
-            unknownIndicator.value = !indicator;
+    const unknown = [];
+    const checkRouteProp = (propName: "pathogen" | "version" | "indicator" | "country", candidates: string[]) => {
+        if (!props[propName]) {
+            return "";
+        }
 
-            const country = props.country ? props.country.toUpperCase() : "";
-            unknownCountry.value = country && !appConfig.value.countries.includes(country);
+        // Do case-insensitive check against route prop - add to unknown props if not found
+        const pattern = new RegExp(`^${props[propName]}$`, "i");
+        const result = candidates.find((i) => pattern.test(i));
+        if (!result) {
+            unknown.push(propName);
+        }
+        return result;
+    };
 
-            if (!unknownIndicator.value && !unknownCountry.value) {
-                selectedIndicator.value = indicator;
-                await selectCountry(country);
-            }
+    checkRouteProp("pathogen", [PATHOGEN]);
+    checkRouteProp("version", [VERSION]);
+    const indicator = checkRouteProp("indicator", Object.keys(appConfig.value.indicators));
+    const country = checkRouteProp("country", appConfig.value.countries);
+
+    unknownProps.value = unknown;
+
+    if (!unknownProps.value.length) {
+        if (indicator) {
+            selectedIndicator.value = indicator;
+            await selectCountry(country);
         } else {
             // No indicator selected on route - default to first indicator and navigate
-            router.push(`/${indicatorNames.value[0]}`);
+            router.push(`/${APP_BASE_ROUTE}/${indicatorNames.value[0]}`);
         }
     }
 };
 
-watch([appConfig, () => props.indicator, () => props.country], selectDataForRoute);
+watch(
+    [appConfig, () => props.pathogen, () => props.version, () => props.indicator, () => props.country],
+    selectDataForRoute
+);
 
 selectDataForRoute();
 </script>

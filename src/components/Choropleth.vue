@@ -32,6 +32,7 @@ import { useColourScale } from "../composables/useColourScale.ts";
 import "leaflet/dist/leaflet.css";
 import { useLoadingSpinner } from "../composables/useLoadingSpinner";
 import Color from "color";
+import { APP_BASE_ROUTE } from "../router/utils";
 
 interface FeatureWithColour {
     feature: Feature;
@@ -129,9 +130,14 @@ const createTooltips = {
         layer.on({
             click: async () => {
                 const country = feature.properties[featureProps.value.country];
-                // select country, or unselect if click on it when already selected
-                const selectCountry = country === selectedCountryId.value ? "" : country;
-                router.push(`/${selectedIndicator.value}/${selectCountry}`);
+                // select feature's country, or unselect if click on it when already selected
+                let countryToSelect: string;
+                if (country === selectedCountryId.value) {
+                    countryToSelect = "";
+                } else {
+                    countryToSelect = country;
+                }
+                router.push(`/${APP_BASE_ROUTE}/${selectedIndicator.value}/${countryToSelect}`);
             }
         });
     }
