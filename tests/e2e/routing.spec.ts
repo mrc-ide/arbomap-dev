@@ -18,7 +18,8 @@ const expectIndexPage = async (
     await expect(await summary).toHaveAttribute("colour-scale", scale);
     await expect(await summary).toHaveAttribute("feature-count", featureCount.toString());
     await expect(await summary).toHaveAttribute(
-        "selected-country-feature-count", selectedCountryFeatureCount.toString()
+        "selected-country-feature-count",
+        selectedCountryFeatureCount.toString()
     );
 };
 
@@ -54,7 +55,7 @@ test.describe("Router", () => {
 
     test("is case-insensitive", async ({ page }) => {
         await page.goto("/DENGUE/May24/P9/tza");
-        await page.waitForURL(new RegExp(`/DENGUE/May24/P9/tza`));
+        await page.waitForURL(/\/DENGUE\/May24\/P9\/tza/);
         await expect(await page.textContent("button.bg-blue")).toBe("p9");
         const summary = await page.locator(".choropleth-data-summary");
         await expect(await summary).toHaveAttribute("colour-scale", "interpolateBlues");
