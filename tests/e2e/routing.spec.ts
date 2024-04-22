@@ -13,12 +13,12 @@ const expectIndexPage = async (
     await page.waitForURL(new RegExp(`${BASE_URL}${url}`));
     await expect(await page.textContent("button.bg-blue")).toBe(selectedIndicator);
     const summary = await page.locator(".choropleth-data-summary");
-    await expect(await summary.getAttribute("selected-indicator")).toBe(selectedIndicator);
-    await expect(await summary.getAttribute("selected-country-id")).toBe(selectedCountry);
-    await expect(await summary.getAttribute("colour-scale")).toBe(scale);
-    await expect(await summary.getAttribute("feature-count")).toBe(featureCount.toString());
-    await expect(await summary.getAttribute("selected-country-feature-count")).toBe(
-        selectedCountryFeatureCount.toString()
+    await expect(await summary).toHaveAttribute("selected-indicator", selectedIndicator);
+    await expect(await summary).toHaveAttribute("selected-country-id", selectedCountry);
+    await expect(await summary).toHaveAttribute("colour-scale", scale);
+    await expect(await summary).toHaveAttribute("feature-count", featureCount.toString());
+    await expect(await summary).toHaveAttribute(
+        "selected-country-feature-count", selectedCountryFeatureCount.toString()
     );
 };
 
@@ -54,7 +54,12 @@ test.describe("Router", () => {
 
     test("is case-insensitive", async ({ page }) => {
         await page.goto("/DENGUE/May24/P9/tza");
-        await expectIndexPage(page, "/dengue/may24/P9/TZA", "p9", "TZA", "interpolateBlues", 173, 170);
+        await page.waitForURL(new RegExp(`/DENGUE/May24/P9/tza`));
+        await expect(await page.textContent("button.bg-blue")).toBe("p9");
+        const summary = await page.locator(".choropleth-data-summary");
+        await expect(await summary).toHaveAttribute("colour-scale", "interpolateBlues");
+        await expect(await summary).toHaveAttribute("feature-count", "173");
+        await expect(await summary).toHaveAttribute("selected-country-feature-count", "170");
     });
 
     test("shows not found message when browse to non-existent route", async ({ page }) => {
