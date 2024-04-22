@@ -22,6 +22,5 @@ export const getGeojsonFeatures = async (country: string, level: number) => {
 };
 
 export const getGlobalGeojsonFeatures = async (level: number) => {
-    const coll = (await getResource(`geojson/all_adm${level}_0_5pc.json`)) as FeatureCollection;
-    return coll.features;
+    return (await getResource(`geojson/all_adm${level}_0_5pc_by_iso.json`)) as FeatureCollection;
 };

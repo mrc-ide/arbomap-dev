@@ -70,17 +70,8 @@ export const useAppStore = defineStore("app", {
             }
 
             // Load all admin1 geojson - load simplified boundaries only, from a
-            // single file, then transform to country-keyed dictionary
-            // TODO: Should be in dict form in resource file
-            const allGeojsonArr = await getGlobalGeojsonFeatures(1);
-            const allGeojson = {};
-            allGeojsonArr.forEach((feature) => {
-                const country = feature.properties["GID_0"]; // TODO: put these prop keys into app config
-                if (!Object.keys(allGeojson).includes(country)) {
-                    allGeojson[country] = [];
-                }
-                allGeojson[country].push(feature);
-            });
+            // single file,
+            const allGeojson = await getGlobalGeojsonFeatures(1);
 
             Object.assign(this.admin1Indicators, allIndicators);
             Object.assign(this.admin1Geojson, allGeojson);
