@@ -73,8 +73,10 @@ export const useAppStore = defineStore("app", {
             // single file,
             const allGeojson = await getGlobalGeojsonFeatures(1);
 
-            Object.assign(this.admin1Indicators, allIndicators);
-            Object.assign(this.admin1Geojson, allGeojson);
+            //Object.assign(this.admin1Geojson, allGeojson);
+            //Object.assign(this.admin1Indicators, allIndicators);
+            this.admin1Geojson = allGeojson;
+            this.admin1Indicators = allIndicators;
 
             this.loading = false;
         },
@@ -100,13 +102,13 @@ export const useAppStore = defineStore("app", {
 
             // TODO: take this out when we're more confident of  matching admin2 ids!
             // Do a quick audit
-            const geojsonFeatureIds = this.admin2Geojson[countryId].map((feature) => feature.properties["GID_2"]);
+            /*const geojsonFeatureIds = this.admin2Geojson[countryId].map((feature) => feature.properties["GID_2"]);
             const indicatorFeatureIds = Object.keys(this.admin2Indicators[countryId]);
             console.log(`geo id count: ${geojsonFeatureIds.length}  ind id count: ${indicatorFeatureIds.length}`)
             const unfoundInd = indicatorFeatureIds.filter((id) => !geojsonFeatureIds.includes(id));
             const unFoundGeo = geojsonFeatureIds.filter((id) => !indicatorFeatureIds.includes(id));
             console.log("geojson ids which are not in indicators: " + JSON.stringify(unFoundGeo));
-            console.log("indicator ids which are not in geogson: " + JSON.stringify(unfoundInd));
+            console.log("indicator ids which are not in geogson: " + JSON.stringify(unfoundInd));*/
 
             this.selectedCountryId = countryId;
             this.loading = false;

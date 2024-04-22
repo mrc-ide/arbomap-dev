@@ -28,7 +28,7 @@ import NotFound from "./notFound.vue";
 import { APP_BASE_ROUTE, PATHOGEN, VERSION } from "../router/utils";
 
 const router = useRouter();
-const { appConfig, selectedIndicator, selectedCountryId } = storeToRefs(useAppStore());
+const { appConfig, selectedIndicator, selectedCountryId, loading, admin1Indicators } = storeToRefs(useAppStore());
 const { selectCountry } = useAppStore();
 
 const props = defineProps({
@@ -63,6 +63,8 @@ const notFoundDetail = computed(() => {
     return unknownProps.value.map((propName) => notFoundMsg(propName, props[propName])).join(" ");
 });
 
+const countryToSelect: Ref<null | string> = ref(null);
+
 const selectDataForRoute = async () => {
     if (!appConfig.value) {
         return;
@@ -93,7 +95,8 @@ const selectDataForRoute = async () => {
     if (!unknownProps.value.length) {
         if (indicator) {
             selectedIndicator.value = indicator;
-            await selectCountry(country);
+            // wait until admin1 loaded before selecting country
+            countryToSelect.value = country;
         } else {
             // No indicator selected on route - default to first indicator and navigate
             router.push(`/${APP_BASE_ROUTE}/${indicatorNames.value[0]}`);
@@ -104,6 +107,17 @@ const selectDataForRoute = async () => {
 watch(
     [appConfig, () => props.pathogen, () => props.version, () => props.indicator, () => props.country],
     selectDataForRoute
+);
+
+watch(
+    [countryToSelect, admin1Indicators], async () => {
+        if ((countryToSelect.value !== null) && Object.keys(admin1Indicators.value).length) {
+            await selectCountry(countryToSelect.value)
+                .finally(() => {
+                    countryToSelect.value = null;
+                });
+        }
+    }
 );
 
 selectDataForRoute();

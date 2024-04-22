@@ -3,7 +3,7 @@
         <LMap ref="map" style="height: 100vh; width: 100%" @ready="updateBounds">
             <LTileLayer data-testid="tile-layer" v-bind="backgroundLayer"></LTileLayer>
             <LGeoJson
-                v-for="f in featuresWithColours"
+                v-for="f in Object.values(featuresWithColours)"
                 ref="featureRefs"
                 :key="getFeatureId(f.feature)"
                 :data-testid="getFeatureId(f.feature)"
@@ -50,8 +50,6 @@ const backgroundLayer = {
     minZoom: 3
 };
 
-// TODO: sort out issue with duplicate key ids - it's happening because not passing a level to getFeatureId
-
 const map = ref<typeof LMap | null>(null);
 const featureRefs = ref<(typeof LGeoJson)[]>([]);
 
@@ -75,14 +73,17 @@ const getColourForFeature = (feature, indicator, selectedCountry) => {
 
 const featuresWithColours = computed(() => {
     const selectedInd = selectedIndicator.value;
-    if (!selectedInd) return [];
+    if (!selectedInd) return {};
     const selectedCountry = selectedCountryId.value;
-    return selectedFeatures.value.map((feature) => {
-        return {
-            feature,
-            colour: getColourForFeature(feature, selectedInd, selectedCountry)
-        };
-    });
+    return Object.fromEntries(selectedFeatures.value.map((feature) => {
+        return [
+            getFeatureId(feature),
+            {
+                feature,
+                colour: getColourForFeature(feature, selectedInd, selectedCountry)
+            }
+        ];
+    }));
 });
 
 const featureProps = computed(() => appConfig.value?.geoJsonFeatureProperties);
@@ -92,8 +93,8 @@ const dataSummary = computed(() => ({
     "selected-indicator": selectedIndicator.value,
     "selected-country-id": selectedCountryId.value,
     "colour-scale": appConfig.value?.indicators[selectedIndicator.value]?.colourScale.name,
-    "feature-count": featuresWithColours.value.length,
-    "selected-country-feature-count": featuresWithColours.value.filter(
+    "feature-count": Object.keys(featuresWithColours.value).length,
+    "selected-country-feature-count": Object.values(featuresWithColours.value).filter(
         (f) => f.feature.properties![featureProps.value.country] === selectedCountryId.value
     ).length
 }));
@@ -102,7 +103,7 @@ const updateBounds = () => {
     if (!loading.value) {
         if (map.value?.leafletObject) {
             map.value.leafletObject.fitBounds(
-                featuresWithColours.value.map((f: FeatureWithColour) => new GeoJSON(f.feature).getBounds())
+                Object.values(featuresWithColours.value).map((f: FeatureWithColour) => new GeoJSON(f.feature).getBounds())
             );
         }
     }
@@ -151,12 +152,14 @@ const borderColor = (fillColor: string) => {
 };
 
 const updateTooltips = () => {
-    featuresWithColours.value.forEach((f: FeatureWithColour) => {
-        const geojson = featureRefs.value.find((fr) => getFeatureId(fr.geojson) === getFeatureId(f.feature));
-        if (geojson && geojson.geojson && geojson.leafletObject) {
-            geojson.leafletObject.eachLayer((layer: Layer) => {
-                layer.setTooltipContent(tooltipForFeature(f.feature));
-            });
+    featureRefs.value.forEach((geojson) => {
+        if (geojson.geojson && geojson.leafletObject) {
+            const f: FeatureWithColour = featuresWithColours.value[getFeatureId(geojson.geojson)];
+            if (f && f.feature) {
+                geojson.leafletObject.eachLayer((layer: Layer) => {
+                    layer.setTooltipContent(tooltipForFeature(f.feature));
+                });
+            }
         }
     });
 };
