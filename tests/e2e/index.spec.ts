@@ -8,14 +8,13 @@ test.describe("Index page", () => {
         const locator = await page.locator("div.spinner");
         // TODO: this tends to pass locally but fail on CI, I guess because spinner is too briefly shown. Reinstate when
         // full dataset is introduced, when spinner should be more reliable...
-        //await expect(locator).toHaveCount(1);
+        // await expect(locator).toHaveCount(1);
         await expect(locator).toHaveCount(0);
     };
 
     test.beforeEach(async ({ page }) => {
         await page.goto("/");
     });
-
 
     test("can see app title", async ({ page }) => {
         await expect(await page.getByText("DengueMap")).toBeVisible();
