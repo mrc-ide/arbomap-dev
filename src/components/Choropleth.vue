@@ -61,11 +61,13 @@ const { selectedFeatures, selectedIndicators, loading, selectedIndicator, select
 useLoadingSpinner(map, loading);
 const { getColour } = useColourScale(selectedIndicators);
 const featureInSelectedCountry = (feature: Feature, selectedCountry) => feature.properties[featureProps.value.country] === selectedCountry;
-const getFeatureId = (feature: Feature, selectedCountry: string) =>  featureInSelectedCountry(feature, selectedCountry) ? feature.properties![featureProps.value.idAdm2] : feature.properties![featureProps.value.idAdm1];
-const getFeatureName = (feature: Feature, selectedCountry: string) => featureInSelectedCountry(feature, selectedCountry) ? feature.properties![featureProps.value.nameAdm2] : feature.properties![featureProps.value.nameAdm1];
+const getFeatureId = (feature: Feature) =>
+    featureInSelectedCountry(feature, selectedCountryId.value) ? feature.properties![featureProps.value.idAdm2] : feature.properties![featureProps.value.idAdm1];
+const getFeatureName = (feature: Feature) =>
+    featureInSelectedCountry(feature, selectedCountryId.value) ? feature.properties![featureProps.value.nameAdm2] : feature.properties![featureProps.value.nameAdm1];
 
 const getColourForFeature = (feature, indicator, selectedCountry) => {
-    const featureId = getFeatureId(feature, selectedCountry);
+    const featureId = getFeatureId(feature);
     const featureIndicators = selectedIndicators.value[featureId];
     return getColour(indicator, featureIndicators);
 };
@@ -113,7 +115,7 @@ const tooltipForFeature = (feature: Feature) => {
         const featureValues = selectedIndicators.value[fid];
         indicatorValues = Object.keys(featureValues)
             .map((key) => {
-                return `${key}: ${featureValues[key].mean} (+/- ${featureValues[key].sd})<br/>`;
+                return `${key}: ${featureValues[key].mean}<br/>`;
             })
             .join("");
     }
