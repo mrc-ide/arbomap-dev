@@ -21,6 +21,7 @@ const renderPage = async (indicator, country, pathogen = "dengue", version = "ma
 };
 
 const spyRouterPush = vi.spyOn(router, "push");
+const spyRouterReplace = vi.spyOn(router, "replace");
 
 describe("Index page", () => {
     beforeEach(() => {
@@ -69,7 +70,7 @@ describe("Index page", () => {
     test("routes to first indicator if none provided", async () => {
         await renderPage();
         await flushPromises();
-        expect(spyRouterPush).toHaveBeenCalledWith("/dengue/may24/FOI");
+        expect(spyRouterReplace).toHaveBeenCalledWith("/dengue/may24/FOI");
     });
 
     test("renders notFound if unknown indicator", async () => {
