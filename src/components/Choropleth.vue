@@ -1,21 +1,24 @@
 <template>
-    <LMap ref="map" style="height: 100vh; width: 100%" @ready="updateBounds">
-        <LTileLayer data-testid="tile-layer" v-bind="backgroundLayer"></LTileLayer>
-        <LGeoJson
-            v-for="f in featuresWithColours"
-            ref="featureRefs"
-            :key="getFeatureId(f.feature)"
-            :data-testid="getFeatureId(f.feature)"
-            :geojson="f.feature"
-            :options="createTooltips"
-            :options-style="
-                () => {
-                    return { ...style, fillColor: f.colour };
-                }
-            "
-        >
-        </LGeoJson>
-    </LMap>
+    <div>
+        <LMap ref="map" style="height: 100vh; width: 100%" @ready="updateBounds">
+            <LTileLayer data-testid="tile-layer" v-bind="backgroundLayer"></LTileLayer>
+            <LGeoJson
+                v-for="f in featuresWithColours"
+                ref="featureRefs"
+                :key="getFeatureId(f.feature)"
+                :data-testid="getFeatureId(f.feature)"
+                :geojson="f.feature"
+                :options="createTooltips"
+                :options-style="
+                    () => {
+                        return { ...style, fillColor: f.colour };
+                    }
+                "
+            >
+            </LGeoJson>
+        </LMap>
+        <div style="visibility: hidden" class="choropleth-data-summary" v-bind="dataSummary"></div>
+    </div>
 </template>
 <script setup lang="ts">
 import { ref, computed, watch } from "vue";
@@ -23,10 +26,12 @@ import { storeToRefs } from "pinia";
 import { GeoJSON, Layer } from "leaflet";
 import { LGeoJson, LMap, LTileLayer } from "@vue-leaflet/vue-leaflet";
 import { Feature } from "geojson";
+import { useRouter } from "vue-router";
 import { useAppStore } from "../stores/appStore.ts";
 import { useColourScale } from "../composables/useColourScale.ts";
 import "leaflet/dist/leaflet.css";
 import { useLoadingSpinner } from "../composables/useLoadingSpinner";
+import { APP_BASE_ROUTE } from "../router/utils";
 
 interface FeatureWithColour {
     feature: Feature;
@@ -51,8 +56,9 @@ const backgroundLayer = {
 const map = ref<typeof LMap | null>(null);
 const featureRefs = ref<(typeof LGeoJson)[]>([]);
 
-const { selectedFeatures, selectedIndicators, loading, selectedIndicator } = storeToRefs(useAppStore());
-const { selectCountry } = useAppStore();
+const router = useRouter();
+const { selectedFeatures, selectedIndicators, loading, selectedIndicator, selectedCountryId, appConfig } =
+    storeToRefs(useAppStore());
 
 useLoadingSpinner(map, loading);
 const { getColour } = useColourScale(selectedIndicators);
@@ -67,6 +73,7 @@ const getColourForFeature = (feature, indicator) => {
 
 const featuresWithColours = computed(() => {
     const selectedInd = selectedIndicator.value;
+    if (!selectedInd) return [];
     return selectedFeatures.value.map((feature) => {
         return {
             feature,
@@ -74,6 +81,17 @@ const featuresWithColours = computed(() => {
         };
     });
 });
+
+// Useful for the e2e tests
+const dataSummary = computed(() => ({
+    "selected-indicator": selectedIndicator.value,
+    "selected-country-id": selectedCountryId.value,
+    "colour-scale": appConfig.value?.indicators[selectedIndicator.value]?.colourScale.name,
+    "feature-count": featuresWithColours.value.length,
+    "selected-country-feature-count": featuresWithColours.value.filter(
+        (f) => f.feature.properties![FEATURE_COUNTRY_PROP] === selectedCountryId.value
+    ).length
+}));
 
 const updateBounds = () => {
     if (!loading.value) {
@@ -106,7 +124,15 @@ const createTooltips = {
         layer.bindTooltip(tooltipForFeature(feature)).openTooltip();
         layer.on({
             click: async () => {
-                await selectCountry(feature.properties[FEATURE_COUNTRY_PROP]);
+                const country = feature.properties[FEATURE_COUNTRY_PROP];
+                // select feature's country, or unselect if click on it when already selected
+                let countryToSelect: string;
+                if (country === selectedCountryId.value) {
+                    countryToSelect = "";
+                } else {
+                    countryToSelect = country;
+                }
+                router.push(`/${APP_BASE_ROUTE}/${selectedIndicator.value}/${countryToSelect}`);
             }
         });
     }

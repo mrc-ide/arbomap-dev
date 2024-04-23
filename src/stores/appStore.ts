@@ -67,17 +67,17 @@ export const useAppStore = defineStore("app", {
                 allGeojson[country] = await getGeojson(country, level);
             }
 
-            this.selectedIndicator = Object.keys(this.appConfig.indicators)[0];
-
             Object.assign(this.admin1Indicators, allIndicators);
             Object.assign(this.admin1Geojson, allGeojson);
 
             this.loading = false;
         },
         async selectCountry(countryId: string) {
-            // If countryId is already selected, toggle to
-            // no selected country
             if (countryId === this.selectedCountryId) {
+                return;
+            }
+
+            if (!countryId) {
                 this.selectedCountryId = "";
                 return;
             }

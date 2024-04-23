@@ -1,16 +1,15 @@
-/**
- * router/index.ts
- *
- * Automatic routes for `./src/pages/*.vue`
- */
-
-// Composables
 import { createRouter, createWebHistory } from "vue-router/auto";
-import { setupLayouts } from "virtual:generated-layouts";
+import index from "../pages/index.vue";
+import about from "../pages/about.vue";
+import notFound from "../pages/notFound.vue";
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
-    extendRoutes: setupLayouts
+    routes: [
+        { path: "/:pathogen?/:version?/:indicator?/:country?", component: index, props: true },
+        { path: `/about`, component: about },
+        { path: "/:pathMatch(.*)", component: notFound}
+    ]
 });
 
 export default router;

@@ -21,25 +21,17 @@ describe("appStore", () => {
             expect(store.admin1Geojson).toStrictEqual(MOCK_ADMIN1_GEOJSON);
             expect(store.admin2Indicators).toStrictEqual({});
             expect(store.admin2Geojson).toStrictEqual({});
-            expect(store.selectedIndicator).toBe("FOI");
+            expect(store.selectedIndicator).toBe("");
             expect(store.selectedCountryId).toBe("");
         });
 
-        test("selectCountry selects country when none selected", async () => {
+        test("selectCountry selects country and loads data", async () => {
             const store = useAppStore();
             await store.initialiseData();
             await store.selectCountry("TZA");
             expect(store.selectedCountryId).toBe("TZA");
             expect(store.admin2Indicators).toStrictEqual({ TZA: MOCK_ADMIN2_INDICATORS.TZA });
             expect(store.admin2Geojson).toStrictEqual({ TZA: MOCK_ADMIN2_GEOJSON.TZA });
-        });
-
-        test("selectCountry toggles to unselected when a country is selected", async () => {
-            const store = useAppStore();
-            await store.initialiseData();
-            await store.selectCountry("TZA");
-            await store.selectCountry("TZA");
-            expect(store.selectedCountryId).toBe("");
         });
     });
 

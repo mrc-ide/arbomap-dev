@@ -1,14 +1,18 @@
-import { fireEvent, render, screen } from "@testing-library/vue";
-import { describe, expect, test } from "vitest";
+import { render, screen } from "@testing-library/vue";
+import { userEvent } from "@testing-library/user-event";
+import { describe, expect, test, vi, beforeEach } from "vitest";
 import Index from "@/pages/index.vue";
+import router from "@/router";
+import { flushPromises } from "@vue/test-utils";
 import { mockVuetify } from "../mocks/mockVuetify";
 import { mockPinia } from "../mocks/mockPinia";
+import { useAppStore } from "../../../src/stores/appStore";
 
-const store = mockPinia();
-const renderPage = async () => {
+const renderPage = async (indicator, country, pathogen = "dengue", version = "may24") => {
     await render(Index, {
+        props: { pathogen, version, indicator, country },
         global: {
-            plugins: [mockVuetify, store],
+            plugins: [mockVuetify, mockPinia(), router],
             stubs: {
                 Choropleth: true
             }
@@ -16,10 +20,17 @@ const renderPage = async () => {
     });
 };
 
+const spyRouterPush = vi.spyOn(router, "push");
+const spyRouterReplace = vi.spyOn(router, "replace");
+
 describe("Index page", () => {
+    beforeEach(() => {
+        vi.clearAllMocks();
+    });
+
     test("renders as expected", async () => {
-        await renderPage();
-        const indicatorButtons = await screen.findAllByRole("button");
+        await renderPage("FOI");
+        const indicatorButtons = await screen.findAllByRole("link");
         expect(indicatorButtons.length).toBe(2);
         expect((indicatorButtons[0] as HTMLButtonElement).textContent).toBe("FOI");
         expect((indicatorButtons[0] as HTMLButtonElement).classList).toContain("bg-blue");
@@ -28,11 +39,69 @@ describe("Index page", () => {
         expect(await screen.findByTestId("choropleth")).toBeVisible();
     });
 
-    test("button click updates selected indicator", async () => {
-        await renderPage();
-        const p9Button = (await screen.findAllByRole("button"))[1];
-        await fireEvent.click(p9Button);
+    test("button click routes to selected indicator", async () => {
+        await renderPage("FOI");
+        const p9Button = (await screen.findAllByRole("link"))[1];
+        const user = userEvent.setup();
+        await user.click(p9Button);
 
-        expect(store.state.value.app.selectedIndicator).toBe("p9");
+        expect(spyRouterPush).toHaveBeenCalledWith("/dengue/may24/p9/");
+    });
+
+    test("selects indicator from props", async () => {
+        await renderPage("p9");
+        expect(useAppStore().selectedIndicator).toBe("p9");
+    });
+
+    test("selects country from props", async () => {
+        await renderPage("p9", "TZA");
+        const { selectedIndicator, selectCountry } = useAppStore();
+        expect(selectCountry).toHaveBeenCalledWith("TZA");
+        expect(selectedIndicator).toBe("p9");
+    });
+
+    test("unselects country if no country prop", async () => {
+        await renderPage("p9");
+        const { selectedIndicator, selectCountry } = useAppStore();
+        expect(selectCountry).toHaveBeenCalledWith("");
+        expect(selectedIndicator).toBe("p9");
+    });
+
+    test("routes to first indicator if none provided", async () => {
+        await renderPage();
+        await flushPromises();
+        expect(spyRouterReplace).toHaveBeenCalledWith("/dengue/may24/FOI");
+    });
+
+    test("renders notFound if unknown indicator", async () => {
+        await renderPage("NotAnIndicator");
+        expect(await screen.findByText("Unknown indicator: NotAnIndicator.")).toBeVisible();
+        expect(await screen.queryAllByRole("button").length).toBe(0);
+    });
+
+    test("renders notFound if unknown country", async () => {
+        await renderPage("FOI", "NotACountry");
+        expect(await screen.findByText("Unknown country: NotACountry.")).toBeVisible();
+        expect(await screen.queryAllByRole("button").length).toBe(0);
+    });
+
+    test("renders notFound if unknown pathogen", async () => {
+        await renderPage("FOI", "", "malaria");
+        expect(await screen.findByText("Unknown pathogen: malaria.")).toBeVisible();
+        expect(await screen.queryAllByRole("button").length).toBe(0);
+    });
+
+    test("renders notFound if unknown version", async () => {
+        await renderPage("FOI", "", "dengue", "may23");
+        expect(await screen.findByText("Unknown version: may23.")).toBeVisible();
+        expect(await screen.queryAllByRole("button").length).toBe(0);
+    });
+
+    test("renders notFound if unknown indicator and unknown country", async () => {
+        await renderPage("NotAnIndicator", "NotACountry");
+        expect(
+            await screen.findByText("Unknown indicator: NotAnIndicator. Unknown country: NotACountry.")
+        ).toBeVisible();
+        expect(await screen.queryAllByRole("button").length).toBe(0);
     });
 });
