@@ -23,23 +23,23 @@
 
 // TODO: probably do this through theme once we've decided what to do with those
 .v-toolbar a {
-  color: #fff;
   text-decoration: none;
+  color: rgba(var(--v-theme-on-surface), var(--v-high-emphasis-opacity)) !important;
 }
 
 .page-text {
   p {
     margin-top: 0.4rem;
-    margin-bottom: 10px;
   }
 
   h1, h2 {
-    margin-bottom: 20px;
-    margin-top: 20px;
+    margin-bottom: 1rem;
+    margin-top: 1rem;
   }
   ul {
-    padding-left: 20px;
-    margin-bottom: 10px;
+    margin-top: 0.4rem;
+    padding-left: 1rem;
+    margin-bottom: 1rem;
   }
   
   @media (min-width: 1920px) {

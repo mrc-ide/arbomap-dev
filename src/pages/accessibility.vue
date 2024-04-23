@@ -65,11 +65,11 @@
                 </p>
                 <h2 class="text-h5">How we test this website</h2>
                 <p class="text-body-1">
-                    This website was last tested for accessibility compliance on XXX, and these tests have been carried
-                    out internally using the Accessibility Insights tools.
+                    This website was last tested for accessibility compliance on 23rd April 2024, and these tests have
+                    been carried out internally using the Accessibility Insights tools.
                 </p>
                 <h2 class="text-h5">Last updated</h2>
-                <p class="text-body-1">This statement was last updated on XXX.</p>
+                <p class="text-body-1">This statement was last updated on 23rd April 2024.</p>
             </v-col>
         </v-row>
     </v-container>

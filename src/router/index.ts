@@ -9,9 +9,9 @@ const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes: [
         { path: "/:pathogen?/:version?/:indicator?/:country?", component: index, props: true },
-        { path: `/about`, component: about },
-        { path: "/accessibility", component: accessibility },
-        { path: "/privacy", component: privacy },
+        { path: "/:pathogen?/about", component: about },
+        { path: "/:pathogen?/accessibility", component: accessibility },
+        { path: "/:pathogen?/privacy", component: privacy },
         { path: "/:pathMatch(.*)", component: notFound}
     ]
 });
