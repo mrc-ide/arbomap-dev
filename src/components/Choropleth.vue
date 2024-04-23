@@ -145,6 +145,12 @@ const createTooltips = {
                     countryToSelect = country;
                 }
                 router.push(`/${APP_BASE_ROUTE}/${selectedIndicator.value}/${countryToSelect}`);
+            },
+            add: async () => {
+                console.log("layer added")
+            },
+            remove: async () => {
+                console.log("layer removed")
             }
         });
     }
