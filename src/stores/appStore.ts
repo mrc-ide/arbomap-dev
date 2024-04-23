@@ -1,13 +1,13 @@
 import { defineStore } from "pinia";
 import { Feature } from "geojson";
 import {
-    getAppConfig,
+    getAppConfig, getCountryBoundingBoxes,
     getGeojsonFeatures,
     getGlobalGeojsonFeatures,
     getIndicators
 } from "../resources/utils";
 import { AppState } from "../types/storeTypes";
-import { FeatureIndicators } from "../types/resourceTypes";
+import {BoundingBox, FeatureIndicators} from "../types/resourceTypes";
 
 export const useAppStore = defineStore("app", {
     state: (): AppState => ({
@@ -19,6 +19,8 @@ export const useAppStore = defineStore("app", {
         selectedCountryId: "",
 
         appConfig: null,
+
+        countryBoundingBoxes: {},
 
         // We keep all data in dictionaries with country ids as keys, mirroring the resources on disk
         admin1Indicators: {},
@@ -68,6 +70,8 @@ export const useAppStore = defineStore("app", {
             for (const country of this.appConfig.countries) {
                 allIndicators[country] = await getIndicators(country, level);
             }
+
+            this.countryBoundingBoxes = await getCountryBoundingBoxes();
 
             // Load all admin1 geojson - load simplified boundaries only, from a
             // single file,

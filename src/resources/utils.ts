@@ -1,6 +1,7 @@
-import { AppConfig, Geojson, FeatureIndicators } from "../types/resourceTypes";
+import {AppConfig, Geojson, FeatureIndicators, BoundingBox} from "../types/resourceTypes";
 import { APP_BASE_URL } from "../router/utils";
 import {Feature, FeatureCollection} from "geojson";
+import {Dict} from "../types/utilTypes";
 
 const getResource = async (path: string) => {
     const location = `${APP_BASE_URL}/resources/${path}`;
@@ -23,4 +24,8 @@ export const getGeojsonFeatures = async (country: string, level: number) => {
 
 export const getGlobalGeojsonFeatures = async (level: number) => {
     return (await getResource(`geojson/all_adm${level}_0_5pc_by_iso.json`)) as FeatureCollection;
+};
+
+export const getCountryBoundingBoxes = async () => {
+    return (await getResource(`geojson/adm0_bounding_box.json`)) as Dict<BoundingBox>;
 };

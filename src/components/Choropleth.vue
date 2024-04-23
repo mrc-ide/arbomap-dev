@@ -23,7 +23,7 @@
 <script setup lang="ts">
 import { ref, computed, watch } from "vue";
 import { storeToRefs } from "pinia";
-import { GeoJSON, Layer } from "leaflet";
+import {GeoJSON, LatLngBounds, Layer} from "leaflet";
 import { LGeoJson, LMap, LTileLayer } from "@vue-leaflet/vue-leaflet";
 import { Feature } from "geojson";
 import { useRouter } from "vue-router";
@@ -54,7 +54,7 @@ const map = ref<typeof LMap | null>(null);
 const featureRefs = ref<(typeof LGeoJson)[]>([]);
 
 const router = useRouter();
-const { selectedFeatures, selectedIndicators, loading, selectedIndicator, selectedCountryId, appConfig } =
+const { selectedFeatures, selectedIndicators, loading, selectedIndicator, selectedCountryId, appConfig, countryBoundingBoxes } =
     storeToRefs(useAppStore());
 
 useLoadingSpinner(map, loading);
@@ -102,9 +102,16 @@ const dataSummary = computed(() => ({
 const updateBounds = () => {
     if (!loading.value) {
         if (map.value?.leafletObject) {
-            map.value.leafletObject.fitBounds(
-                Object.values(featuresWithColours.value).map((f: FeatureWithColour) => new GeoJSON(f.feature).getBounds())
-            );
+            let bounds;
+            if (selectedCountryId.value === "") {
+                // TODO: use global bounding box
+                bounds = Object.values(featuresWithColours.value).map((f: FeatureWithColour) => new GeoJSON(f.feature).getBounds());
+            } else {
+                const [west, east, south, north] = countryBoundingBoxes.value[selectedCountryId.value];
+                console.log(`W: ${west} E: ${east} S: ${south} N: ${north}`)
+                bounds = new LatLngBounds([south, west], [north, east]);
+            }
+            map.value.leafletObject.fitBounds(bounds);
         }
     }
 };
