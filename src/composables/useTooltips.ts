@@ -6,8 +6,6 @@ import { FeatureIndicatorValues, AppConfig, FeatureWithColour } from "../types/r
 import { getFeatureId } from "../resources/utils";
 import { APP_BASE_ROUTE } from "../router/utils";
 
-const router = useRouter();
-
 export const useTooltips = (
     appConfig: Ref<AppConfig>,
     featureRefs: Ref<(typeof LGeoJson)[]>,
@@ -15,6 +13,8 @@ export const useTooltips = (
     selectedIndicators: Ref<Dict<FeatureIndicatorValues>>,
     selectedCountryId: Ref<string>
 ) => {
+    const router = useRouter();
+
     const tooltipForFeature = (feature: Feature) => {
         let indicatorValues = "";
         const featureId = getFeatureId(feature, appConfig.value);
