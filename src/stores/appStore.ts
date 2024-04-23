@@ -30,10 +30,13 @@ export const useAppStore = defineStore("app", {
     }),
     getters: {
         selectedIndicators: (state): FeatureIndicators => {
+            console.log(`getting selected indicators ${new Date().toLocaleString()}`)
             const { selectedCountryId, admin1Indicators, admin2Indicators } = state;
             // get single dictionary of feature id to indicator values for user selections
             if (!selectedCountryId) {
-                return Object.assign({}, ...Object.values(admin1Indicators));
+                const result =  Object.assign({}, ...Object.values(admin1Indicators));
+                console.log(`Finished getting selected indicators ${new Date().toLocaleString()}`)
+                return result;
             }
 
             // Return admin1 indicators for countries other than the selected country, and
@@ -44,9 +47,12 @@ export const useAppStore = defineStore("app", {
                 .filter(([countryId]) => countryId !== selectedCountryId)
                 .map(([, indicators]) => indicators);
 
-            return Object.assign({}, admin2Indicators[selectedCountryId], ...filteredAdmin1);
+            const result = Object.assign({}, admin2Indicators[selectedCountryId], ...filteredAdmin1);
+            console.log(`Finished getting selected indicators ${new Date().toLocaleString()}`)
+            return result;
         },
         selectedFeatures: (state): Feature[] => {
+            console.log(`getting selected features ${new Date().toLocaleString()}`)
             const { selectedCountryId, admin1Geojson, admin2Geojson } = state;
             // get single array of all selected features
             if (!selectedCountryId) {
@@ -57,11 +63,13 @@ export const useAppStore = defineStore("app", {
                 .filter(([countryId]) => countryId !== selectedCountryId)
                 .flatMap(([, geojson]) => geojson);
 
+            console.log(`finished getting selected features ${new Date().toLocaleString()}`)
             return [...admin2Geojson[selectedCountryId], ...filteredAdmin1];
         }
     },
     actions: {
         async initialiseData() {
+            console.log(`Initialising data ${new Date().toLocaleString()}`)
             this.appConfig = await getAppConfig();
             const allIndicators = {};
             const level = 1;
@@ -83,8 +91,10 @@ export const useAppStore = defineStore("app", {
             this.admin1Indicators = allIndicators;
 
             this.loading = false;
+            console.log(`Finished Initialising data ${new Date().toLocaleString()}`)
         },
         async selectCountry(countryId: string) {
+            console.log(`selecting country ${new Date().toLocaleString()}`)
             if (countryId === this.selectedCountryId) {
                 return;
             }
@@ -116,6 +126,8 @@ export const useAppStore = defineStore("app", {
 
             this.selectedCountryId = countryId;
             this.loading = false;
+
+            console.log(`Finished selecting country ${new Date().toLocaleString()}`)
         }
     }
 });

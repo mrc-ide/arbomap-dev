@@ -5,6 +5,7 @@ import {Dict} from "../types/utilTypes";
 
 const getResource = async (path: string) => {
     const location = `${APP_BASE_URL}/resources/${path}`;
+    console.log(`Reading from ${location}`)
     const res = await fetch(location);
     return res.json();
 };
@@ -18,7 +19,7 @@ export const getIndicators = async (country: string, level: number) => {
 };
 
 export const getGeojsonFeatures = async (country: string, level: number) => {
-    const coll = (await getResource(`geojson/admin${level}/gadm41_${country}_${level}.json`)) as Geojson;
+    const coll = (await getResource(`geojson/admin${level}/gadm41_${country}_${level}_2_5pc.json`)) as Geojson;
     return coll.features;
 };
 
@@ -27,5 +28,5 @@ export const getGlobalGeojsonFeatures = async (level: number) => {
 };
 
 export const getCountryBoundingBoxes = async () => {
-    return (await getResource(`geojson/adm0_bounding_box.json`)) as Dict<BoundingBox>;
+    return (await getResource(`geojson/adm0_bounds.json`)) as Dict<BoundingBox>;
 };

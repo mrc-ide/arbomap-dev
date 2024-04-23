@@ -1,9 +1,9 @@
 <template>
     <div>
-        <LMap ref="map" style="height: 100vh; width: 100%" @ready="updateBounds">
+        <LMap ref="map" style="height: 100vh; width: 100%">
             <LTileLayer data-testid="tile-layer" v-bind="backgroundLayer"></LTileLayer>
             <LGeoJson
-                v-for="f in Object.values(featuresWithColours)"
+                v-for="f in featuresWithColoursArr"
                 ref="featureRefs"
                 :key="getFeatureId(f.feature)"
                 :data-testid="getFeatureId(f.feature)"
@@ -86,6 +86,8 @@ const featuresWithColours = computed(() => {
     }));
 });
 
+const featuresWithColoursArr = computed(() => Object.values(featuresWithColours.value));
+
 const featureProps = computed(() => appConfig.value?.geoJsonFeatureProperties);
 
 // Useful for the e2e tests
@@ -93,27 +95,24 @@ const dataSummary = computed(() => ({
     "selected-indicator": selectedIndicator.value,
     "selected-country-id": selectedCountryId.value,
     "colour-scale": appConfig.value?.indicators[selectedIndicator.value]?.colourScale.name,
-    "feature-count": Object.keys(featuresWithColours.value).length,
-    "selected-country-feature-count": Object.values(featuresWithColours.value).filter(
+    "feature-count": featuresWithColoursArr.value.length,
+    "selected-country-feature-count": featuresWithColoursArr.value.filter(
         (f) => f.feature.properties![featureProps.value.country] === selectedCountryId.value
     ).length
 }));
 
 const updateBounds = () => {
+    console.log(`Updating bounds ${new Date().toLocaleString()}`)
     if (!loading.value) {
         if (map.value?.leafletObject) {
-            let bounds;
-            if (selectedCountryId.value === "") {
-                // TODO: use global bounding box
-                bounds = Object.values(featuresWithColours.value).map((f: FeatureWithColour) => new GeoJSON(f.feature).getBounds());
-            } else {
-                const [west, east, south, north] = countryBoundingBoxes.value[selectedCountryId.value];
-                console.log(`W: ${west} E: ${east} S: ${south} N: ${north}`)
-                bounds = new LatLngBounds([south, west], [north, east]);
-            }
+            const country = selectedCountryId.value || "GLOBAL";
+            const [west, east, south, north] = countryBoundingBoxes.value[country];
+            console.log(`W: ${west} E: ${east} S: ${south} N: ${north}`)
+            const bounds = new LatLngBounds([south, west], [north, east]);
             map.value.leafletObject.fitBounds(bounds);
         }
     }
+    console.log(`Finished Updating bounds ${new Date().toLocaleString()}`)
 };
 
 // TODO: pull out tooltips stuff into composable when fully implement
@@ -159,6 +158,7 @@ const borderColor = (fillColor: string) => {
 };
 
 const updateTooltips = () => {
+    console.log(`Updating tooltips ${new Date().toLocaleString()}`)
     featureRefs.value.forEach((geojson) => {
         if (geojson.geojson && geojson.leafletObject) {
             const f: FeatureWithColour = featuresWithColours.value[getFeatureId(geojson.geojson)];
@@ -169,6 +169,7 @@ const updateTooltips = () => {
             }
         }
     });
+    console.log(`Finished updating tooltips ${new Date().toLocaleString()}`)
 };
 
 const updateMap = () => {
