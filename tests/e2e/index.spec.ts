@@ -63,7 +63,7 @@ test.describe("Index page", () => {
         await expect(await page.innerText(".leaflet-tooltip-pane")).toContain("Central Region");
         await expect(await page.innerText(".leaflet-tooltip-pane")).toContain("Force of infection: 0.0128");
         await expect(await page.innerText(".leaflet-tooltip-pane")).toContain(
-            "Seroprevalence at 9 years of age: 44.3 %"
+            "Seroprevalence at 9 years of age: 44.3%"
         );
     });
 });
