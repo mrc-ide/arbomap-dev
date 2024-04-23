@@ -99,7 +99,7 @@ const selectDataForRoute = async () => {
             countryToSelect.value = country;
         } else {
             // No indicator selected on route - default to first indicator and navigate
-            router.push(`/${APP_BASE_ROUTE}/${indicatorNames.value[0]}`);
+            router.replace(`/${APP_BASE_ROUTE}/${indicatorNames.value[0]}`);
         }
     }
 };
