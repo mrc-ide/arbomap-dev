@@ -53,13 +53,7 @@ const { selectedFeatures, selectedIndicators, loading, selectedIndicator, select
 
 useLoadingSpinner(map, loading);
 const { getColour } = useColourScale(selectedIndicators);
-const { updateTooltips, createTooltips } = useTooltips(
-    appConfig,
-    featureRefs,
-    selectedIndicator,
-    selectedIndicators,
-    selectedCountryId
-);
+const { updateTooltips, createTooltips } = useTooltips(featureRefs);
 
 const getColourForFeature = (featureId, indicator) => {
     const featureIndicators = selectedIndicators.value[featureId];
