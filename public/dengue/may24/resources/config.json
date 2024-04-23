@@ -23,8 +23,5 @@
             "humanReadableName": "Seroprevalence at 9 years of age",
             "unit": "%"
         }
-    },
-    "featureIdProp": "shapeID",
-    "featureNameProp": "shapeName",
-    "featureCountryProp": "shapeGroup"
+    }
 }

@@ -1,17 +1,13 @@
 import { Layer } from "leaflet";
 import { LGeoJson } from "@vue-leaflet/vue-leaflet";
 import { Feature } from "geojson";
-import { Dict } from "../types/utilTypes";
-import { FeatureIndicatorValues, AppConfig, FeatureWithColour } from "../types/resourceTypes";
+import { storeToRefs } from "pinia";
+import { FeatureWithColour } from "../types/resourceTypes";
 import { APP_BASE_ROUTE } from "../router/utils";
+import { useAppStore } from "../stores/appStore";
 
-export const useTooltips = (
-    appConfig: Ref<AppConfig>,
-    featureRefs: Ref<(typeof LGeoJson)[]>,
-    selectedIndicator: Ref<string>,
-    selectedIndicators: Ref<Dict<FeatureIndicatorValues>>,
-    selectedCountryId: Ref<string>
-) => {
+export const useTooltips = (featureRefs: Ref<(typeof LGeoJson)[]>) => {
+    const { appConfig, selectedIndicator, selectedIndicators, selectedCountryId } = storeToRefs(useAppStore());
     const router = useRouter();
     const featureProps = computed(() => appConfig.value?.geoJsonFeatureProperties);
     const featureInSelectedCountry = (feature: Feature, selectedCountry) =>
@@ -20,24 +16,43 @@ export const useTooltips = (
         featureInSelectedCountry(feature, selectedCountryId.value)
             ? feature.properties![featureProps.value.idAdm2]
             : feature.properties![featureProps.value.idAdm1];
+    const getFeatureName = (feature: Feature) =>
+        featureInSelectedCountry(feature, selectedCountryId.value)
+            ? feature.properties![featureProps.value.nameAdm2]
+            : feature.properties![featureProps.value.nameAdm1];
+    const sortedIndicators = computed(() => {
+        if (!appConfig.value) return [];
+
+        const sortedKeys = Object.keys(appConfig.value.indicators).sort((indicatorName) =>
+            indicatorName.toLowerCase() === selectedIndicator.value.toLowerCase() ? -1 : 1
+        );
+
+        const sortedMap = new Map();
+
+        sortedKeys.forEach((key) => {
+            sortedMap.set(key, appConfig.value.indicators[key]);
+        });
+
+        return sortedMap;
+    });
 
     const tooltipForFeature = (feature: Feature) => {
         let indicatorValues = "";
         const featureId = getFeatureId(feature);
         if (featureId in selectedIndicators.value) {
             const featureValues = selectedIndicators.value[featureId];
-            indicatorValues = Object.keys(featureValues)
-                .sort((key) => (key === selectedIndicator.value ? -1 : 1))
-                .map((key) => {
-                    const { humanReadableName, unit } = appConfig.value.indicators[key];
-                    const { mean } = featureValues[key];
-                    const headlineNumber = mean.toPrecision(3);
-                    const line = `${humanReadableName}: ${headlineNumber} ${unit}<br/>`;
-                    return key === selectedIndicator.value ? `<span class="font-weight-bold">${line}</span>` : line;
-                })
-                .join("");
+            indicatorValues = "";
+            sortedIndicators.value.forEach((metadata, indicatorKey) => {
+                const { mean } = featureValues[indicatorKey];
+                const headlineNumber = mean.toPrecision(3);
+                const line = `${metadata.humanReadableName}: ${headlineNumber}${metadata.unit}<br/>`;
+                indicatorValues +=
+                    indicatorKey.toLowerCase() === selectedIndicator.value.toLowerCase()
+                        ? `<span class="font-weight-bold">${line}</span>`
+                        : line;
+            });
         }
-        const name = feature.properties![appConfig.value?.featureNameProp] || featureId;
+        const name = getFeatureName(feature) || featureId;
         return `<div class="text-body-1">${name}</div>` + `<div class="text-body-2">${indicatorValues}</div>`;
     };
 

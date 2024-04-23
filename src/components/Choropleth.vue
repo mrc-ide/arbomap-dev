@@ -73,18 +73,8 @@ const getFeatureId = (feature: Feature) =>
     featureInSelectedCountry(feature, selectedCountryId.value)
         ? feature.properties![featureProps.value.idAdm2]
         : feature.properties![featureProps.value.idAdm1];
-const getFeatureName = (feature: Feature) =>
-    featureInSelectedCountry(feature, selectedCountryId.value)
-        ? feature.properties![featureProps.value.nameAdm2]
-        : feature.properties![featureProps.value.nameAdm1];
 
-const { updateTooltips, createTooltips } = useTooltips(
-    appConfig,
-    featureRefs,
-    selectedIndicator,
-    selectedIndicators,
-    selectedCountryId
-);
+const { updateTooltips, createTooltips } = useTooltips(featureRefs);
 
 const getColourForFeature = (feature, indicator, selectedCountry) => {
     const featureId = getFeatureId(feature);
