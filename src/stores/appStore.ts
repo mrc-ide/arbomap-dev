@@ -12,6 +12,7 @@ import {BoundingBox, FeatureIndicators} from "../types/resourceTypes";
 export const useAppStore = defineStore("app", {
     state: (): AppState => ({
         loading: true,
+        waitingForMapBounds: false,
         selectedIndicator: "",
 
         // When a country is selected, we display admin2 data for it.
@@ -99,6 +100,7 @@ export const useAppStore = defineStore("app", {
                 return;
             }
 
+            this.waitingForMapBounds = true;
             if (!countryId) {
                 this.selectedCountryId = "";
                 return;

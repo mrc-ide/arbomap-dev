@@ -1,6 +1,6 @@
 <template>
     <div>
-        <LMap ref="map" style="height: 100vh; width: 100%">
+        <LMap ref="map" style="height: 100vh; width: 100%" @update:bounds="boundsUpdated">
             <LTileLayer data-testid="tile-layer" v-bind="backgroundLayer"></LTileLayer>
             <LGeoJson
                 v-for="f in featuresWithColoursArr"
@@ -53,11 +53,17 @@ const backgroundLayer = {
 const map = ref<typeof LMap | null>(null);
 const featureRefs = ref<(typeof LGeoJson)[]>([]);
 
+// The last thing the map does when features are updated is redraw its bounds - we want to show the spinner while waiting
+// for this, so set this to true when features first update, and false on update bounds event from map
+
+
 const router = useRouter();
-const { selectedFeatures, selectedIndicators, loading, selectedIndicator, selectedCountryId, appConfig, countryBoundingBoxes } =
+const { selectedFeatures, selectedIndicators, loading, selectedIndicator, selectedCountryId, appConfig, countryBoundingBoxes, waitingForMapBounds } =
     storeToRefs(useAppStore());
 
-useLoadingSpinner(map, loading);
+const showSpinner = computed(() => waitingForMapBounds.value || loading.value);
+useLoadingSpinner(map, showSpinner);
+
 const { getColour } = useColourScale(selectedIndicators);
 const featureInSelectedCountry = (feature: Feature, selectedCountry) => feature.properties[featureProps.value.country] === selectedCountry;
 const getFeatureId = (feature: Feature) =>
@@ -182,7 +188,15 @@ const updateMap = () => {
     updateTooltips();
 };
 
+const boundsUpdated = () => {
+    console.log("Map bounds updated!")
+    waitingForMapBounds.value = false;
+};
+
 watch([selectedFeatures], () => {
+    console.log("setting wating to true")
+    waitingForMapBounds.value = true;
+
     updateBounds();
     updateMap();
 });

@@ -3,6 +3,7 @@ import { Dict } from "./utilTypes";
 
 export interface AppState {
     loading: boolean;
+    waitingForMapBounds: boolean;
     selectedIndicator: string;
 
     // When a country is selected (when value is non-empty), we display admin2 data for it.
