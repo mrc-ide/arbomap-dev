@@ -1,6 +1,5 @@
 <template>
     <div>
-        <!--<div>{{waitingForMapBounds}}</div>-->
         <LMap ref="map" style="height: 100vh; width: 100%" @update:bounds="boundsUpdated">
             <LTileLayer data-testid="tile-layer" v-bind="backgroundLayer"></LTileLayer>
             <LGeoJson
@@ -144,7 +143,7 @@ const createTooltips = {
         layer.bindTooltip(tooltipForFeature(feature)).openTooltip();
         layer.on({
             click: async () => {
-                waitingForMapBounds.value = true;
+                //waitingForMapBounds.value = true;
                 const country = feature.properties[featureProps.value.country];
                 // select feature's country, or unselect if click on it when already selected
                 let countryToSelect: string;
@@ -198,7 +197,7 @@ const boundsUpdated = () => {
 
 watch([selectedFeatures], () => {
     console.log("setting wating to true")
-    waitingForMapBounds.value = true;
+    //waitingForMapBounds.value = true;
 
     updateBounds();
     updateMap();

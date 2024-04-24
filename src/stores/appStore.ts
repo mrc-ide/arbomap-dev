@@ -112,7 +112,7 @@ export const useAppStore = defineStore("app", {
 
             // Some countries do not have admin2 regions or data - if one of these is selected, we load
             // a more detailed geojson, and re-use its admin1 indicators as "admin2"
-            const level = this.appConfig.includes(countryId) ? 1 : 2;
+            const level = this.appConfig.countriesWithoutAdmin2.includes(countryId) ? 1 : 2;
 
             if (!(countryId in this.admin2Indicators)) {
                 if (level === 1) {
