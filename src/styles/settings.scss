@@ -41,11 +41,11 @@
     padding-left: 1rem;
     margin-bottom: 1rem;
   }
-  
-  @media (min-width: 1920px) {
-    .v-container {
-      max-width: 1200px;
-    }
-  }  
+}
+
+@media (min-width: 1920px) {
+  .page-text.v-container {
+    max-width: 1200px;
+  }
 }
 
