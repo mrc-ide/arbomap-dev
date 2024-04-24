@@ -4,6 +4,7 @@ import {
     getAppConfig, getCountryBoundingBoxes,
     getGeojsonFeatures,
     getGlobalGeojsonFeatures,
+    getGlobalIndicators,
     getIndicators
 } from "../resources/utils";
 import { AppState } from "../types/storeTypes";
@@ -72,13 +73,14 @@ export const useAppStore = defineStore("app", {
         async initialiseData() {
             console.log(`Initialising data ${new Date().toLocaleString()}`)
             this.appConfig = await getAppConfig();
-            const allIndicators = {};
             const level = 1;
 
             // eslint-disable-next-line no-restricted-syntax
-            for (const country of this.appConfig.countries) {
+            /*for (const country of this.appConfig.countries) {
                 allIndicators[country] = await getIndicators(country, level);
-            }
+            }*/
+            // Read all adm1 indicators from a single file
+            const allIndicators = await getGlobalIndicators(1);
 
             this.countryBoundingBoxes = await getCountryBoundingBoxes();
 
@@ -107,10 +109,17 @@ export const useAppStore = defineStore("app", {
             }
 
             this.loading = true;
-            const level = 2;
+
+            // Some countries do not have admin2 regions or data - if one of these is selected, we load
+            // a more detailed geojson, and re-use its admin1 indicators as "admin2"
+            const level = this.appConfig.includes(countryId) ? 1 : 2;
 
             if (!(countryId in this.admin2Indicators)) {
-                this.admin2Indicators[countryId] = await getIndicators(countryId, level);
+                if (level === 1) {
+                    this.admin2Indicators[countryId] = this.admin1Indicators[countryId];
+                } else {
+                    this.admin2Indicators[countryId] = await getIndicators(countryId, level);
+                }
             }
             if (!(countryId in this.admin2Geojson)) {
                 this.admin2Geojson[countryId] = await getGeojsonFeatures(countryId, level);

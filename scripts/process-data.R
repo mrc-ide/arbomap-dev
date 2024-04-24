@@ -22,20 +22,31 @@ process <- function(path, dest, level) {
   # There are some NAs in the current dataset - Clare is looking into this.
   #dat <- dat[!is.na(dat$ISO), ]
   dir.create(dest, FALSE, TRUE)
-  # also output array of countries
-  countries <- c()
-  for (iso in unique(dat$ISO)) {
-    json <- jsonlite::toJSON(
-      process_country(dat[dat$ISO == iso, ], country_codes, level), auto_unbox = TRUE)
-    writeLines(json, file.path(dest, paste0(iso, ".json")))
-    countries <- append(countries, iso)
+  if (level == 2) {
+    for (iso in unique(dat$ISO)) {
+      json <- jsonlite::toJSON(
+        process_country(dat[dat$ISO == iso, ], country_codes, level), auto_unbox = TRUE)
+      writeLines(json, file.path(dest, paste0(iso, ".json")))
+    }
   }
+  
   if (level == 1) {
+    # output a single file, and also output array of countries
+    countries <- c()
+    data_by_country <- list()
+    for (iso in unique(dat$ISO)) {
+      data_by_country[[iso]] = process_country(dat[dat$ISO == iso, ], country_codes, level)
+      countries <- append(countries, iso)
+    }
+    json <- jsonlite::toJSON(data_by_country, auto_unbox = TRUE)
+    writeLines(json, file.path(dest, paste0("global_adm1.json")))
     writeLines(jsonlite::toJSON(countries), file.path(dest, "_countries.json"))
   }
 }
 
-root <- here::here()
+# TODO: remove!
+root <- "C:/dev/arbomap"
+#root <- here::here()
 process(file.path(root, "data/raw/Adm1_Estimates_gadm41.xlsx"),
         file.path(root, "data/processed/admin1"),
         1)

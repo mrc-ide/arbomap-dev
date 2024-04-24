@@ -10,6 +10,7 @@ export interface IndicatorConfig {
 export interface AppConfig {
     title: string;
     countries: string[];
+    countriesWithoutAdmin2: string[];
     geoJsonFeatureProperties: {
         idAdm1: string,
         idAdm2: string,
