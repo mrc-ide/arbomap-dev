@@ -1,5 +1,6 @@
 <template>
     <div>
+        <!--<div>{{waitingForMapBounds}}</div>-->
         <LMap ref="map" style="height: 100vh; width: 100%" @update:bounds="boundsUpdated">
             <LTileLayer data-testid="tile-layer" v-bind="backgroundLayer"></LTileLayer>
             <LGeoJson
@@ -52,6 +53,7 @@ const backgroundLayer = {
 
 const map = ref<typeof LMap | null>(null);
 const featureRefs = ref<(typeof LGeoJson)[]>([]);
+//const waitingForMapBounds = ref(false);
 
 // The last thing the map does when features are updated is redraw its bounds - we want to show the spinner while waiting
 // for this, so set this to true when features first update, and false on update bounds event from map
@@ -142,6 +144,7 @@ const createTooltips = {
         layer.bindTooltip(tooltipForFeature(feature)).openTooltip();
         layer.on({
             click: async () => {
+                waitingForMapBounds.value = true;
                 const country = feature.properties[featureProps.value.country];
                 // select feature's country, or unselect if click on it when already selected
                 let countryToSelect: string;
@@ -152,12 +155,12 @@ const createTooltips = {
                 }
                 router.push(`/${APP_BASE_ROUTE}/${selectedIndicator.value}/${countryToSelect}`);
             },
-            add: async () => {
+           /* add: async () => {
                 console.log("layer added")
             },
             remove: async () => {
                 console.log("layer removed")
-            }
+            }*/
         });
     }
 };

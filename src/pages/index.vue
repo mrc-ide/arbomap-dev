@@ -26,9 +26,10 @@ import { useRouter } from "vue-router";
 import { useAppStore } from "../stores/appStore";
 import NotFound from "./notFound.vue";
 import { APP_BASE_ROUTE, PATHOGEN, VERSION } from "../router/utils";
+import {wait} from "@testing-library/user-event/utils/misc/wait";
 
 const router = useRouter();
-const { appConfig, selectedIndicator, selectedCountryId, loading, admin1Indicators } = storeToRefs(useAppStore());
+const { appConfig, selectedIndicator, selectedCountryId, loading, admin1Indicators, waitingForMapBounds } = storeToRefs(useAppStore());
 const { selectCountry } = useAppStore();
 
 const props = defineProps({
@@ -112,6 +113,7 @@ watch(
 watch(
     [countryToSelect, admin1Indicators], async () => {
         if ((countryToSelect.value !== null) && Object.keys(admin1Indicators.value).length) {
+            waitingForMapBounds.value = true;
             await selectCountry(countryToSelect.value)
                 .finally(() => {
                     countryToSelect.value = null;

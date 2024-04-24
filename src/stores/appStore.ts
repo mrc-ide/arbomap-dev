@@ -100,7 +100,7 @@ export const useAppStore = defineStore("app", {
                 return;
             }
 
-            this.waitingForMapBounds = true;
+           // this.waitingForMapBounds = true;
             if (!countryId) {
                 this.selectedCountryId = "";
                 return;
