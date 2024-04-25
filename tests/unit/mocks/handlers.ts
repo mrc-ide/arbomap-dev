@@ -17,11 +17,17 @@ export const handlers: HttpHandler[] = [
     http.get(`${resourcesBase}/indicators/admin2/TZA.json`, () =>
         HttpResponse.json(MOCK_ADMIN2_INDICATORS.TZA)
     ),
+    http.get(`${resourcesBase}/indicators/admin1/MWI.json`, () =>
+        HttpResponse.json(MOCK_ADMIN1_INDICATORS.MWI)
+    ),
     http.get(`${resourcesBase}/indicators/admin2/MWI.json`, () =>
         HttpResponse.json(MOCK_ADMIN2_INDICATORS.MWI)
     ),
     http.get(`${resourcesBase}/geojson/all_adm1_0_5pc_by_iso.json`, () =>
         HttpResponse.json(MOCK_ADMIN1_GEOJSON)
+    ),
+    http.get(`${resourcesBase}/geojson/admin1/gadm41_MWI_1.json`, () =>
+        HttpResponse.json(MOCK_ADMIN1_GEOJSON.MWI)
     ),
     http.get(`${resourcesBase}/geojson/admin2/gadm41_TZA_2_2_5pc.json`, () =>
         HttpResponse.json(MOCK_ADMIN2_GEOJSON.TZA)
