@@ -8,6 +8,7 @@
 // @use 'vuetify/settings' with (
 //   $color-pack: false
 // );
+
 .geojson {
   stroke-width: 1;
   fill-opacity: 0.7;
@@ -22,11 +23,29 @@
 
 // TODO: probably do this through theme once we've decided what to do with those
 .v-toolbar a {
-  color: #fff;
   text-decoration: none;
+  color: rgba(var(--v-theme-on-surface), var(--v-high-emphasis-opacity)) !important;
 }
 
-.page-text p {
-  margin-top: 0.4rem;
+.page-text {
+  p {
+    margin-top: 0.4rem;
+  }
+
+  h1, h2 {
+    margin-bottom: 1rem;
+    margin-top: 1rem;
+  }
+  ul {
+    margin-top: 0.4rem;
+    padding-left: 1rem;
+    margin-bottom: 1rem;
+  }
+}
+
+@media (min-width: 1920px) {
+  .page-text.v-container {
+    max-width: 1200px;
+  }
 }
 
