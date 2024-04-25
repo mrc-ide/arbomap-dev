@@ -5,6 +5,7 @@ import {Dict} from "../types/utilTypes";
 
 const getResource = async (path: string) => {
     const location = `${APP_BASE_URL}/resources/${path}`;
+    console.log(`loading from ${location}`)
     const res = await fetch(location);
     return res.json();
 };

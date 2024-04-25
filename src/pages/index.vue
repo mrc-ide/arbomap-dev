@@ -97,6 +97,7 @@ const selectDataForRoute = async () => {
         if (indicator) {
             selectedIndicator.value = indicator;
             // wait until admin1 loaded before selecting country
+            console.log(`country is ${country}  and current country is ${selectedCountryId.value}`)
             if (country !== selectedCountryId.value) {
                 countryToSelect.value = country;
             }

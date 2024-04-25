@@ -1,12 +1,13 @@
 import { render, screen } from "@testing-library/vue";
 import { userEvent } from "@testing-library/user-event";
-import { describe, expect, test, vi, beforeEach } from "vitest";
+import { describe, expect, test, vi, beforeEach, beforeAll, afterAll } from "vitest";
 import Index from "@/pages/index.vue";
 import router from "@/router";
 import { flushPromises } from "@vue/test-utils";
 import { mockVuetify } from "../mocks/mockVuetify";
 import { mockPinia } from "../mocks/mockPinia";
 import { useAppStore } from "../../../src/stores/appStore";
+import {PATHOGEN, VERSION} from "../../../src/router/utils";
 
 const renderPage = async (indicator, country, pathogen = "dengue", version = "may24") => {
     await render(Index, {
@@ -25,7 +26,12 @@ const spyRouterReplace = vi.spyOn(router, "replace");
 
 describe("Index page", () => {
     beforeEach(() => {
+        vi.useFakeTimers();
         vi.clearAllMocks();
+    });
+
+    afterAll(() => {
+        vi.useRealTimers();
     });
 
     test("renders as expected", async () => {
@@ -40,11 +46,12 @@ describe("Index page", () => {
     });
 
     test("button click routes to selected indicator", async () => {
+        // need to use real timers with userEvent...
+        vi.useRealTimers();
         await renderPage("FOI");
         const p9Button = (await screen.findAllByRole("link"))[1];
         const user = userEvent.setup();
         await user.click(p9Button);
-
         expect(spyRouterPush).toHaveBeenCalledWith("/dengue/may24/p9/");
     });
 
@@ -56,13 +63,31 @@ describe("Index page", () => {
     test("selects country from props", async () => {
         await renderPage("p9", "TZA");
         const { selectedIndicator, selectCountry } = useAppStore();
+        vi.runAllTimers();
         expect(selectCountry).toHaveBeenCalledWith("TZA");
         expect(selectedIndicator).toBe("p9");
     });
 
-    test("unselects country if no country prop", async () => {
+    test("does not unselect country if no country prop, and none set in store", async () => {
         await renderPage("p9");
         const { selectedIndicator, selectCountry } = useAppStore();
+        vi.runAllTimers();
+        expect(selectCountry).not.toHaveBeenCalled();
+        expect(selectedIndicator).toBe("p9");
+    });
+
+    test("unselects country if empty country prop, and country is set in store", async () => {
+        await render(Index, {
+            props: { pathogen: PATHOGEN, version: VERSION, indicator: "p9", country: "" },
+            global: {
+                plugins: [mockVuetify, mockPinia({selectedCountryId: "MWI"}), router],
+                stubs: {
+                    Choropleth: true
+                }
+            }
+        });
+        const { selectedIndicator, selectCountry } = useAppStore();
+        vi.runAllTimers();
         expect(selectCountry).toHaveBeenCalledWith("");
         expect(selectedIndicator).toBe("p9");
     });

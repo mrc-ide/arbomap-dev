@@ -1,6 +1,7 @@
 export const MOCK_APP_CONFIG = {
     title: "MockApp",
     countries: ["MWI", "TZA"],
+    countriesWithoutAdmin2: [],
     indicators: {
         FOI: {
             colourScale: { name: "interpolateReds" }
@@ -12,17 +13,12 @@ export const MOCK_APP_CONFIG = {
 };
 
 export const MOCK_ADMIN1_GEOJSON = {
-    MWI: {
-        features: [{ properties: { shapeID: "123", shapeName: "Test123", shapeGroup: "MWI" } }]
-    },
-    TZA: {
-        features: [{ properties: { shapeID: "789", shapeName: "Test789", shapeGroup: "TZA" } }]
-    }
+    MWI:  [{ properties: { shapeID: "123", shapeName: "Test123", shapeGroup: "MWI" } }],
+    TZA:  [{ properties: { shapeID: "789", shapeName: "Test789", shapeGroup: "TZA" } }]
 };
 
 export const MOCK_ADMIN2_GEOJSON = {
-    TZA: {
-        features: [
+    TZA: { features: [
             { properties: { shapeID: "789-a", shapeName: "Test789-a", shapeGroup: "TZA" } },
             { properties: { shapeID: "789-b", shapeName: "Test789-b", shapeGroup: "TZA" } }
         ]
@@ -64,4 +60,10 @@ export const MOCK_ADMIN2_INDICATORS = {
             p9: { mean: 0.2, sd: 0.02 }
         }
     }
+};
+
+export const MOCK_BOUNDS = {
+    GLOBAL: [0, 10, 20, 30],
+    MWI: [0, 1, 2, 3],
+    TZA: [4, 5, 6, 7]
 };
