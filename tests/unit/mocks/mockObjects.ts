@@ -2,6 +2,13 @@ export const MOCK_APP_CONFIG = {
     title: "MockApp",
     countries: ["MWI", "TZA"],
     countriesWithoutAdmin2: [],
+    geoJsonFeatureProperties: {
+        idAdm1: "shapeID",
+        idAdm2: "shapeID",
+        nameAdm1: "shapeName",
+        nameAdm2: "shapeName",
+        country: "shapeGroup"
+    },
     indicators: {
         FOI: {
             colourScale: { name: "interpolateReds" }
