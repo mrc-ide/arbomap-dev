@@ -1,12 +1,11 @@
-export function debounce(fn, wait = 0){
+export function debounce(fn, wait = 0) {
     let timer;
-    return function(...args){
+    return (...args) => {
         if (timer) {
             clearTimeout(timer); // clear any pre-existing timer
         }
-        const context = this; // get the current context
-        timer = setTimeout(()=> {
-            fn.apply(context, args); // call the function if time expires
+        timer = setTimeout(() => {
+            fn(...args);
         }, wait);
-    }
+    };
 }

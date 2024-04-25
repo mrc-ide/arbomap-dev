@@ -1,4 +1,4 @@
-import {AppConfig, BoundingBox, FeatureIndicators, Geojson} from "./resourceTypes";
+import { AppConfig, BoundingBox, FeatureIndicators, Geojson } from "./resourceTypes";
 import { Dict } from "./utilTypes";
 
 export interface AppState {

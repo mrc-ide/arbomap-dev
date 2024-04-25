@@ -4,7 +4,6 @@ import * as d3ScaleChromatic from "d3-scale-chromatic";
 import { FeatureIndicatorValues, IndicatorValue } from "../types/resourceTypes";
 import { Dict } from "../types/utilTypes";
 import { useAppStore } from "../stores/appStore";
-import Color from "color";
 
 interface IndicatorRange {
     min: number;

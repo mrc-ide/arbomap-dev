@@ -26,10 +26,11 @@ import { useRouter } from "vue-router";
 import { useAppStore } from "../stores/appStore";
 import NotFound from "./notFound.vue";
 import { APP_BASE_ROUTE, PATHOGEN, VERSION } from "../router/utils";
-import {debounce} from "../utils";
+import { debounce } from "../utils";
 
 const router = useRouter();
-const { appConfig, selectedIndicator, selectedCountryId, loading, admin1Indicators, waitingForMapBounds } = storeToRefs(useAppStore());
+const { appConfig, selectedIndicator, selectedCountryId, admin1Indicators, waitingForMapBounds } =
+    storeToRefs(useAppStore());
 const { selectCountry } = useAppStore();
 
 const props = defineProps({
@@ -96,8 +97,6 @@ const selectDataForRoute = async () => {
     if (!unknownProps.value.length) {
         if (indicator) {
             selectedIndicator.value = indicator;
-            // wait until admin1 loaded before selecting country
-            console.log(`country is ${country}  and current country is ${selectedCountryId.value}`)
             if (country !== selectedCountryId.value) {
                 countryToSelect.value = country;
             }
@@ -113,20 +112,18 @@ watch(
     selectDataForRoute
 );
 
-watch(
-    [countryToSelect, admin1Indicators], async () => {
-        if ((countryToSelect.value !== null) && Object.keys(admin1Indicators.value).length) {
-            // set waiting flag so Choropleth can show spinner while Leaflet updates. Debounce the select country
-            // action so Vue can start showing spinner first.
-            waitingForMapBounds.value = true;
-            debounce(() => {
-                selectCountry(countryToSelect.value);
-                countryToSelect.value = null;
-            })();
-
-        }
+watch([countryToSelect, admin1Indicators], async () => {
+    // wait until admin1 loaded before selecting country
+    if (countryToSelect.value !== null && Object.keys(admin1Indicators.value).length) {
+        // set waiting flag so Choropleth can show spinner while Leaflet updates. Debounce the select country
+        // action so Vue can start showing spinner first.
+        waitingForMapBounds.value = true;
+        debounce(() => {
+            selectCountry(countryToSelect.value);
+            countryToSelect.value = null;
+        })();
     }
-);
+});
 
 selectDataForRoute();
 </script>

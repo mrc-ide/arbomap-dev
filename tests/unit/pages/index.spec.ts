@@ -1,13 +1,13 @@
 import { render, screen } from "@testing-library/vue";
 import { userEvent } from "@testing-library/user-event";
-import { describe, expect, test, vi, beforeEach, beforeAll, afterAll } from "vitest";
+import { describe, expect, test, vi, beforeEach, afterAll } from "vitest";
 import Index from "@/pages/index.vue";
 import router from "@/router";
 import { flushPromises } from "@vue/test-utils";
 import { mockVuetify } from "../mocks/mockVuetify";
 import { mockPinia } from "../mocks/mockPinia";
 import { useAppStore } from "../../../src/stores/appStore";
-import {PATHOGEN, VERSION} from "../../../src/router/utils";
+import { PATHOGEN, VERSION } from "../../../src/router/utils";
 
 const renderPage = async (indicator, country, pathogen = "dengue", version = "may24") => {
     await render(Index, {
@@ -80,7 +80,7 @@ describe("Index page", () => {
         await render(Index, {
             props: { pathogen: PATHOGEN, version: VERSION, indicator: "p9", country: "" },
             global: {
-                plugins: [mockVuetify, mockPinia({selectedCountryId: "MWI"}), router],
+                plugins: [mockVuetify, mockPinia({ selectedCountryId: "MWI" }), router],
                 stubs: {
                     Choropleth: true
                 }

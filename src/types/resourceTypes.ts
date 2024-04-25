@@ -12,12 +12,12 @@ export interface AppConfig {
     countries: string[];
     countriesWithoutAdmin2: string[];
     geoJsonFeatureProperties: {
-        idAdm1: string,
-        idAdm2: string,
-        nameAdm1: string,
-        nameAdm2: string,
-        country: string
-    },
+        idAdm1: string;
+        idAdm2: string;
+        nameAdm1: string;
+        nameAdm2: string;
+        country: string;
+    };
     indicators: Dict<IndicatorConfig>;
 }
 

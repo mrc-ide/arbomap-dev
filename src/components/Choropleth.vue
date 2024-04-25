@@ -23,15 +23,15 @@
 <script setup lang="ts">
 import { ref, computed, watch } from "vue";
 import { storeToRefs } from "pinia";
-import {GeoJSON, LatLngBounds, Layer} from "leaflet";
+import { LatLngBounds, Layer } from "leaflet";
 import { LGeoJson, LMap, LTileLayer } from "@vue-leaflet/vue-leaflet";
 import { Feature } from "geojson";
 import { useRouter } from "vue-router";
+import Color from "color";
 import { useAppStore } from "../stores/appStore.ts";
 import { useColourScale } from "../composables/useColourScale.ts";
 import "leaflet/dist/leaflet.css";
 import { useLoadingSpinner } from "../composables/useLoadingSpinner";
-import Color from "color";
 import { APP_BASE_ROUTE } from "../router/utils";
 
 interface FeatureWithColour {
@@ -54,20 +54,36 @@ const map = ref<typeof LMap | null>(null);
 const featureRefs = ref<(typeof LGeoJson)[]>([]);
 
 const router = useRouter();
-const { selectedFeatures, selectedIndicators, loading, selectedIndicator, selectedCountryId, appConfig, countryBoundingBoxes, waitingForMapBounds } =
-    storeToRefs(useAppStore());
+const {
+    selectedFeatures,
+    selectedIndicators,
+    loading,
+    selectedIndicator,
+    selectedCountryId,
+    appConfig,
+    countryBoundingBoxes,
+    waitingForMapBounds
+} = storeToRefs(useAppStore());
 
 const showSpinner = computed(() => waitingForMapBounds.value || loading.value);
 useLoadingSpinner(map, showSpinner);
 
 const { getColour } = useColourScale(selectedIndicators);
-const featureInSelectedCountry = (feature: Feature, selectedCountry) => feature.properties[featureProps.value.country] === selectedCountry;
-const getFeatureId = (feature: Feature) =>
-    featureInSelectedCountry(feature, selectedCountryId.value) ? feature.properties![featureProps.value.idAdm2] : feature.properties![featureProps.value.idAdm1];
-const getFeatureName = (feature: Feature) =>
-    featureInSelectedCountry(feature, selectedCountryId.value) ? feature.properties![featureProps.value.nameAdm2] : feature.properties![featureProps.value.nameAdm1];
 
-const getColourForFeature = (feature, indicator, selectedCountry) => {
+const featureProps = computed(() => appConfig.value?.geoJsonFeatureProperties);
+
+const featureInSelectedCountry = (feature: Feature, selectedCountry) =>
+    feature.properties[featureProps.value.country] === selectedCountry;
+const getFeatureId = (feature: Feature) =>
+    featureInSelectedCountry(feature, selectedCountryId.value)
+        ? feature.properties![featureProps.value.idAdm2]
+        : feature.properties![featureProps.value.idAdm1];
+const getFeatureName = (feature: Feature) =>
+    featureInSelectedCountry(feature, selectedCountryId.value)
+        ? feature.properties![featureProps.value.nameAdm2]
+        : feature.properties![featureProps.value.nameAdm1];
+
+const getColourForFeature = (feature, indicator) => {
     const featureId = getFeatureId(feature);
     const featureIndicators = selectedIndicators.value[featureId];
     return getColour(indicator, featureIndicators);
@@ -77,20 +93,20 @@ const featuresWithColours = computed(() => {
     const selectedInd = selectedIndicator.value;
     if (!selectedInd) return {};
     const selectedCountry = selectedCountryId.value;
-    return Object.fromEntries(selectedFeatures.value.map((feature) => {
-        return [
-            getFeatureId(feature),
-            {
-                feature,
-                colour: getColourForFeature(feature, selectedInd, selectedCountry)
-            }
-        ];
-    }));
+    return Object.fromEntries(
+        selectedFeatures.value.map((feature) => {
+            return [
+                getFeatureId(feature),
+                {
+                    feature,
+                    colour: getColourForFeature(feature, selectedInd, selectedCountry)
+                }
+            ];
+        })
+    );
 });
 
 const featuresWithColoursArr = computed(() => Object.values(featuresWithColours.value));
-
-const featureProps = computed(() => appConfig.value?.geoJsonFeatureProperties);
 
 // Useful for the e2e tests
 const dataSummary = computed(() => ({
@@ -157,7 +173,6 @@ const borderColor = (fillColor: string) => {
 };
 
 const updateTooltips = () => {
-    console.log(`Updating tooltips ${new Date().toLocaleString()}`)
     featureRefs.value.forEach((geojson) => {
         if (geojson.geojson && geojson.leafletObject) {
             const f: FeatureWithColour = featuresWithColours.value[getFeatureId(geojson.geojson)];
@@ -176,8 +191,8 @@ const updateMap = () => {
 
 const boundsUpdated = () => {
     // The last thing the map does when features are updated is redraw its bounds - we want to show the spinner while
-    // waiting for this, so we set this flag to true when features first update on select country (in index page) and false
-    // here
+    // waiting for this, so we set this flag to true when features first update on select country (in index page) and
+    // false here
     waitingForMapBounds.value = false;
 };
 

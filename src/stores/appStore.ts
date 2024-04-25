@@ -1,14 +1,15 @@
 import { defineStore } from "pinia";
 import { Feature } from "geojson";
 import {
-    getAppConfig, getCountryBoundingBoxes,
+    getAppConfig,
+    getCountryBoundingBoxes,
     getGeojsonFeatures,
     getGlobalGeojsonFeatures,
     getGlobalIndicators,
     getIndicators
 } from "../resources/utils";
 import { AppState } from "../types/storeTypes";
-import {BoundingBox, FeatureIndicators} from "../types/resourceTypes";
+import { FeatureIndicators } from "../types/resourceTypes";
 
 export const useAppStore = defineStore("app", {
     state: (): AppState => ({
@@ -35,7 +36,7 @@ export const useAppStore = defineStore("app", {
             const { selectedCountryId, admin1Indicators, admin2Indicators } = state;
             // get single dictionary of feature id to indicator values for user selections
             if (!selectedCountryId) {
-                return  Object.assign({}, ...Object.values(admin1Indicators));
+                return Object.assign({}, ...Object.values(admin1Indicators));
             }
 
             // Return admin1 indicators for countries other than the selected country, and
