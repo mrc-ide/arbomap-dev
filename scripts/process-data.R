@@ -19,8 +19,6 @@ process_country <- function(x, country_codes, level) {
 
 process <- function(path, dest, level) {
   dat <- readxl::read_excel(path)
-  # There are some NAs in the current dataset - Clare is looking into this.
-  #dat <- dat[!is.na(dat$ISO), ]
   dir.create(dest, FALSE, TRUE)
   if (level == 2) {
     for (iso in unique(dat$ISO)) {
@@ -44,9 +42,7 @@ process <- function(path, dest, level) {
   }
 }
 
-# TODO: remove!
-root <- "C:/dev/arbomap"
-#root <- here::here()
+root <- here::here()
 process(file.path(root, "data/raw/Adm1_Estimates_gadm41.xlsx"),
         file.path(root, "data/processed/admin1"),
         1)

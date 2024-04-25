@@ -26,7 +26,6 @@ import { useRouter } from "vue-router";
 import { useAppStore } from "../stores/appStore";
 import NotFound from "./notFound.vue";
 import { APP_BASE_ROUTE, PATHOGEN, VERSION } from "../router/utils";
-import {wait} from "@testing-library/user-event/utils/misc/wait";
 import {debounce} from "../utils";
 
 const router = useRouter();
@@ -98,7 +97,6 @@ const selectDataForRoute = async () => {
         if (indicator) {
             selectedIndicator.value = indicator;
             // wait until admin1 loaded before selecting country
-            console.log("setting countryToSelect")
             if (country !== selectedCountryId.value) {
                 countryToSelect.value = country;
             }
@@ -117,14 +115,13 @@ watch(
 watch(
     [countryToSelect, admin1Indicators], async () => {
         if ((countryToSelect.value !== null) && Object.keys(admin1Indicators.value).length) {
-            console.log("setting waiting to true")
+            // set waiting flag so Choropleth can show spinner while Leaflet updates. Debounce the select country
+            // action so Vue can start showing spinner first.
             waitingForMapBounds.value = true;
             debounce(() => {
-                selectCountry(countryToSelect.value)
-                    .finally(() => {
-                        countryToSelect.value = null;
-                    });
-            }, 50)();
+                selectCountry(countryToSelect.value);
+                countryToSelect.value = null;
+            })();
 
         }
     }

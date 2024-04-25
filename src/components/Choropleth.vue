@@ -52,11 +52,6 @@ const backgroundLayer = {
 
 const map = ref<typeof LMap | null>(null);
 const featureRefs = ref<(typeof LGeoJson)[]>([]);
-//const waitingForMapBounds = ref(false);
-
-// The last thing the map does when features are updated is redraw its bounds - we want to show the spinner while waiting
-// for this, so set this to true when features first update, and false on update bounds event from map
-
 
 const router = useRouter();
 const { selectedFeatures, selectedIndicators, loading, selectedIndicator, selectedCountryId, appConfig, countryBoundingBoxes, waitingForMapBounds } =
@@ -109,17 +104,14 @@ const dataSummary = computed(() => ({
 }));
 
 const updateBounds = () => {
-    console.log(`Updating bounds ${new Date().toLocaleString()}`)
     if (!loading.value) {
         if (map.value?.leafletObject) {
             const country = selectedCountryId.value || "GLOBAL";
             const [west, east, south, north] = countryBoundingBoxes.value[country];
-            console.log(`W: ${west} E: ${east} S: ${south} N: ${north}`)
             const bounds = new LatLngBounds([south, west], [north, east]);
             map.value.leafletObject.fitBounds(bounds);
         }
     }
-    console.log(`Finished Updating bounds ${new Date().toLocaleString()}`)
 };
 
 // TODO: pull out tooltips stuff into composable when fully implement
@@ -143,7 +135,6 @@ const createTooltips = {
         layer.bindTooltip(tooltipForFeature(feature)).openTooltip();
         layer.on({
             click: async () => {
-                //waitingForMapBounds.value = true;
                 const country = feature.properties[featureProps.value.country];
                 // select feature's country, or unselect if click on it when already selected
                 let countryToSelect: string;
@@ -153,13 +144,7 @@ const createTooltips = {
                     countryToSelect = country;
                 }
                 router.push(`/${APP_BASE_ROUTE}/${selectedIndicator.value}/${countryToSelect}`);
-            },
-           /* add: async () => {
-                console.log("layer added")
-            },
-            remove: async () => {
-                console.log("layer removed")
-            }*/
+            }
         });
     }
 };
@@ -183,7 +168,6 @@ const updateTooltips = () => {
             }
         }
     });
-    console.log(`Finished updating tooltips ${new Date().toLocaleString()}`)
 };
 
 const updateMap = () => {
@@ -191,14 +175,13 @@ const updateMap = () => {
 };
 
 const boundsUpdated = () => {
-    console.log("Map bounds updated!")
+    // The last thing the map does when features are updated is redraw its bounds - we want to show the spinner while
+    // waiting for this, so we set this flag to true when features first update on select country (in index page) and false
+    // here
     waitingForMapBounds.value = false;
 };
 
 watch([selectedFeatures], () => {
-    console.log("setting wating to true")
-    //waitingForMapBounds.value = true;
-
     updateBounds();
     updateMap();
 });
