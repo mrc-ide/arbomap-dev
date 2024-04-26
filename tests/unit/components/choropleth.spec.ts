@@ -7,12 +7,7 @@ const store = mockPinia();
 const renderComponent = () => {
     return render(Choropleth, {
         global: {
-            plugins: [store],
-            stubs: {
-                LMap: true,
-                LTileLayer: true,
-                LGeoJson: true
-            }
+            plugins: [store]
         }
     });
 };
