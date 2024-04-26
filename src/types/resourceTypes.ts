@@ -5,6 +5,8 @@ export interface IndicatorConfig {
     colourScale: {
         name: string;
     };
+    unit: string;
+    humanReadableName: string;
 }
 
 export interface AppConfig {

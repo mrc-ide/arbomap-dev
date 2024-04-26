@@ -81,6 +81,7 @@ export const useColourScale = (selectedIndicators: Ref<Dict<FeatureIndicatorValu
 
     return {
         colourScales,
-        getColour
+        getColour,
+        indicatorExtremes
     };
 };
