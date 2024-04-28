@@ -24,7 +24,7 @@ const expectIndexPage = async (
 };
 
 const expectDefaultView = async (page) => {
-    await expectIndexPage(page, "/FOI", "FOI", "", "interpolateReds", 33, 0);
+    await expectIndexPage(page, "/FOI", "FOI", "", "interpolateRdYlBu", 1915, 0);
 };
 
 test.describe("Router", () => {
@@ -44,23 +44,23 @@ test.describe("Router", () => {
     });
 
     test("browse to indicator loads expected data", async ({ page }) => {
-        await page.goto(`${BASE_URL}/p9`);
-        await expectIndexPage(page, "/p9", "p9", "", "interpolateBlues", 33, 0);
+        await page.goto(`${BASE_URL}/serop9`);
+        await expectIndexPage(page, "/serop9", "serop9", "", "interpolateGreens", 1915, 0);
     });
 
     test("browse to indicator and country loads expected data", async ({ page }) => {
         await page.goto(`${BASE_URL}/FOI/TZA`);
-        await expectIndexPage(page, "/FOI/TZA", "FOI", "TZA", "interpolateReds", 173, 170);
+        await expectIndexPage(page, "/FOI/TZA", "FOI", "TZA", "interpolateRdYlBu", 2070, 186);
     });
 
     test("is case-insensitive", async ({ page }) => {
-        await page.goto("/DENGUE/May24/P9/tza");
-        await page.waitForURL(/\/DENGUE\/May24\/P9\/tza/);
-        await expect(await page.textContent("button.bg-blue")).toBe("p9");
+        await page.goto("/DENGUE/May24/SEROP9/tza");
+        await page.waitForURL(/\/DENGUE\/May24\/SEROP9\/tza/);
+        await expect(await page.textContent("button.bg-blue")).toBe("serop9");
         const summary = await page.locator(".choropleth-data-summary");
-        await expect(await summary).toHaveAttribute("colour-scale", "interpolateBlues");
-        await expect(await summary).toHaveAttribute("feature-count", "173");
-        await expect(await summary).toHaveAttribute("selected-country-feature-count", "170");
+        await expect(await summary).toHaveAttribute("colour-scale", "interpolateGreens");
+        await expect(await summary).toHaveAttribute("feature-count", "2070");
+        await expect(await summary).toHaveAttribute("selected-country-feature-count", "186");
     });
 
     test("shows not found message when browse to non-existent route", async ({ page }) => {

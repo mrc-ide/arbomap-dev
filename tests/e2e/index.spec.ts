@@ -6,9 +6,7 @@ test.describe("Index page", () => {
 
     const expectLoadingSpinnerIsShownThenRemoved = async (page) => {
         const locator = await page.locator("div.spinner");
-        // TODO: this tends to pass locally but fail on CI, I guess because spinner is too briefly shown. Reinstate when
-        // full dataset is introduced, when spinner should be more reliable...
-        // await expect(locator).toHaveCount(1);
+        await expect(locator).toHaveCount(1);
         await expect(locator).toHaveCount(0);
     };
 
@@ -41,28 +39,27 @@ test.describe("Index page", () => {
         const firstRegion = await getFirstRegion(page);
         const allRegions = await page.locator(".leaflet-pane path.geojson");
         await expect(firstRegion).toBeVisible();
-        await expect(await allRegions).toHaveCount(33);
+        await expect(await allRegions).toHaveCount(1833);
         await firstRegion.click();
-        await page.waitForURL(/dengue\/may24\/FOI\/MWI/i);
+        await page.waitForURL(/dengue\/may24\/FOI\/AGO/i);
         await expectLoadingSpinnerIsShownThenRemoved(page);
-        await expect(firstRegion).toBeVisible(); // regions are removed before being re-rendered
-        await expect(await allRegions).toHaveCount(58, { timeout: 5000 }); // timeout required for Safari
+        await expect(await allRegions).toHaveCount(1978, { timeout: 5000 }); // timeout required for Safari
     });
 
     test("changing selected indicator changes route and colours on map", async ({ page }) => {
         const firstRegion = await getFirstRegion(page);
         const colour = await firstRegion.getAttribute("fill");
-        await page.getByText("P9").click();
-        await page.waitForURL(/dengue\/may24\/p9/);
+        await page.getByText("SEROP9").click();
+        await page.waitForURL(/dengue\/may24\/serop9/);
         await expect(await firstRegion.getAttribute("fill")).not.toEqual(colour);
     });
 
     test("tooltips are shown", async ({ page }) => {
         const firstRegion = await getFirstRegion(page);
         await firstRegion.hover();
-        await expect(await page.innerText(".leaflet-tooltip-pane")).toContain("Central Region");
+        await expect(await page.innerText(".leaflet-tooltip-pane")).toContain("Bengo");
         await expect(await page.innerText(".leaflet-tooltip-pane")).toContain(
-            "FOI: 0.012805993967005706 (+/- 0.0034409995688380827)"
+            "FOI: 0.0134"
         );
     });
 });
