@@ -21,7 +21,7 @@
     </div>
 </template>
 <script setup lang="ts">
-import { ref, computed, watch } from "vue";
+import { ref, computed, watch, Ref } from "vue";
 import { storeToRefs } from "pinia";
 import { LatLngBounds, Layer } from "leaflet";
 import { LGeoJson, LMap, LTileLayer } from "@vue-leaflet/vue-leaflet";
@@ -52,6 +52,7 @@ const backgroundLayer = {
 
 const map = ref<typeof LMap | null>(null);
 const featureRefs = ref<(typeof LGeoJson)[]>([]);
+const bounds: Ref<LatLngBounds | null> = ref(null);
 
 const router = useRouter();
 const {
@@ -116,7 +117,10 @@ const dataSummary = computed(() => ({
     "feature-count": featuresWithColoursArr.value.length,
     "selected-country-feature-count": featuresWithColoursArr.value.filter(
         (f) => f.feature.properties![featureProps.value.country] === selectedCountryId.value
-    ).length
+    ).length,
+    bounds:
+        `S: ${bounds.value?.getSouth()} W: ${bounds.value?.getWest()} N: ${bounds.value?.getNorth()}` +
+        `E: ${bounds.value?.getEast()}`
 }));
 
 const updateBounds = () => {
@@ -124,8 +128,8 @@ const updateBounds = () => {
         if (map.value?.leafletObject) {
             const country = selectedCountryId.value || "GLOBAL";
             const [west, east, south, north] = countryBoundingBoxes.value[country];
-            const bounds = new LatLngBounds([south, west], [north, east]);
-            map.value.leafletObject.fitBounds(bounds);
+            const countryBounds = new LatLngBounds([south, west], [north, east]);
+            map.value.leafletObject.fitBounds(countryBounds);
         }
     }
 };
@@ -189,10 +193,11 @@ const updateMap = () => {
     updateTooltips();
 };
 
-const boundsUpdated = () => {
+const boundsUpdated = (b) => {
     // The last thing the map does when features are updated is redraw its bounds - we want to show the spinner while
     // waiting for this, so we set this flag to true when features first update on select country (in index page) and
     // false here
+    bounds.value = b;
     waitingForMapBounds.value = false;
 };
 

@@ -40,26 +40,30 @@ test.describe("Index page", () => {
         const allRegions = await page.locator(".leaflet-pane path.geojson");
         await expect(firstRegion).toBeVisible();
         await expect(await allRegions).toHaveCount(1833);
+        const summary = await page.locator(".choropleth-data-summary");
+        const globalBounds = await summary.getAttribute("bounds");
         await firstRegion.click();
         await page.waitForURL(/dengue\/may24\/FOI\/AGO/i);
         await expectLoadingSpinnerIsShownThenRemoved(page);
         await expect(await allRegions).toHaveCount(1978, { timeout: 5000 }); // timeout required for Safari
+        const newBounds = await summary.getAttribute("bounds");
+        expect(newBounds).not.toEqual(globalBounds);
     });
 
     test("changing selected indicator changes route and colours on map", async ({ page }) => {
         const firstRegion = await getFirstRegion(page);
         const colour = await firstRegion.getAttribute("fill");
+        const stroke = await firstRegion.getAttribute("stroke");
         await page.getByText("SEROP9").click();
         await page.waitForURL(/dengue\/may24\/serop9/);
         await expect(await firstRegion.getAttribute("fill")).not.toEqual(colour);
+        await expect(await firstRegion.getAttribute("stroke")).not.toEqual(stroke);
     });
 
     test("tooltips are shown", async ({ page }) => {
         const firstRegion = await getFirstRegion(page);
         await firstRegion.hover();
         await expect(await page.innerText(".leaflet-tooltip-pane")).toContain("Bengo");
-        await expect(await page.innerText(".leaflet-tooltip-pane")).toContain(
-            "FOI: 0.0134"
-        );
+        await expect(await page.innerText(".leaflet-tooltip-pane")).toContain("FOI: 0.0134");
     });
 });

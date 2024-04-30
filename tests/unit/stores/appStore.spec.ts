@@ -5,7 +5,8 @@ import {
     MOCK_ADMIN1_GEOJSON,
     MOCK_ADMIN1_INDICATORS,
     MOCK_ADMIN2_GEOJSON,
-    MOCK_ADMIN2_INDICATORS
+    MOCK_ADMIN2_INDICATORS,
+    MOCK_BOUNDS
 } from "../mocks/mockObjects";
 
 describe("appStore", () => {
@@ -19,6 +20,7 @@ describe("appStore", () => {
             await store.initialiseData();
             expect(store.admin1Indicators).toStrictEqual(MOCK_ADMIN1_INDICATORS);
             expect(store.admin1Geojson).toStrictEqual(MOCK_ADMIN1_GEOJSON);
+            expect(store.countryBoundingBoxes).toStrictEqual(MOCK_BOUNDS);
             expect(store.admin2Indicators).toStrictEqual({});
             expect(store.admin2Geojson).toStrictEqual({});
             expect(store.selectedIndicator).toBe("");
