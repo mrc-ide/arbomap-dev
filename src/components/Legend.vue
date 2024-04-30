@@ -1,10 +1,9 @@
 <template>
     <div class="legend-container">
-        <div class="legend-element map-control p-3">
-            <div class="legend" v-for="(level, index) in scaleLevels" v-bind:key="index">
+        <div class="legend-element map-control">
+            <div class="legend-item" v-for="(level, index) in scaleLevels" v-bind:key="index" data-testid="legendItem">
                 <i v-bind:style="level.style"></i>
                 <span class="level">{{ level.label }}</span>
-                <span class="hidden" style="display: none">{{ level.style }}</span>
                 <br />
             </div>
         </div>
@@ -33,7 +32,9 @@ const colourFunction = computed(() => {
 });
 
 const indicatorUnit = computed(() => {
-    return appConfig.value.indicators[selectedIndicator.value].unit;
+    const { unit } = appConfig.value.indicators[selectedIndicator.value];
+    if (!unit) return "";
+    return unit === "%" ? unit : ` ${unit}`;
 });
 
 const indicatorMin = computed(() => {
@@ -85,13 +86,14 @@ const scaleLevels = computed(() => {
     vertical-align: bottom;
     display: inline-block;
 }
-.legend {
+.legend-item {
     height: 1.125rem;
-}
-.legend i {
-    width: 1.125rem;
-    height: 1.125rem;
-    float: left;
-    margin-right: 0.5rem;
+
+    i {
+        width: 1.125rem;
+        height: 1.125rem;
+        float: left;
+        margin-right: 0.5rem;
+    }
 }
 </style>
