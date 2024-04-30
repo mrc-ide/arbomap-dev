@@ -15,7 +15,7 @@ export default mergeConfig(
             coverage: {
                 provider: "v8",
                 include: ["src/**/*"],
-                exclude: ["src/types.ts", "src/main.ts"]
+                exclude: ["src/types.ts", "src/main.ts", "src/plugins.ts"]
             },
             server: {
                 deps: {
