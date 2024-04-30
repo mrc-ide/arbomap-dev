@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - main
+      - "mrc-*"
   pull_request:
     branches:
       - main
