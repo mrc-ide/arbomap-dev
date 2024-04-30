@@ -40,7 +40,7 @@ describe("Index page", () => {
         expect(indicatorButtons.length).toBe(2);
         expect((indicatorButtons[0] as HTMLButtonElement).textContent).toBe("FOI");
         expect((indicatorButtons[0] as HTMLButtonElement).classList).toContain("bg-blue");
-        expect((indicatorButtons[1] as HTMLButtonElement).textContent).toBe("p9");
+        expect((indicatorButtons[1] as HTMLButtonElement).textContent).toBe("serop9");
         expect((indicatorButtons[1] as HTMLButtonElement).classList).toContain("bg-black");
         expect(await screen.findByTestId("choropleth")).toBeVisible();
     });
@@ -52,33 +52,33 @@ describe("Index page", () => {
         const p9Button = (await screen.findAllByRole("link"))[1];
         const user = userEvent.setup();
         await user.click(p9Button);
-        expect(spyRouterPush).toHaveBeenCalledWith("/dengue/may24/p9/");
+        expect(spyRouterPush).toHaveBeenCalledWith("/dengue/may24/serop9/");
     });
 
     test("selects indicator from props", async () => {
-        await renderPage("p9");
-        expect(useAppStore().selectedIndicator).toBe("p9");
+        await renderPage("serop9");
+        expect(useAppStore().selectedIndicator).toBe("serop9");
     });
 
     test("selects country from props", async () => {
-        await renderPage("p9", "TZA");
+        await renderPage("serop9", "TZA");
         const { selectedIndicator, selectCountry } = useAppStore();
         vi.runAllTimers();
         expect(selectCountry).toHaveBeenCalledWith("TZA");
-        expect(selectedIndicator).toBe("p9");
+        expect(selectedIndicator).toBe("serop9");
     });
 
     test("does not unselect country if no country prop, and none set in store", async () => {
-        await renderPage("p9");
+        await renderPage("serop9");
         const { selectedIndicator, selectCountry } = useAppStore();
         vi.runAllTimers();
         expect(selectCountry).not.toHaveBeenCalled();
-        expect(selectedIndicator).toBe("p9");
+        expect(selectedIndicator).toBe("serop9");
     });
 
     test("unselects country if empty country prop, and country is set in store", async () => {
         await render(Index, {
-            props: { pathogen: PATHOGEN, version: VERSION, indicator: "p9", country: "" },
+            props: { pathogen: PATHOGEN, version: VERSION, indicator: "serop9", country: "" },
             global: {
                 plugins: [mockVuetify, mockPinia({ selectedCountryId: "MWI" }), router],
                 stubs: {
@@ -89,7 +89,7 @@ describe("Index page", () => {
         const { selectedIndicator, selectCountry } = useAppStore();
         vi.runAllTimers();
         expect(selectCountry).toHaveBeenCalledWith("");
-        expect(selectedIndicator).toBe("p9");
+        expect(selectedIndicator).toBe("serop9");
     });
 
     test("routes to first indicator if none provided", async () => {
