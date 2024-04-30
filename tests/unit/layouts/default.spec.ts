@@ -6,10 +6,11 @@ import { mockVuetify } from "../mocks/mockVuetify";
 import { mockPinia } from "../mocks/mockPinia";
 import { useAppStore } from "../../../src/stores/appStore";
 import { mockRouter } from "../mocks/mockRouter";
+import { APP_BASE_ROUTE } from "../../../src/router/utils";
 
 const router = mockRouter();
 const renderLayout = async () => {
-    router.push("/");
+    router.push(APP_BASE_ROUTE);
     await router.isReady();
 
     await render(Default, {
@@ -40,11 +41,25 @@ describe("default layout", () => {
         expect(appStore.initialiseData).toHaveBeenCalledTimes(1);
     });
 
-    test("menu link navigates to About page", async () => {
+    test("Menu links navigate to correct pages", async () => {
         await renderLayout();
-        const link = await screen.findByRole("button", { name: /About/i });
+
         const user = userEvent.setup();
-        await user.click(link);
-        expect(await screen.findByText(/MockApp is in development/)).toBeVisible();
+
+        const aboutLink = await screen.findByRole("link", { name: /about/i });
+        await user.click(aboutLink);
+        expect(await screen.findByText("About this site")).toBeVisible();
+
+        const accessibilityLink = await screen.findByRole("link", { name: /accessibility/i });
+        await user.click(accessibilityLink);
+        expect(await screen.findByText(/We are committed to making this website accessible/)).toBeVisible();
+
+        const privacyLink = await screen.findByRole("link", { name: /privacy policy/i });
+        await user.click(privacyLink);
+        expect(await screen.findByText("Privacy notice for arbomap.org")).toBeVisible();
+
+        const mapLink = await screen.findByRole("link", { name: /map/i });
+        await user.click(mapLink);
+        expect(await screen.findByText("FOI")).toBeVisible();
     });
 });
