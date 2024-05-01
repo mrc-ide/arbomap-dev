@@ -64,11 +64,11 @@ describe("appStore", () => {
             expect(store.selectedIndicators).toStrictEqual({
                 "123": {
                     FOI: { mean: 0.1, sd: 0.01 },
-                    p9: { mean: 0.2, sd: 0.02 }
+                    serop9: { mean: 0.2, sd: 0.02 }
                 },
                 "789": {
                     FOI: { mean: 0.3, sd: 0.03 },
-                    p9: { mean: 0.4, sd: 0.04 }
+                    serop9: { mean: 0.4, sd: 0.04 }
                 }
             });
         });
@@ -80,15 +80,15 @@ describe("appStore", () => {
             expect(store.selectedIndicators).toStrictEqual({
                 "123": {
                     FOI: { mean: 0.1, sd: 0.01 },
-                    p9: { mean: 0.2, sd: 0.02 }
+                    serop9: { mean: 0.2, sd: 0.02 }
                 },
                 "789-a": {
                     FOI: { mean: 0.31, sd: 0.031 },
-                    p9: { mean: 0.41, sd: 0.041 }
+                    serop9: { mean: 0.41, sd: 0.041 }
                 },
                 "789-b": {
                     FOI: { mean: 0.32, sd: 0.032 },
-                    p9: { mean: 0.42, sd: 0.042 }
+                    serop9: { mean: 0.42, sd: 0.042 }
                 }
             });
         });
