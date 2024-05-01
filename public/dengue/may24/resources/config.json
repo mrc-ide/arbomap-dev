@@ -47,7 +47,7 @@
                 "name": "interpolatePurples"
             },
             "humanReadableName": "Hospital admissions in 5-9 year olds",
-            "desription": "Annual number of hospital admissions in 5-9 year olds",
+            "description": "Annual number of hospital admissions in 5-9 year olds",
             "unit": ""
         }
     },
@@ -60,7 +60,7 @@
         },
         {
             "mainIndicator": "hosp",
-            "subIndicators": ["hosp_0_9", "hosp_10_19"]
+            "subIndicators": ["hosp_0_4", "hosp_5_9"]
         }
     ]
 }
