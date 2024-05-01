@@ -28,8 +28,7 @@ import NotFound from "./notFound.vue";
 import { APP_BASE_ROUTE, PATHOGEN, VERSION } from "../router/utils";
 
 const router = useRouter();
-const { appConfig, selectedIndicator, selectedCountryId, admin1Indicators } =
-    storeToRefs(useAppStore());
+const { appConfig, selectedIndicator, selectedCountryId, admin1Indicators } = storeToRefs(useAppStore());
 const { selectCountry } = useAppStore();
 
 const props = defineProps({
