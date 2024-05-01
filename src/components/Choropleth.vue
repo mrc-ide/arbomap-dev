@@ -2,6 +2,9 @@
     <div>
         <LMap ref="map" style="height: 100vh; width: 100%" @update:bounds="waitingForMapBounds = false">
             <LTileLayer v-once data-testid="tile-layer" v-bind="backgroundLayer"></LTileLayer>
+            <LControl position="bottomright">
+                <Legend :numberOfSteps="6" />
+            </LControl>
         </LMap>
         <div style="visibility: hidden" class="choropleth-data-summary" v-bind="dataSummary"></div>
     </div>
@@ -10,7 +13,7 @@
 import { ref, computed, watch } from "vue";
 import { storeToRefs } from "pinia";
 import { LatLngBounds, Layer, geoJSON, GeoJSON } from "leaflet";
-import { LMap, LTileLayer } from "@vue-leaflet/vue-leaflet";
+import { LMap, LTileLayer, LControl } from "@vue-leaflet/vue-leaflet";
 import { Feature, Geometry } from "geojson";
 import { useRouter } from "vue-router";
 import Color from "color";
@@ -49,18 +52,18 @@ useLoadingSpinner(map, waitingForMapBounds);
 
 const { getColour } = useColourScale(selectedIndicators);
 
-const featureProps = computed(() => appConfig.value?.geoJsonFeatureProperties);
+const featureProperties = appConfig.value.geoJsonFeatureProperties;
 
 const featureInSelectedCountry = (feature: Feature, selectedCountry) =>
-    feature.properties[featureProps.value.country] === selectedCountry;
+    feature.properties[featureProperties.country] === selectedCountry;
 const getFeatureId = (feature: Feature) =>
     featureInSelectedCountry(feature, selectedCountryId.value)
-        ? feature.properties![featureProps.value.idAdm2]
-        : feature.properties![featureProps.value.idAdm1];
+        ? feature.properties![featureProperties.idAdm2]
+        : feature.properties![featureProperties.idAdm1];
 const getFeatureName = (feature: Feature) =>
     featureInSelectedCountry(feature, selectedCountryId.value)
-        ? feature.properties![featureProps.value.nameAdm2]
-        : feature.properties![featureProps.value.nameAdm1];
+        ? feature.properties![featureProperties.nameAdm2]
+        : feature.properties![featureProperties.nameAdm1];
 
 const getColourForFeature = (feature, indicator) => {
     const featureId = getFeatureId(feature);
@@ -75,7 +78,7 @@ const dataSummary = computed(() => ({
     "colour-scale": appConfig.value?.indicators[selectedIndicator.value]?.colourScale.name,
     "feature-count": selectedFeatures.value.length,
     "selected-country-feature-count": selectedFeatures.value.filter(
-        f => f.properties![featureProps.value.country] === selectedCountryId.value
+        f => f.properties![featureProperties.country] === selectedCountryId.value
     ).length,
     bounds:
         `S: ${bounds.value?.south} W: ${bounds.value?.west} N: ${bounds.value?.north}` +
@@ -103,7 +106,7 @@ const createTooltips = (feature: Feature, layer: Layer) => {
     layer.on({
         click: async () => {
             waitingForMapBounds.value = true;
-            const country = feature.properties[featureProps.value.country];
+            const country = feature.properties[featureProperties.country];
             // select feature's country, or unselect if click on it when already selected
             const countryToSelect = country === selectedCountryId.value ? "" : country;
             debounce(() => router.push(`/${APP_BASE_ROUTE}/${selectedIndicator.value}/${countryToSelect}`))();
@@ -120,7 +123,7 @@ const fadeColour = (fillColor: string, desaturate = 0.7, fade = 0.7) => {
 
 const style = (f: any) => {
     const isFaded = selectedCountryId.value &&
-        f.properties![featureProps.value.country] !== selectedCountryId.value;
+        f.properties![featureProperties.country] !== selectedCountryId.value;
     const featureColour = getColourForFeature(f, selectedIndicator.value);
     const fillColor = isFaded ? fadeColour(featureColour, 0.5, 0.6) : featureColour;
     return { className: "geojson", fillColor, color: fadeColour(fillColor) };

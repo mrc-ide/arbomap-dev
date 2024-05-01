@@ -7,15 +7,15 @@ import { mockPinia } from "../mocks/mockPinia";
 const indicatorValues = ref({
     "123": {
         FOI: { mean: 0.1, sd: 0.01 },
-        p9: { mean: 0.2, sd: 0.02 }
+        serop9: { mean: 0.2, sd: 0.02 }
     },
     "456": {
         FOI: { mean: 0.2, sd: 0.02 },
-        p9: { mean: 0.3, sd: 0.03 }
+        serop9: { mean: 0.3, sd: 0.03 }
     },
     "789": {
         FOI: { mean: 0.3, sd: 0.03 },
-        p9: { mean: 0.4, sd: 0.04 }
+        serop9: { mean: 0.4, sd: 0.04 }
     }
 });
 
@@ -28,7 +28,7 @@ describe("useColourScale", () => {
         const sut = useColourScale(indicatorValues);
         expect(sut.colourScales.value).toStrictEqual({
             FOI: d3ScaleChromatic.interpolateReds,
-            p9: d3ScaleChromatic.interpolateBlues
+            serop9: d3ScaleChromatic.interpolateBlues
         });
     });
 
