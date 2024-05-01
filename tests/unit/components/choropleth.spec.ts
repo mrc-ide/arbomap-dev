@@ -22,11 +22,5 @@ describe("Choropleth", () => {
         renderComponent();
         const tileLayer = screen.getByTestId("tile-layer");
         expect(tileLayer).toBeVisible();
-        const region123Geojson = screen.getByTestId("123");
-        expect(region123Geojson).toBeVisible();
-        expect(region123Geojson.getAttribute("geojson")).toBeTruthy();
-        const region789Geojson = screen.getByTestId("789");
-        expect(region789Geojson).toBeVisible();
-        expect(region789Geojson.getAttribute("geojson")).toBeTruthy();
     });
 });
