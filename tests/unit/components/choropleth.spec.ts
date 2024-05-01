@@ -21,7 +21,7 @@ describe("Choropleth", () => {
     test("renders as expected", async () => {
         const comp = renderComponent();
         const map = comp.baseElement.children[0].children[0].children[0];
-        expect(map.children.length).toBe(3);
+        expect(map.children.length).toBe(4);
         const tileLayer = map.children[0];
         expect(tileLayer.tagName).toBe("L-TILE-LAYER-STUB");
         expect(tileLayer.getAttribute("maxzoom")).toBe("10");

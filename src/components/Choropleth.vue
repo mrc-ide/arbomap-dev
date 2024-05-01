@@ -72,18 +72,18 @@ useLoadingSpinner(map, showSpinner);
 
 const { getColour } = useColourScale(selectedIndicators);
 
-const featureProps = computed(() => appConfig.value?.geoJsonFeatureProperties);
+const featureProperties = computed(() => appConfig.value?.geoJsonFeatureProperties);
 
 const featureInSelectedCountry = (feature: Feature, selectedCountry) =>
-    feature.properties[featureProps.value.country] === selectedCountry;
+    feature.properties[featureProperties.value.country] === selectedCountry;
 const getFeatureId = (feature: Feature) =>
     featureInSelectedCountry(feature, selectedCountryId.value)
-        ? feature.properties![featureProps.value.idAdm2]
-        : feature.properties![featureProps.value.idAdm1];
+        ? feature.properties![featureProperties.value.idAdm2]
+        : feature.properties![featureProperties.value.idAdm1];
 const getFeatureName = (feature: Feature) =>
     featureInSelectedCountry(feature, selectedCountryId.value)
-        ? feature.properties![featureProps.value.nameAdm2]
-        : feature.properties![featureProps.value.nameAdm1];
+        ? feature.properties![featureProperties.value.nameAdm2]
+        : feature.properties![featureProperties.value.nameAdm1];
 
 const getColourForFeature = (feature, indicator) => {
     const featureId = getFeatureId(feature);
@@ -117,7 +117,7 @@ const dataSummary = computed(() => ({
     "colour-scale": appConfig.value?.indicators[selectedIndicator.value]?.colourScale.name,
     "feature-count": featuresWithColoursArr.value.length,
     "selected-country-feature-count": featuresWithColoursArr.value.filter(
-        (f) => f.feature.properties![featureProps.value.country] === selectedCountryId.value
+        (f) => f.feature.properties![featureProperties.value.country] === selectedCountryId.value
     ).length,
     bounds:
         `S: ${bounds.value?.getSouth()} W: ${bounds.value?.getWest()} N: ${bounds.value?.getNorth()}` +
@@ -156,7 +156,7 @@ const createTooltips = {
         layer.bindTooltip(tooltipForFeature(feature)).openTooltip();
         layer.on({
             click: async () => {
-                const country = feature.properties[featureProps.value.country];
+                const country = feature.properties[featureProperties.value.country];
                 // select feature's country, or unselect if click on it when already selected
                 let countryToSelect: string;
                 if (country === selectedCountryId.value) {
