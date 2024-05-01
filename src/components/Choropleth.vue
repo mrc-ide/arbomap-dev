@@ -94,7 +94,6 @@ const getColourForFeature = (feature, indicator) => {
 const featuresWithColours = computed(() => {
     const selectedInd = selectedIndicator.value;
     if (!selectedInd) return {};
-    const selectedCountry = selectedCountryId.value;
     return Object.fromEntries(
         selectedFeatures.value.map((feature) => {
             return [
