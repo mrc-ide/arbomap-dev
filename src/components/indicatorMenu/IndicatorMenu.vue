@@ -1,6 +1,6 @@
 <template>
     <v-theme-provider theme="dark">
-        <v-btn v-if="appConfig">
+        <v-btn v-if="appConfig && selectedIndicator">
             {{ appConfig.indicators[selectedIndicator].humanReadableName }}
             <v-menu activator="parent">
                 <v-list class="opacity-80">
@@ -29,11 +29,16 @@
                         <router-link :to="`/${APP_BASE_ROUTE}/${id}/${selectedCountryId}`" custom v-slot="{ navigate }">
                             <v-list-item
                                 :value="id"
-                                :title="appConfig.indicators[id].humanReadableName"
-                                :subtitle="appConfig.indicators[id].description"
                                 :active="id === selectedIndicator"
                                 @click="navigate"
                             >
+                                <ColourScaleIcon class="float-left mr-1" size="24" :indicator="id"></ColourScaleIcon>
+                                <v-list-item-title>
+                                    {{appConfig.indicators[id].humanReadableName}}
+                                </v-list-item-title>
+                                <v-list-item-subtitle>
+                                    {{appConfig.indicators[id].description}}
+                                </v-list-item-subtitle>
                             </v-list-item>
                         </router-link>
                     </template>
@@ -45,8 +50,8 @@
 <script setup lang="ts">
 import {computed} from "vue";
 import {storeToRefs} from "pinia";
-import {useAppStore} from "../stores/appStore";
-import { APP_BASE_ROUTE } from "../router/utils";
+import {useAppStore} from "../../stores/appStore";
+import { APP_BASE_ROUTE } from "../../router/utils";
 
 const { appConfig, selectedIndicator, selectedCountryId } = storeToRefs(useAppStore());
 
