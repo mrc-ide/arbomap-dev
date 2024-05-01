@@ -2,6 +2,7 @@
     <v-theme-provider theme="dark">
         <v-btn v-if="appConfig && selectedIndicator">
             {{ appConfig.indicators[selectedIndicator].humanReadableName }}
+            <v-icon icon="mdi-chevron-up" end></v-icon>
             <v-menu activator="parent">
                 <v-list class="opacity-80">
                     <template v-for="(id, index) in indicatorGroupIds" :key="id">
@@ -36,7 +37,7 @@
                                 <v-list-item-title>
                                     {{appConfig.indicators[id].humanReadableName}}
                                 </v-list-item-title>
-                                <v-list-item-subtitle>
+                                <v-list-item-subtitle class="pt-1">
                                     {{appConfig.indicators[id].description}}
                                 </v-list-item-subtitle>
                             </v-list-item>
