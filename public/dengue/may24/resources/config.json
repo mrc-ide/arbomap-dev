@@ -15,6 +15,7 @@
                 "name": "interpolateRdYlBu"
             },
             "humanReadableName": "Force of infection",
+            "description": "Annual per capita risk of dengue infection for a susceptible person",
             "unit": ""
         },
         "serop9": {
@@ -22,7 +23,44 @@
                 "name": "interpolateGreens"
             },
             "humanReadableName": "Seroprevalence at 9 years of age",
+            "description": "Proportion of 9 year olds exposed to dengue infection",
             "unit": "%"
+        },
+        "hosp": {
+            "colourScale": {
+                "name": "interpolatePurples"
+            },
+            "humanReadableName": "Hospital admissions",
+            "description": "Annual number of hospital admissions over all age groups ",
+            "unit": ""
+        },
+        "hosp_0_4": {
+            "colourScale": {
+                "name": "interpolatePurples"
+            },
+            "humanReadableName": "Hospital admissions in 0-4 year olds",
+            "description":"Annual number of hospital admissions in 0-4 year olds",
+            "unit": ""
+        },
+        "hosp_5_9": {
+            "colourScale": {
+                "name": "interpolatePurples"
+            },
+            "humanReadableName": "Hospital admissions in 5-9 year olds",
+            "desription": "Annual number of hospital admissions in 5-9 year olds",
+            "unit": ""
         }
-    }
+    },
+    "indicatorGroups": [
+        {
+            "mainIndicator": "FOI"
+        },
+        {
+            "mainIndicator": "serop9"
+        },
+        {
+            "mainIndicator": "hosp",
+            "subIndicators": ["hosp_0_9", "hosp_10_19"]
+        }
+    ]
 }

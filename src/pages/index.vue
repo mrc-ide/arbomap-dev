@@ -1,8 +1,9 @@
 <template>
     <template v-if="!unknownProps.length">
         <Choropleth v-if="selectedIndicator" data-testid="choropleth" />
-        <!--<div class="sticky-footer">
-            <div v-for="name in indicatorNames" :key="name">
+        <div class="sticky-footer">
+            <IndicatorMenu></IndicatorMenu>
+            <!--<div v-for="name in indicatorNames" :key="name">
                 <router-link :to="`/${APP_BASE_ROUTE}/${name}/${selectedCountryId}`" custom v-slot="{ navigate }">
                     <v-btn
                         @click="navigate"
@@ -13,8 +14,8 @@
                         >{{ name }}
                     </v-btn>
                 </router-link>
-            </div>
-        </div>-->
+            </div>-->
+        </div>
     </template>
     <not-found v-else :detail="notFoundDetail"></not-found>
 </template>
