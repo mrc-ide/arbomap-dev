@@ -55,7 +55,7 @@ export const useColourScale = (selectedIndicators: Ref<Dict<FeatureIndicatorValu
 
     const getColour = (indicator: string, featureIndicators: FeatureIndicatorValues | undefined) => {
         // If indicators do not exist for this feature, return transparent
-        if (!featureIndicators) {
+        if (!featureIndicators || !featureIndicators[indicator]) {
             return "rgba(0, 0, 0, 0)";
         }
 
