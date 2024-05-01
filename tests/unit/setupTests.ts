@@ -8,8 +8,9 @@ beforeAll(() => {
     vi.mock("@vue-leaflet/vue-leaflet", () => {
         return {
             LMap: defineComponent({ template: "<l-map-stub><slot></slot></l-map-stub>" }),
-            LTileLayer: defineComponent({ template: "<l-tile-layer></l-tile-layer>" }),
-            LGeoJson: defineComponent({ template: "<l-geo-json></l-geo-json>" })
+            LTileLayer: defineComponent({ template: "<l-tile-layer-stub></l-tile-layer-stub>" }),
+            LGeoJson: defineComponent({ template: "<l-geo-json-stub></l-geo-json-stub>" }),
+            LControl: defineComponent({ template: "<l-control-stub></l-control-stub>" })
         };
     });
 });

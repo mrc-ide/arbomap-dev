@@ -14,8 +14,10 @@
                         return { ...style, fillColor: f.colour, color: borderColor(f.colour) };
                     }
                 "
-            >
-            </LGeoJson>
+            ></LGeoJson>
+            <LControl position="bottomright">
+                <Legend :numberOfSteps="6" />
+            </LControl>
         </LMap>
         <div style="visibility: hidden" class="choropleth-data-summary" v-bind="dataSummary"></div>
     </div>
@@ -24,7 +26,7 @@
 import { ref, computed, watch, Ref } from "vue";
 import { storeToRefs } from "pinia";
 import { LatLngBounds, Layer } from "leaflet";
-import { LGeoJson, LMap, LTileLayer } from "@vue-leaflet/vue-leaflet";
+import { LControl, LGeoJson, LMap, LTileLayer } from "@vue-leaflet/vue-leaflet";
 import { Feature } from "geojson";
 import { useRouter } from "vue-router";
 import Color from "color";

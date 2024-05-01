@@ -11,10 +11,14 @@ export const MOCK_APP_CONFIG = {
     },
     indicators: {
         FOI: {
-            colourScale: { name: "interpolateReds" }
+            colourScale: { name: "interpolateReds" },
+            humanReadableName: "Force of infection",
+            unit: ""
         },
         serop9: {
-            colourScale: { name: "interpolateBlues" }
+            colourScale: { name: "interpolateBlues" },
+            humanReadableName: "Seroprevalence at 9 years of age",
+            unit: "%"
         }
     }
 };
