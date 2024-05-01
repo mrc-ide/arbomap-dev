@@ -1,12 +1,11 @@
 <template>
     <div>
         <LMap ref="map" style="height: 100vh; width: 100%" @update:bounds="boundsUpdated">
-            <LTileLayer data-testid="tile-layer" v-bind="backgroundLayer"></LTileLayer>
+            <LTileLayer v-bind="backgroundLayer"></LTileLayer>
             <LGeoJson
                 v-for="f in featuresWithColoursArr"
                 ref="featureRefs"
                 :key="getFeatureId(f.feature)"
-                :data-testid="getFeatureId(f.feature)"
                 :geojson="f.feature"
                 :options="createTooltips"
                 :options-style="
