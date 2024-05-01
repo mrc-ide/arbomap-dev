@@ -1,6 +1,6 @@
 <template>
     <div>
-        <LMap ref="map" style="height: 100vh; width: 100%" @update:bounds="boundsUpdated">
+        <LMap ref="map" style="height: 100vh; width: 100%" @update:bounds="boundsUpdated" :zoom-control="false">
             <LTileLayer data-testid="tile-layer" v-bind="backgroundLayer"></LTileLayer>
             <LGeoJson
                 v-for="f in featuresWithColoursArr"
@@ -15,6 +15,9 @@
                     }
                 "
             ></LGeoJson>
+            <LControl position="topleft">
+                <IndicatorMenu></IndicatorMenu>
+            </LControl>
             <LControl position="bottomright">
                 <Legend :numberOfSteps="6" />
             </LControl>
