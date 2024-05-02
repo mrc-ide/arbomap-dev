@@ -2,12 +2,15 @@ import { storeToRefs } from "pinia";
 import { Point } from "leaflet";
 import { useAppStore } from "../stores/appStore";
 
+// Notes for picking up in the future:
+// - Mantra's branch (https://github.com/mrc-ide/arbomap/pull/13) obviates the need for updateTooltips, so wait
+// till that one is merged, then return to this branch
+// - Ensure we update the tooltips when the selected indicator changes
+
 export const useTooltips = () => {
     const { selectedIndicators, selectedIndicator, appConfig } = storeToRefs(useAppStore());
 
     const sortedIndicators = computed(() => {
-        // if (!appConfig.value) return [];
-
         const sortedKeys = Object.keys(appConfig.value.indicators).sort((indicatorName) =>
             indicatorName.toLowerCase() === selectedIndicator.value.toLowerCase() ? -1 : 1
         );
@@ -26,8 +29,6 @@ export const useTooltips = () => {
         // Default values for when the feature is not part of the selected country
         let content = "<div hidden></div>";
         let options = { sticky: true, offset: new Point(9999999, 9999999) }; // Hide container out of sight
-        console.log(featureId);
-        console.log(Object.keys(selectedIndicators.value).length);
         if (featureId in selectedIndicators.value) {
             const featureValues = selectedIndicators.value[featureId];
             indicatorValues = "";
@@ -50,4 +51,4 @@ export const useTooltips = () => {
     return {
         tooltipForFeature
     };
-}
+};

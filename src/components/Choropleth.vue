@@ -36,10 +36,10 @@ import { useLoadingSpinner } from "../composables/useLoadingSpinner";
 import { useTooltips } from "../composables/useTooltips";
 import { APP_BASE_ROUTE } from "../router/utils";
 
-interface FeatureWithColour {
-    feature: Feature;
-    colour: string;
-}
+// interface FeatureWithColour {
+//     feature: Feature;
+//     colour: string;
+// }
 
 const style = {
     className: "geojson"
@@ -163,26 +163,8 @@ const borderColor = (fillColor: string) => {
     return c.desaturate(0.7).fade(0.7).rgb();
 };
 
-const updateTooltips = () => {
-    featureRefs.value.forEach((geojson) => {
-        if (geojson.geojson && geojson.leafletObject) {
-            const f: FeatureWithColour = featuresWithColours.value[getFeatureId(geojson.geojson)];
-            if (f && f.feature) {
-                geojson.leafletObject.eachLayer((layer: Layer) => {
-                    const oldTooltip = layer.getTooltip();
-                    if (oldTooltip) {
-                        layer.unbindTooltip();
-                    }
-                    const tooltip = tooltipForFeature(getFeatureId(f.feature), getFeatureName(f.feature));
-                    layer.bindTooltip(tooltip.content, tooltip.options);
-                });
-            }
-        }
-    });
-};
-
 const updateMap = () => {
-    updateTooltips();
+    // updateTooltips();
 };
 
 const boundsUpdated = (b) => {
@@ -193,9 +175,9 @@ const boundsUpdated = (b) => {
     waitingForMapBounds.value = false;
 };
 
-watch([selectedIndicator], () => {
-    updateMap();
-});
+// watch([selectedIndicator], () => {
+//     updateMap();
+// });
 
 watch([selectedFeatures], () => {
     updateBounds();
