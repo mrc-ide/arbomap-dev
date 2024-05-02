@@ -33,6 +33,7 @@ import { useAppStore } from "../stores/appStore.ts";
 import { useColourScale } from "../composables/useColourScale.ts";
 import "leaflet/dist/leaflet.css";
 import { useLoadingSpinner } from "../composables/useLoadingSpinner";
+import { useTooltips } from "../composables/useTooltips";
 import { APP_BASE_ROUTE } from "../router/utils";
 
 interface FeatureWithColour {
@@ -55,6 +56,7 @@ const map = ref<typeof LMap | null>(null);
 const featureRefs = ref<(typeof LGeoJson)[]>([]);
 const bounds: Ref<LatLngBounds | null> = ref(null);
 
+const { tooltipForFeature } = useTooltips();
 const router = useRouter();
 const {
     selectedFeatures,
@@ -134,25 +136,10 @@ const updateBounds = () => {
     }
 };
 
-// TODO: pull out tooltips stuff into composable when fully implement
-const tooltipForFeature = (feature: Feature) => {
-    let indicatorValues = "";
-    const fid = getFeatureId(feature);
-    if (fid in selectedIndicators.value) {
-        const featureValues = selectedIndicators.value[fid];
-        indicatorValues = Object.keys(featureValues)
-            .map((key) => {
-                return `${key}: ${featureValues[key].mean}<br/>`;
-            })
-            .join("");
-    }
-    const name = getFeatureName(feature) || getFeatureId(feature);
-    return `<div><strong>${name}</strong></div><div>${indicatorValues}</div>`;
-};
-
 const createTooltips = {
     onEachFeature: (feature: Feature, layer: Layer) => {
-        layer.bindTooltip(tooltipForFeature(feature)).openTooltip();
+        const tooltip = tooltipForFeature(getFeatureId(feature), getFeatureName(feature));
+        layer.bindTooltip(tooltip.content, tooltip.options).openTooltip();
         layer.on({
             click: async () => {
                 const country = feature.properties[featureProperties.country];
@@ -182,7 +169,12 @@ const updateTooltips = () => {
             const f: FeatureWithColour = featuresWithColours.value[getFeatureId(geojson.geojson)];
             if (f && f.feature) {
                 geojson.leafletObject.eachLayer((layer: Layer) => {
-                    layer.setTooltipContent(tooltipForFeature(f.feature));
+                    const oldTooltip = layer.getTooltip();
+                    if (oldTooltip) {
+                        layer.unbindTooltip();
+                    }
+                    const tooltip = tooltipForFeature(getFeatureId(f.feature), getFeatureName(f.feature));
+                    layer.bindTooltip(tooltip.content, tooltip.options);
                 });
             }
         }
@@ -200,6 +192,10 @@ const boundsUpdated = (b) => {
     bounds.value = b;
     waitingForMapBounds.value = false;
 };
+
+watch([selectedIndicator], () => {
+    updateMap();
+});
 
 watch([selectedFeatures], () => {
     updateBounds();
