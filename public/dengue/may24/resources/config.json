@@ -31,7 +31,7 @@
                 "name": "interpolatePurples"
             },
             "humanReadableName": "Hospital admissions",
-            "description": "Annual number of hospital admissions over all age groups ",
+            "description": "Annual number of hospital admissions by age group",
             "unit": ""
         },
         "hosp_0_4": {
@@ -39,6 +39,7 @@
                 "name": "interpolatePurples"
             },
             "humanReadableName": "Hospital admissions in 0-4 year olds",
+            "shortName": "0-4",
             "description":"Annual number of hospital admissions in 0-4 year olds",
             "unit": ""
         },
@@ -47,7 +48,62 @@
                 "name": "interpolatePurples"
             },
             "humanReadableName": "Hospital admissions in 5-9 year olds",
+            "shortName": "5-9",
             "description": "Annual number of hospital admissions in 5-9 year olds",
+            "unit": ""
+        },
+        "hosp_10_14": {
+            "colourScale": {
+                "name": "interpolatePurples"
+            },
+            "humanReadableName": "Hospital admissions in 10-14 year olds",
+            "shortName": "10-14",
+            "description":"Annual number of hospital admissions in 10-14 year olds",
+            "unit": ""
+        },
+        "hosp_15_19": {
+            "colourScale": {
+                "name": "interpolatePurples"
+            },
+            "humanReadableName": "Hospital admissions in 15-19 year olds",
+            "shortName": "15-19",
+            "description": "Annual number of hospital admissions in 15-19 year olds",
+            "unit": ""
+        },
+        "hosp_20_24": {
+            "colourScale": {
+                "name": "interpolatePurples"
+            },
+            "humanReadableName": "Hospital admissions in 20-24 year olds",
+            "shortName": "20-24",
+            "description":"Annual number of hospital admissions in 20-24 year olds",
+            "unit": ""
+        },
+        "hosp_25_29": {
+            "colourScale": {
+                "name": "interpolatePurples"
+            },
+            "humanReadableName": "Hospital admissions in 25-29 year olds",
+            "shortName": "25-29",
+            "description": "Annual number of hospital admissions in 25-29 year olds",
+            "unit": ""
+        },
+        "hosp_30_34": {
+            "colourScale": {
+                "name": "interpolatePurples"
+            },
+            "humanReadableName": "Hospital admissions in 30-34 year olds",
+            "shortName": "30-34",
+            "description":"Annual number of hospital admissions in 30-34 year olds",
+            "unit": ""
+        },
+        "hosp_35_39": {
+            "colourScale": {
+                "name": "interpolatePurples"
+            },
+            "humanReadableName": "Hospital admissions in 35-39 year olds",
+            "shortName": "35-39",
+            "description": "Annual number of hospital admissions in 35-39 year olds",
             "unit": ""
         }
     },
@@ -60,7 +116,9 @@
         },
         {
             "mainIndicator": "hosp",
-            "subIndicators": ["hosp_0_4", "hosp_5_9"]
+            "mainIndicatorAlias": "all ages",
+            "subIndicators": ["hosp_0_4", "hosp_5_9", "hosp_10_14", "hosp_15_19", "hosp_20_24", "hosp_25_29",
+                              "hosp_30_34", "hosp_35_39"]
         }
     ]
 }
