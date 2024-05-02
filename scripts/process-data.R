@@ -1,25 +1,53 @@
 #!/usr/bin/env Rscript
-process_country <- function(x) {
-  id <- sprintf("%s.%s_1", x$IS0, trimws(x$ID_1))
+process_country <- function(x, country_codes, level) {
+  if (level == 1) {
+    id <- trimws(x$GID_1)
+  }
+  if (level == 2) {
+    id <- trimws(x$GID_2)
+  }
+  
+  # TODO: output sd as 0 for now, awaiting Ilaria to confirm if we don't want it
   g <- function(i) {
     el <- x[i, ]
     list(
-      FOI = list(mean = el$mean_FOI, sd = el$sd_FOI),
-      p9 = list(mean = el$mean_p9, sd = el$sd_p9))
+      FOI = list(mean = el$FOI, sd = 0),
+      serop9 = list(mean = el$p9, sd = 0))
   }
   setNames(lapply(seq_len(nrow(x)), g), id)
 }
 
-process <- function(path, dest) {
+process <- function(path, dest, level) {
   dat <- readxl::read_excel(path)
   dir.create(dest, FALSE, TRUE)
-  for (iso in unique(dat$IS0)) {
-    json <- jsonlite::toJSON(
-      process_country(dat[dat$IS0 == iso, ]), auto_unbox = TRUE)
-    writeLines(json, file.path(dest, paste0(iso, ".json")))
+  if (level == 2) {
+    for (iso in unique(dat$ISO)) {
+      json <- jsonlite::toJSON(
+        process_country(dat[dat$ISO == iso, ], country_codes, level), auto_unbox = TRUE)
+      writeLines(json, file.path(dest, paste0(iso, ".json")))
+    }
+  }
+  
+  if (level == 1) {
+    # output a single file, and also output array of countries
+    countries <- c()
+    data_by_country <- list()
+    for (iso in unique(dat$ISO)) {
+      data_by_country[[iso]] = process_country(dat[dat$ISO == iso, ], country_codes, level)
+      countries <- append(countries, iso)
+    }
+    json <- jsonlite::toJSON(data_by_country, auto_unbox = TRUE)
+    writeLines(json, file.path(dest, paste0("global_adm1.json")))
+    writeLines(jsonlite::toJSON(countries), file.path(dest, "_countries.json"))
   }
 }
 
 root <- here::here()
-process(file.path(root, "data/raw/Admin_1_Estimates_v2.xlsx"),
-        file.path(root, "data/processed/admin1"))
+process(file.path(root, "data/raw/Adm1_Estimates_gadm41.xlsx"),
+        file.path(root, "data/processed/admin1"),
+        1)
+process(file.path(root, "data/raw/Adm2_Estimates_gadm41.xlsx"),
+        file.path(root, "data/processed/admin2"),
+        2)
+
+

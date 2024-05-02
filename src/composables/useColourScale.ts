@@ -53,7 +53,12 @@ export const useColourScale = (selectedIndicators: Ref<Dict<FeatureIndicatorValu
         return result;
     });
 
-    const getColour = (indicator: string, featureIndicators: FeatureIndicatorValues) => {
+    const getColour = (indicator: string, featureIndicators: FeatureIndicatorValues | undefined) => {
+        // If indicators do not exist for this feature, return transparent
+        if (!featureIndicators) {
+            return "rgba(0, 0, 0, 0)";
+        }
+
         const value = featureIndicators[indicator].mean;
 
         if (!indicatorExtremes.value || !colourScales.value) {
@@ -76,6 +81,7 @@ export const useColourScale = (selectedIndicators: Ref<Dict<FeatureIndicatorValu
 
     return {
         colourScales,
-        getColour
+        getColour,
+        indicatorExtremes
     };
 };

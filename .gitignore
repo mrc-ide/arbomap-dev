@@ -24,3 +24,8 @@ pnpm-debug.log*
 .eslintrc-auto-import.json
 playwright-report
 coverage
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+data/processed

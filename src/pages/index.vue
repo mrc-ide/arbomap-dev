@@ -26,9 +26,11 @@ import { useRouter } from "vue-router";
 import { useAppStore } from "../stores/appStore";
 import NotFound from "./notFound.vue";
 import { APP_BASE_ROUTE, PATHOGEN, VERSION } from "../router/utils";
+import { debounce } from "../utils";
 
 const router = useRouter();
-const { appConfig, selectedIndicator, selectedCountryId } = storeToRefs(useAppStore());
+const { appConfig, selectedIndicator, selectedCountryId, admin1Indicators, waitingForMapBounds } =
+    storeToRefs(useAppStore());
 const { selectCountry } = useAppStore();
 
 const props = defineProps({
@@ -63,6 +65,8 @@ const notFoundDetail = computed(() => {
     return unknownProps.value.map((propName) => notFoundMsg(propName, props[propName])).join(" ");
 });
 
+const countryToSelect: Ref<null | string> = ref(null);
+
 const selectDataForRoute = async () => {
     if (!appConfig.value) {
         return;
@@ -93,7 +97,9 @@ const selectDataForRoute = async () => {
     if (!unknownProps.value.length) {
         if (indicator) {
             selectedIndicator.value = indicator;
-            await selectCountry(country);
+            if (country !== selectedCountryId.value) {
+                countryToSelect.value = country;
+            }
         } else {
             // No indicator selected on route - default to first indicator and navigate
             router.replace(`/${APP_BASE_ROUTE}/${indicatorNames.value[0]}`);
@@ -105,6 +111,19 @@ watch(
     [appConfig, () => props.pathogen, () => props.version, () => props.indicator, () => props.country],
     selectDataForRoute
 );
+
+watch([countryToSelect, admin1Indicators], async () => {
+    // wait until admin1 loaded before selecting country
+    if (countryToSelect.value !== null && Object.keys(admin1Indicators.value).length) {
+        // set waiting flag so Choropleth can show spinner while Leaflet updates. Debounce the select country
+        // action so Vue can start showing spinner first.
+        waitingForMapBounds.value = true;
+        debounce(() => {
+            selectCountry(countryToSelect.value);
+            countryToSelect.value = null;
+        })();
+    }
+});
 
 selectDataForRoute();
 </script>

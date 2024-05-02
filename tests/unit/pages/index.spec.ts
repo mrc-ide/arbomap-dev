@@ -1,12 +1,13 @@
 import { render, screen } from "@testing-library/vue";
 import { userEvent } from "@testing-library/user-event";
-import { describe, expect, test, vi, beforeEach } from "vitest";
+import { describe, expect, test, vi, beforeEach, afterAll } from "vitest";
 import Index from "@/pages/index.vue";
 import router from "@/router";
 import { flushPromises } from "@vue/test-utils";
 import { mockVuetify } from "../mocks/mockVuetify";
 import { mockPinia } from "../mocks/mockPinia";
 import { useAppStore } from "../../../src/stores/appStore";
+import { PATHOGEN, VERSION } from "../../../src/router/utils";
 
 const renderPage = async (indicator, country, pathogen = "dengue", version = "may24") => {
     await render(Index, {
@@ -25,7 +26,12 @@ const spyRouterReplace = vi.spyOn(router, "replace");
 
 describe("Index page", () => {
     beforeEach(() => {
+        vi.useFakeTimers();
         vi.clearAllMocks();
+    });
+
+    afterAll(() => {
+        vi.useRealTimers();
     });
 
     test("renders as expected", async () => {
@@ -34,37 +40,56 @@ describe("Index page", () => {
         expect(indicatorButtons.length).toBe(2);
         expect((indicatorButtons[0] as HTMLButtonElement).textContent).toBe("FOI");
         expect((indicatorButtons[0] as HTMLButtonElement).classList).toContain("bg-blue");
-        expect((indicatorButtons[1] as HTMLButtonElement).textContent).toBe("p9");
+        expect((indicatorButtons[1] as HTMLButtonElement).textContent).toBe("serop9");
         expect((indicatorButtons[1] as HTMLButtonElement).classList).toContain("bg-black");
         expect(await screen.findByTestId("choropleth")).toBeVisible();
     });
 
     test("button click routes to selected indicator", async () => {
+        // need to use real timers with userEvent...
+        vi.useRealTimers();
         await renderPage("FOI");
         const p9Button = (await screen.findAllByRole("link"))[1];
         const user = userEvent.setup();
         await user.click(p9Button);
-
-        expect(spyRouterPush).toHaveBeenCalledWith("/dengue/may24/p9/");
+        expect(spyRouterPush).toHaveBeenCalledWith("/dengue/may24/serop9/");
     });
 
     test("selects indicator from props", async () => {
-        await renderPage("p9");
-        expect(useAppStore().selectedIndicator).toBe("p9");
+        await renderPage("serop9");
+        expect(useAppStore().selectedIndicator).toBe("serop9");
     });
 
     test("selects country from props", async () => {
-        await renderPage("p9", "TZA");
+        await renderPage("serop9", "TZA");
         const { selectedIndicator, selectCountry } = useAppStore();
+        vi.runAllTimers();
         expect(selectCountry).toHaveBeenCalledWith("TZA");
-        expect(selectedIndicator).toBe("p9");
+        expect(selectedIndicator).toBe("serop9");
     });
 
-    test("unselects country if no country prop", async () => {
-        await renderPage("p9");
+    test("does not unselect country if no country prop, and none set in store", async () => {
+        await renderPage("serop9");
         const { selectedIndicator, selectCountry } = useAppStore();
+        vi.runAllTimers();
+        expect(selectCountry).not.toHaveBeenCalled();
+        expect(selectedIndicator).toBe("serop9");
+    });
+
+    test("unselects country if empty country prop, and country is set in store", async () => {
+        await render(Index, {
+            props: { pathogen: PATHOGEN, version: VERSION, indicator: "serop9", country: "" },
+            global: {
+                plugins: [mockVuetify, mockPinia({ selectedCountryId: "MWI" }), router],
+                stubs: {
+                    Choropleth: true
+                }
+            }
+        });
+        const { selectedIndicator, selectCountry } = useAppStore();
+        vi.runAllTimers();
         expect(selectCountry).toHaveBeenCalledWith("");
-        expect(selectedIndicator).toBe("p9");
+        expect(selectedIndicator).toBe("serop9");
     });
 
     test("routes to first indicator if none provided", async () => {

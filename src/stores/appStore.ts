@@ -1,12 +1,20 @@
 import { defineStore } from "pinia";
 import { Feature } from "geojson";
-import { getAppConfig, getGeojson, getIndicators } from "../resources/utils";
+import {
+    getAppConfig,
+    getCountryBoundingBoxes,
+    getGeojsonFeatures,
+    getGlobalGeojsonFeatures,
+    getGlobalIndicators,
+    getIndicators
+} from "../resources/utils";
 import { AppState } from "../types/storeTypes";
 import { FeatureIndicators } from "../types/resourceTypes";
 
 export const useAppStore = defineStore("app", {
     state: (): AppState => ({
         loading: true,
+        waitingForMapBounds: false,
         selectedIndicator: "",
 
         // When a country is selected, we display admin2 data for it.
@@ -14,6 +22,8 @@ export const useAppStore = defineStore("app", {
         selectedCountryId: "",
 
         appConfig: null,
+
+        countryBoundingBoxes: {},
 
         // We keep all data in dictionaries with country ids as keys, mirroring the resources on disk
         admin1Indicators: {},
@@ -43,32 +53,29 @@ export const useAppStore = defineStore("app", {
             const { selectedCountryId, admin1Geojson, admin2Geojson } = state;
             // get single array of all selected features
             if (!selectedCountryId) {
-                return Object.values(admin1Geojson).flatMap((geojson) => geojson.features);
+                return Object.values(admin1Geojson).flatMap((geojson) => geojson);
             }
 
             const filteredAdmin1 = Object.entries(admin1Geojson)
                 .filter(([countryId]) => countryId !== selectedCountryId)
-                .flatMap(([, geojson]) => geojson.features);
+                .flatMap(([, geojson]) => geojson);
 
-            return [...admin2Geojson[selectedCountryId].features, ...filteredAdmin1];
+            return [...admin2Geojson[selectedCountryId], ...filteredAdmin1];
         }
     },
     actions: {
         async initialiseData() {
             this.appConfig = await getAppConfig();
-            const allIndicators = {};
-            const allGeojson = {};
-            const level = 1;
 
-            // Load all admin1 level data
-            // eslint-disable-next-line no-restricted-syntax
-            for (const country of this.appConfig.countries) {
-                allIndicators[country] = await getIndicators(country, level);
-                allGeojson[country] = await getGeojson(country, level);
-            }
+            // Read all adm1 indicators from a single file
+            const allIndicators = await getGlobalIndicators(1);
+            // Load all admin1 geojson - load simplified boundaries only, from a
+            // single file,
+            const allGeojson = await getGlobalGeojsonFeatures(1);
 
-            Object.assign(this.admin1Indicators, allIndicators);
-            Object.assign(this.admin1Geojson, allGeojson);
+            this.countryBoundingBoxes = await getCountryBoundingBoxes();
+            this.admin1Geojson = allGeojson;
+            this.admin1Indicators = allIndicators;
 
             this.loading = false;
         },
@@ -83,13 +90,20 @@ export const useAppStore = defineStore("app", {
             }
 
             this.loading = true;
-            const level = 2;
+
+            // Some countries do not have admin2 regions or data - if one of these is selected, we load
+            // a more detailed geojson, and re-use its admin1 indicators as "admin2"
+            const level = this.appConfig.countriesWithoutAdmin2.includes(countryId) ? 1 : 2;
 
             if (!(countryId in this.admin2Indicators)) {
-                this.admin2Indicators[countryId] = await getIndicators(countryId, level);
+                if (level === 1) {
+                    this.admin2Indicators[countryId] = this.admin1Indicators[countryId];
+                } else {
+                    this.admin2Indicators[countryId] = await getIndicators(countryId, level);
+                }
             }
             if (!(countryId in this.admin2Geojson)) {
-                this.admin2Geojson[countryId] = await getGeojson(countryId, level);
+                this.admin2Geojson[countryId] = await getGeojsonFeatures(countryId, level);
             }
 
             this.selectedCountryId = countryId;
