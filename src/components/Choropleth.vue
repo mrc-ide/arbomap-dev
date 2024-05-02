@@ -18,7 +18,7 @@
                 <Legend :numberOfSteps="6" />
             </LControl>
             <LControl position="topleft">
-                <ResetMapButton :selected-indicator="selectedIndicator" />
+                <ResetMapButton :selected-indicator="selectedIndicator" @reset-view="updateBounds" />
             </LControl>
         </LMap>
         <div style="visibility: hidden" class="choropleth-data-summary" v-bind="dataSummary"></div>

@@ -8,16 +8,20 @@
             aria-label="Reset map"
             role="button"
         >
-            <vue-feather type="home" size="20" style="margin-top: 4px; margin-right: 1px"></vue-feather>
+            <i class="mdi mdi-home"></i>
         </a>
     </div>
 </template>
 
 <script setup lang="ts">
+import { storeToRefs } from "pinia";
 import { useRouter } from "vue-router";
-import VueFeather from "vue-feather";
-import { defineProps } from "vue";
+import { defineProps, defineEmits } from "vue";
 import { APP_BASE_ROUTE } from "../router/utils";
+import { useAppStore } from "../stores/appStore";
+
+const { selectedCountryId } = storeToRefs(useAppStore());
+const router = useRouter();
 
 const props = defineProps({
     selectedIndicator: {
@@ -26,18 +30,20 @@ const props = defineProps({
     }
 });
 
-const router = useRouter();
+const emit = defineEmits(["resetView"]);
 
 const resetView = () => {
-    let homePath = `/${APP_BASE_ROUTE}/${props.selectedIndicator}`;
-    let currentPath = router.currentRoute.value.fullPath;
-    homePath = homePath.replace(/\/+$/, "");
-    currentPath = currentPath.replace(/\/+$/, "");
-    if (currentPath === homePath) {
-        // TODO: Do this by zooming out rather than by reloading the page, for performance reasons
-        window.location.reload();
-    } else {
+    const homePath = `/${APP_BASE_ROUTE}/${props.selectedIndicator}`;
+    if (selectedCountryId.value) {
         router.push(homePath);
+    } else {
+        emit("resetView");
     }
 };
 </script>
+
+<style>
+.mdi-home {
+    margin-left: -2px;
+}
+</style>

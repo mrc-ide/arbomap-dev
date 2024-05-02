@@ -29,3 +29,7 @@ coverage
 .RData
 .Ruserdata
 data/processed
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
