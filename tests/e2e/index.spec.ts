@@ -42,7 +42,7 @@ test.describe("Index page", () => {
         // (drills down to admin2 on selected country)
         await page.waitForURL(/dengue\/may24\/FOI/i);
         const firstRegion = await getNthRegion(page, 1);
-        const allRegions = await page.locator(".leaflet-pane path.geojson");
+        const allRegions = await page.locator(GEOJSON_SELECTOR);
         await expect(firstRegion).toBeVisible();
         await expect(await allRegions).toHaveCount(1833);
         const summary = await page.locator(".choropleth-data-summary");
@@ -86,6 +86,8 @@ test.describe("Index page", () => {
 
     test("country outline is shown", async ({ page }) => {
         const firstRegion = await getNthRegion(page, 1);
+        // assuming page is fully loaded
+        await expect(await page.locator(COUNTRY_OUTLINE_SELECTOR)).toHaveCount(0);
         await firstRegion.click();
         await page.waitForURL(/dengue\/may24\/FOI\/AGO/i);
         await expect(await page.locator("div.spinner")).toHaveCount(0);
@@ -95,5 +97,16 @@ test.describe("Index page", () => {
     test("link to GADM is shown", async ({ page }) => {
         const gadmLink = await page.getByText("GADM");
         await expect(await gadmLink.getAttribute("href")).toBe("https://gadm.org");
+    });
+
+    test("resetMapButton click navigates to home page from country URL", async ({ page }) => {
+        await page.waitForURL(/dengue\/may24\/FOI/i);
+        const allRegions = await page.locator(GEOJSON_SELECTOR);
+        await expect(await allRegions).toHaveCount(1833);
+        await page.goto("/dengue/may24/serop9/MWI");
+        await expect(await allRegions).toHaveCount(2060);
+        await page.locator('a[title="Reset map"]').click();
+        await expect(await allRegions).toHaveCount(1833);
+        await expect(page).toHaveURL("/dengue/may24/serop9");
     });
 });
