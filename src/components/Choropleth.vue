@@ -1,6 +1,11 @@
 <template>
     <div>
-        <LMap ref="map" style="height: 100vh; width: 100%" @update:bounds="waitingForMapBounds = false">
+        <LMap
+            class="map"
+            ref="map"
+            style="height: calc(100vh - 48px); width: 100%"
+            @update:bounds="waitingForMapBounds = false"
+        >
             <LTileLayer v-once data-testid="tile-layer" v-bind="backgroundLayer"></LTileLayer>
             <LControl position="bottomright">
                 <Legend :numberOfSteps="6" />
@@ -29,7 +34,9 @@ type FeatureProperties = { GID_0: string; GID_1: string; NAME_1: string };
 
 const backgroundLayer = {
     url: "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}",
-    attribution: "Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ",
+    attribution:
+        "Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ; " +
+        "Boundaries: <a href='https://gadm.org' target='_blank'>GADM</a> version 4.1",
     maxZoom: 10,
     minZoom: 3
 };
@@ -94,7 +101,7 @@ const tooltipForFeature = (feature: Feature) => {
     return `<div><strong>${name}</strong></div><div>${indicatorValues}</div>`;
 };
 
-const createTooltips = (feature: Feature, layer: Layer) => {
+const configureGeojsonLayer = (feature: Feature, layer: Layer) => {
     layer.bindTooltip(tooltipForFeature(feature));
     layer.on({
         click: async () => {
@@ -121,6 +128,17 @@ const style = (f: Feature) => {
     return { className: "geojson", fillColor, color: fadeColour(fillColor) };
 };
 
+const updateBounds = async () => {
+    // update bounds
+    const country = selectedCountryId.value || "GLOBAL";
+    const [west, east, south, north] = countryBoundingBoxes.value[country];
+    const countryBounds = new LatLngBounds([south, west], [north, east]);
+    await map.value.leafletObject.fitBounds(countryBounds);
+
+    // record bounds for testing
+    bounds.value = { west, east, south, north };
+};
+
 const updateMap = async (newFeatures: Feature[]) => {
     if (!map.value) return;
 
@@ -130,17 +148,10 @@ const updateMap = async (newFeatures: Feature[]) => {
     // create new geojson and add to map
     geoJsonLayer.value = geoJSON<FeatureProperties, Geometry>(newFeatures, {
         style,
-        onEachFeature: createTooltips
+        onEachFeature: configureGeojsonLayer
     }).addTo(map.value.leafletObject);
 
-    // update bounds
-    const country = selectedCountryId.value || "GLOBAL";
-    const [west, east, south, north] = countryBoundingBoxes.value[country];
-    const countryBounds = new LatLngBounds([south, west], [north, east]);
-    await map.value.leafletObject.fitBounds(countryBounds);
-
-    // record bounds for testing
-    bounds.value = { west, east, south, north };
+    updateBounds();
 };
 
 watch([selectedFeatures, selectedIndicator], (newVal) => updateMap(newVal[0]));

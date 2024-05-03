@@ -21,22 +21,33 @@
                 <p class="text-body-1">
                     Estimates of these metrics are available at the first and second administrative unit level.
                 </p>
-                <!-- <p class="text-body-1">We gratefully acknowledge support for this work from XXX.</p> -->
+                <p class="text-body-1">
+                    We acknowledge research funding from the MRC Centre for Global Infectious Disease Analysis
+                    (reference MR/X020258/1), funded by the UK Medical Research Council (carried out in the frame of the
+                    Global Health EDCTP3 Joint Undertaking) and also from Community Jameel and Wellcome Trust. The tool
+                    was co-funded by the World Health Organization and developed in collaboration with the Drugs for
+                    Neglected Diseases initiative.
+                </p>
             </v-row>
             <v-row class="justify-center mt-12">
+                <v-img
+                    alt="Logo of the Drugs for Neglected Diseases initiative (DNDi)"
+                    src="@/assets/DNDi_Logo_EN_Full Colour_margins.png"
+                    max-height="150px"
+                />
+            </v-row>
+            <v-row class="justify-center">
                 <v-img
                     alt="Logo of the Jameel Institute"
                     src="@/assets/ICL_Jameel_Full-Lock-up_RGB Transparent.png"
                     max-height="100px"
-                    max-width="50vw"
                 />
             </v-row>
             <v-row class="justify-center">
                 <v-img
                     alt="Logo of Imperial College London"
                     src="@/assets/Imperial logo new - BLUE transparent.png"
-                    max-height="200px"
-                    max-width="50vw"
+                    max-height="170px"
                 />
             </v-row>
             <v-row class="justify-center">
@@ -44,10 +55,7 @@
                     alt="Logo of the MRC Centre for Global Infectious Disease Analysis (MRC GIDA)"
                     src="@/assets/MRC GIDA logo.png"
                     max-height="80px"
-                    max-width="50vw"
                 />
-                <!-- Placeholder for DNDI logo (Ilaria to check if we should use it) -->
-                <!-- Placeholder for WHO logo (WHO to provide) -->
             </v-row>
         </v-col>
     </v-container>
