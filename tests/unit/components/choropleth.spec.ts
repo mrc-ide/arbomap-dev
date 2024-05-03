@@ -7,12 +7,7 @@ const store = mockPinia();
 const renderComponent = () => {
     return render(Choropleth, {
         global: {
-            plugins: [store],
-            stubs: {
-                LMap: true,
-                LTileLayer: true,
-                LGeoJson: true
-            }
+            plugins: [store]
         }
     });
 };
@@ -21,7 +16,7 @@ describe("Choropleth", () => {
     test("renders as expected", async () => {
         const comp = renderComponent();
         const map = (comp.baseElement as any).children[0].children[0].children[0];
-        expect(map.children.length).toBe(2);
+        expect(map.children.length).toBe(3);
         const tileLayer = map.children[0];
         expect(tileLayer.tagName).toBe("L-TILE-LAYER-STUB");
         expect(tileLayer.getAttribute("maxzoom")).toBe("10");
