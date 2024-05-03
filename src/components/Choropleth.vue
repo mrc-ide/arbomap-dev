@@ -52,6 +52,7 @@ const geoJsonLayer = shallowRef<GeoJSON<FeatureProperties, Geometry>>(geoJSON(un
 const countryOutlineLayer = shallowRef<Polyline | null>(null);
 const waitingForMapBounds = ref(true);
 const isNewSelectedCountry = ref(false);
+const layerWithOpenTooltip = ref<Layer | null>(null);
 
 const router = useRouter();
 const {
@@ -116,8 +117,6 @@ const tooltipForFeature = (feature: Feature) => {
     const name = getFeatureName(feature) || getFeatureId(feature);
     return `<div><strong>${name}</strong></div><div>${indicatorValues}</div>`;
 };
-
-const layerWithOpenTooltip = ref<Layer | null>(null);
 
 const configureGeojsonLayer = (feature: Feature, layer: Layer) => {
     layer.bindTooltip(tooltipForFeature(feature));
