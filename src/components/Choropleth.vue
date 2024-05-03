@@ -49,8 +49,15 @@ const countryOutlineLayer = shallowRef<Polyline | null>(null);
 const waitingForMapBounds = ref(true);
 
 const router = useRouter();
-const { selectedFeatures, selectedIndicators, selectedIndicator, selectedCountryId, appConfig, countryBoundingBoxes, admin0Geojson } =
-    storeToRefs(useAppStore());
+const {
+    selectedFeatures,
+    selectedIndicators,
+    selectedIndicator,
+    selectedCountryId,
+    appConfig,
+    countryBoundingBoxes,
+    admin0Geojson
+} = storeToRefs(useAppStore());
 
 useLoadingSpinner(map, waitingForMapBounds);
 
@@ -160,10 +167,13 @@ const updateMap = async (newFeatures: Feature[]) => {
     }).addTo(leafletMap);
 
     if (admin0Geojson.value) {
-        const latLngs = GeoJSON.coordsToLatLngs((admin0Geojson.value.geometry as any).coordinates, 2);
+        const latLngs = GeoJSON.coordsToLatLngs(admin0Geojson.value.geometry.coordinates, 2);
         // className is just for testing
         countryOutlineLayer.value = polyline(latLngs, {
-            color: "black", weight: 1, opacity: 0.5, className: "country-outline"
+            color: "black",
+            weight: 1,
+            opacity: 0.5,
+            className: "country-outline"
         }).addTo(leafletMap);
     }
 

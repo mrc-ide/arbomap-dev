@@ -19,11 +19,9 @@ export const getIndicators = async (country: string, level: number) => {
 
 export const getGeojsonFeatures = async (country: string, level: number) => {
     const file =
-        level === 0
+        level === 0 || level === 1
             ? `geojson/admin${level}/gadm41_${country}_${level}.json`
-            : level === 1
-                ? `geojson/admin${level}/gadm41_${country}_${level}.json`
-                : `geojson/admin${level}/gadm41_${country}_${level}_2_5pc.json`;
+            : `geojson/admin${level}/gadm41_${country}_${level}_2_5pc.json`;
     const coll = (await getResource(file)) as Geojson;
     return coll.features;
 };

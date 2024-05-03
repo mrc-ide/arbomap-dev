@@ -3,7 +3,8 @@ import { test, expect, Page, Locator } from "@playwright/test";
 test.describe("Index page", () => {
     const GEOJSON_SELECTOR = ".leaflet-pane path.geojson";
     const COUNTRY_OUTLINE_SELECTOR = ".leaflet-pane path.country-outline";
-    const getNthRegion = async (page: Page, n: number): Promise<Locator> => page.locator(`:nth-match(${GEOJSON_SELECTOR}, ${n})`);
+    const getNthRegion = async (page: Page, n: number): Promise<Locator> =>
+        page.locator(`:nth-match(${GEOJSON_SELECTOR}, ${n})`);
 
     const expectLoadingSpinnerIsShownThenRemoved = async (page) => {
         const locator = await page.locator("div.spinner");
