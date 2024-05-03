@@ -90,4 +90,9 @@ test.describe("Index page", () => {
         await expect(await page.locator("div.spinner")).toHaveCount(0);
         await expect(await page.locator(COUNTRY_OUTLINE_SELECTOR)).toHaveCount(1);
     });
+
+    test("link to GADM is shown", async ({ page }) => {
+        const gadmLink = await page.getByText("GADM");
+        await expect(await gadmLink.getAttribute("href")).toBe("https://gadm.org");
+    });
 });
