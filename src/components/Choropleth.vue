@@ -95,7 +95,8 @@ const dataSummary = computed(() => ({
     "selected-country-feature-count": selectedFeatures.value.filter(
         (f) => f.properties![featureProperties.country] === selectedCountryId.value
     ).length,
-    bounds: `S: ${bounds.value?.getSouth()} W: ${bounds.value?.getWest()} N: ${bounds.value?.getNorth()}` +
+    bounds:
+        `S: ${bounds.value?.getSouth()} W: ${bounds.value?.getWest()} N: ${bounds.value?.getNorth()}` +
         `E: ${bounds.value?.getEast()}`
 }));
 
@@ -206,5 +207,7 @@ const updateMap = async (newFeatures: Feature[]) => {
 };
 
 watch([selectedFeatures, selectedIndicator], (newVal) => updateMap(newVal[0]));
-watch(selectedCountryId, () => isNewSelectedCountry.value = true);
+watch(selectedCountryId, () => {
+    isNewSelectedCountry.value = true;
+});
 </script>
