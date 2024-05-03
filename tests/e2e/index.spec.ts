@@ -66,4 +66,9 @@ test.describe("Index page", () => {
         await expect(await page.innerText(".leaflet-tooltip-pane")).toContain("Bengo");
         await expect(await page.innerText(".leaflet-tooltip-pane")).toContain("FOI: 0.0134");
     });
+
+    test("link to GADM is shown", async ({ page }) => {
+        const gadmLink = await page.getByText("GADM");
+        await expect(await gadmLink.getAttribute("href")).toBe("https://gadm.org");
+    });
 });

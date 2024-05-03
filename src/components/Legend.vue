@@ -80,7 +80,7 @@ const scaleLevels = computed(() => {
     display: table-cell;
     position: absolute;
     left: -4rem;
-    bottom: 2.5rem;
+    bottom: 0.5rem;
 }
 .legend-element {
     vertical-align: bottom;
