@@ -1,6 +1,11 @@
 <template>
     <div>
-        <LMap class="map" ref="map" style="height: calc(100vh - 48px); width: 100%" @update:bounds="waitingForMapBounds = false">
+        <LMap
+            class="map"
+            ref="map"
+            style="height: calc(100vh - 48px); width: 100%"
+            @update:bounds="waitingForMapBounds = false"
+        >
             <LTileLayer v-once data-testid="tile-layer" v-bind="backgroundLayer"></LTileLayer>
             <LControl position="bottomright">
                 <Legend :numberOfSteps="6" />
