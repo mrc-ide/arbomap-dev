@@ -74,9 +74,10 @@ test.describe("Index page", () => {
         const firstRegion = await getNthRegion(page, 1);
         const colour = await firstRegion.getAttribute("fill");
         const stroke = await firstRegion.getAttribute("stroke");
-        const secondRegion = await getNthRegion(page, 1000);
-        await secondRegion.click();
-        await page.waitForURL(/dengue\/may24\/FOI/i);
+        const lastRegion = await getNthRegion(page, 1833);
+        await lastRegion.click();
+        await page.waitForURL(/dengue\/may24\/FOI\/ZWE/i);
+        await expect(await page.locator("div.spinner")).toHaveCount(0);
         await expect(await firstRegion.getAttribute("fill")).not.toEqual(colour);
         await expect(await firstRegion.getAttribute("stroke")).not.toEqual(stroke);
     });

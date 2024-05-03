@@ -94,7 +94,7 @@ const tooltipForFeature = (feature: Feature) => {
     return `<div><strong>${name}</strong></div><div>${indicatorValues}</div>`;
 };
 
-const createTooltips = (feature: Feature, layer: Layer) => {
+const bindTooltipAndClickEvent = (feature: Feature, layer: Layer) => {
     layer.bindTooltip(tooltipForFeature(feature));
     layer.on({
         click: async () => {
@@ -121,6 +121,17 @@ const style = (f: Feature) => {
     return { className: "geojson", fillColor, color: fadeColour(fillColor) };
 };
 
+const updateBounds = async () => {
+    // update bounds
+    const country = selectedCountryId.value || "GLOBAL";
+    const [west, east, south, north] = countryBoundingBoxes.value[country];
+    const countryBounds = new LatLngBounds([south, west], [north, east]);
+    await map.value.leafletObject.fitBounds(countryBounds);
+
+    // record bounds for testing
+    bounds.value = { west, east, south, north };
+};
+
 const updateMap = async (newFeatures: Feature[]) => {
     if (!map.value) return;
 
@@ -130,17 +141,10 @@ const updateMap = async (newFeatures: Feature[]) => {
     // create new geojson and add to map
     geoJsonLayer.value = geoJSON<FeatureProperties, Geometry>(newFeatures, {
         style,
-        onEachFeature: createTooltips
+        onEachFeature: bindTooltipAndClickEvent
     }).addTo(map.value.leafletObject);
 
-    // update bounds
-    const country = selectedCountryId.value || "GLOBAL";
-    const [west, east, south, north] = countryBoundingBoxes.value[country];
-    const countryBounds = new LatLngBounds([south, west], [north, east]);
-    await map.value.leafletObject.fitBounds(countryBounds);
-
-    // record bounds for testing
-    bounds.value = { west, east, south, north };
+    updateBounds();
 };
 
 watch([selectedFeatures, selectedIndicator], (newVal) => updateMap(newVal[0]));
