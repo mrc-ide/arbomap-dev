@@ -5,7 +5,6 @@ import { AppState } from "../../../src/types/storeTypes";
 export const mockPinia = (appState: Partial<AppState> = {}) => {
     const initialState = {
         app: {
-            loading: false,
             selectedIndicator: "FOI",
             appConfig: MOCK_APP_CONFIG,
             admin1Indicators: MOCK_ADMIN1_INDICATORS,

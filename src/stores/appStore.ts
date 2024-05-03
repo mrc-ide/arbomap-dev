@@ -13,8 +13,6 @@ import { FeatureIndicators } from "../types/resourceTypes";
 
 export const useAppStore = defineStore("app", {
     state: (): AppState => ({
-        loading: true,
-        waitingForMapBounds: false,
         selectedIndicator: "",
 
         // When a country is selected, we display admin2 data for it.
@@ -76,8 +74,6 @@ export const useAppStore = defineStore("app", {
             this.countryBoundingBoxes = await getCountryBoundingBoxes();
             this.admin1Geojson = allGeojson;
             this.admin1Indicators = allIndicators;
-
-            this.loading = false;
         },
         async selectCountry(countryId: string) {
             if (countryId === this.selectedCountryId) {
@@ -88,8 +84,6 @@ export const useAppStore = defineStore("app", {
                 this.selectedCountryId = "";
                 return;
             }
-
-            this.loading = true;
 
             // Some countries do not have admin2 regions or data - if one of these is selected, we load
             // a more detailed geojson, and re-use its admin1 indicators as "admin2"
@@ -107,7 +101,6 @@ export const useAppStore = defineStore("app", {
             }
 
             this.selectedCountryId = countryId;
-            this.loading = false;
         }
     }
 });

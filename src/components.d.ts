@@ -11,6 +11,7 @@ declare module 'vue' {
     ColourScaleIcon: typeof import('./components/indicatorMenu/ColourScaleIcon.vue')['default']
     IndicatorMenu: typeof import('./components/indicatorMenu/IndicatorMenu.vue')['default']
     Legend: typeof import('./components/Legend.vue')['default']
+    ResetMapButton: typeof import('./components/ResetMapButton.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }

@@ -7,7 +7,7 @@ process_country <- function(x, country_codes, level) {
     id <- trimws(x$GID_2)
   }
   
-  # TODO: output sd as 0 for now, awaiting Ilaria to confirm if we don't want it
+  # TODO: output sd as 0 for now, sd should be reinstated in future datasets, for Excel output only
   g <- function(i) {
     el <- x[i, ]
     list(
@@ -46,7 +46,7 @@ root <- here::here()
 process(file.path(root, "data/raw/Adm1_Estimates_gadm41.xlsx"),
         file.path(root, "data/processed/admin1"),
         1)
-process(file.path(root, "data/raw/Adm2_Estimates_gadm41.xlsx"),
+process(file.path(root, "data/raw/Adm2_Estimates_gadm41_filled_gaps.xlsx"),
         file.path(root, "data/processed/admin2"),
         2)
 
