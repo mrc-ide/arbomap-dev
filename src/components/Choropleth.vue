@@ -4,8 +4,9 @@
             class="map"
             ref="map"
             style="height: calc(100vh - 48px); width: 100%"
-            @update:bounds="waitingForMapBounds = false"
+            @update:bounds="lockBounds"
             @ready="() => updateMap(selectedFeatures)"
+            :max-bounds-viscosity="1"
         >
             <LTileLayer v-once data-testid="tile-layer" v-bind="backgroundLayer"></LTileLayer>
             <LControl position="bottomright">
@@ -30,7 +31,6 @@ import { useLoadingSpinner } from "../composables/useLoadingSpinner";
 import { APP_BASE_ROUTE } from "../router/utils";
 import { debounce } from "../utils";
 
-type Bounds = { west: number; east: number; south: number; north: number };
 type FeatureProperties = { GID_0: string; GID_1: string; NAME_1: string };
 
 const backgroundLayer = {
@@ -43,10 +43,11 @@ const backgroundLayer = {
 };
 
 const map = shallowRef<typeof LMap | null>(null);
-const bounds = ref<Bounds | null>(null);
+const bounds = ref<LatLngBounds | null>(null);
 const geoJsonLayer = shallowRef<GeoJSON<FeatureProperties, Geometry>>(geoJSON(undefined));
 const countryOutlineLayer = shallowRef<Polyline | null>(null);
 const waitingForMapBounds = ref(true);
+const isNewSelectedCountry = ref(false);
 
 const router = useRouter();
 const {
@@ -91,7 +92,8 @@ const dataSummary = computed(() => ({
     "selected-country-feature-count": selectedFeatures.value.filter(
         (f) => f.properties![featureProperties.country] === selectedCountryId.value
     ).length,
-    bounds: `S: ${bounds.value?.south} W: ${bounds.value?.west} N: ${bounds.value?.north} E: ${bounds.value?.east}`
+    bounds: `S: ${bounds.value?.getSouth()} W: ${bounds.value?.getWest()} N: ${bounds.value?.getNorth()}` +
+        `E: ${bounds.value?.getEast()}`
 }));
 
 // TODO: pull out tooltips stuff into composable when fully implement
@@ -137,18 +139,37 @@ const style = (f: Feature) => {
     return { className: "geojson", fillColor, color: fadeColour(fillColor) };
 };
 
-const updateBounds = async () => {
+const lockBounds = async () => {
     const rawMap = toRaw(map.value);
     if (!rawMap) return;
     const leafletMap = rawMap.leafletObject;
 
-    const country = selectedCountryId.value || "GLOBAL";
-    const [west, east, south, north] = countryBoundingBoxes.value[country];
-    const countryBounds = new LatLngBounds([south, west], [north, east]);
-    await leafletMap.fitBounds(countryBounds);
+    if (isNewSelectedCountry.value && selectedCountryId.value) {
+        leafletMap.setMaxBounds(leafletMap.getBounds());
+        leafletMap.setMinZoom(leafletMap.getZoom());
+    }
 
-    // record bounds for testing
-    bounds.value = { west, east, south, north };
+    isNewSelectedCountry.value = false;
+    waitingForMapBounds.value = false;
+};
+
+const getBoundsForCountry = (countryId?: string) => {
+    const [west, east, south, north] = countryBoundingBoxes.value[countryId || "GLOBAL"];
+    return new LatLngBounds([south, west], [north, east]);
+};
+
+const updateBounds = async () => {
+    const rawMap = toRaw(map.value);
+    if (!rawMap || Object.keys(countryBoundingBoxes.value).length === 0) return;
+    const leafletMap = rawMap.leafletObject;
+
+    // need to reset min zoom and max bounds so we can zoom out to world
+    const globalBounds = getBoundsForCountry();
+    leafletMap.setMinZoom(2.5);
+    leafletMap.setMaxBounds(globalBounds);
+
+    bounds.value = selectedCountryId.value ? getBoundsForCountry(selectedCountryId.value) : globalBounds;
+    await leafletMap.fitBounds(bounds.value);
 };
 
 const updateMap = async (newFeatures: Feature[]) => {
@@ -181,4 +202,5 @@ const updateMap = async (newFeatures: Feature[]) => {
 };
 
 watch([selectedFeatures, selectedIndicator], (newVal) => updateMap(newVal[0]));
+watch(selectedCountryId, () => isNewSelectedCountry.value = true);
 </script>
