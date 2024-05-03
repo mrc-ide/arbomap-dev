@@ -103,7 +103,7 @@ const tooltipForFeature = (feature: Feature) => {
     return `<div><strong>${name}</strong></div><div>${indicatorValues}</div>`;
 };
 
-const bindTooltipAndClickEvent = (feature: Feature, layer: Layer) => {
+const configureGeojsonLayer = (feature: Feature, layer: Layer) => {
     layer.bindTooltip(tooltipForFeature(feature));
     layer.on({
         click: async () => {
@@ -142,7 +142,7 @@ const updateMap = async (newFeatures: Feature[]) => {
     // create new geojson and add to map
     geoJsonLayer.value = geoJSON<FeatureProperties, Geometry>(newFeatures, {
         style,
-        onEachFeature: bindTooltipAndClickEvent
+        onEachFeature: configureGeojsonLayer
     }).addTo(leafletMap);
 
     if (admin0Geojson.value) {
