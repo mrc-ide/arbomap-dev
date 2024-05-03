@@ -130,6 +130,20 @@ const style = (f: Feature) => {
     return { className: "geojson", fillColor, color: fadeColour(fillColor) };
 };
 
+const updateBounds = async () => {
+    const rawMap = toRaw(map.value);
+    if (!rawMap) return;
+    const leafletMap = rawMap.leafletObject;
+
+    const country = selectedCountryId.value || "GLOBAL";
+    const [west, east, south, north] = countryBoundingBoxes.value[country];
+    const countryBounds = new LatLngBounds([south, west], [north, east]);
+    await leafletMap.fitBounds(countryBounds);
+
+    // record bounds for testing
+    bounds.value = { west, east, south, north };
+};
+
 const updateMap = async (newFeatures: Feature[]) => {
     const rawMap = toRaw(map.value);
     if (!rawMap) return;
@@ -153,14 +167,7 @@ const updateMap = async (newFeatures: Feature[]) => {
         }).addTo(leafletMap);
     }
 
-    // update bounds
-    const country = selectedCountryId.value || "GLOBAL";
-    const [west, east, south, north] = countryBoundingBoxes.value[country];
-    const countryBounds = new LatLngBounds([south, west], [north, east]);
-    await leafletMap.fitBounds(countryBounds);
-
-    // record bounds for testing
-    bounds.value = { west, east, south, north };
+    await updateBounds();
 };
 
 watch([selectedFeatures, selectedIndicator], (newVal) => updateMap(newVal[0]));
