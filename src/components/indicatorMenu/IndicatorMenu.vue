@@ -10,10 +10,9 @@
                     <template v-for="(id, index) in indicatorGroupIds" :key="id">
                         <v-list-item
                             class="bg-black mb-2 rounded pa-2 elevation-4"
-                            style="opacity: 0.8;"
                             :value="id"
-                            :active="id === selectedIndicator"
-
+                            :active="id === selectedIndicator && !appConfig.indicatorGroups[index].subIndicators"
+                            active-class="bg-grey-darken-4"
                         >
                             <router-link :to="`/${APP_BASE_ROUTE}/${id}/${selectedCountryId}`" custom v-slot="{ navigate }">
                                     <div @click="navigate">
@@ -26,9 +25,8 @@
                                         </v-list-item-subtitle>
                                     </div>
                             </router-link>
-
                             <template v-if="appConfig.indicatorGroups[index].subIndicators">
-                                <v-slide-group>
+                                <v-slide-group class="cursor-default" @click="slideGroupClicked($event)">
                                     <v-slide-group-item
                                         :key="id"
                                     >
@@ -42,48 +40,29 @@
                                                 rounded
                                                 @click="navigate"
                                             >
-                                                {{appConfig.indicatorGroups[index].mainIndicatorAlias}}
+                                                {{appConfig.indicators[appConfig.indicatorGroups[index].mainIndicator].shortName}}
                                             </v-btn>
                                         </router-link>
                                     </v-slide-group-item>
                                     <v-slide-group-item
                                         v-for="subId in appConfig.indicatorGroups[index].subIndicators"
                                         :key="subId"
-                                        >
-                                            <router-link
-                                                         :to="`/${APP_BASE_ROUTE}/${subId}/${selectedCountryId}`"
-                                                         custom v-slot="{ navigate }">
-                                                <v-btn
-                                                    :class="subId === selectedIndicator ? 'bg-grey-darken-1' : 'bg-grey-darken-3'"
-                                                    size="small"
-                                                    class="ma-2"
-                                                    rounded
-                                                    @click="navigate"
-                                                >
-                                                    {{appConfig.indicators[subId].shortName}}
-                                                </v-btn>
-                                            </router-link>
+                                     >
+                                        <router-link
+                                                     :to="`/${APP_BASE_ROUTE}/${subId}/${selectedCountryId}`"
+                                                     custom v-slot="{ navigate }">
+                                            <v-btn
+                                                :class="subId === selectedIndicator ? 'bg-grey-darken-1' : 'bg-grey-darken-4'"
+                                                size="small"
+                                                class="ma-2"
+                                                rounded
+                                                @click="navigate"
+                                            >
+                                                {{appConfig.indicators[subId].shortName}}
+                                            </v-btn>
+                                        </router-link>
                                     </v-slide-group-item>
                                 </v-slide-group>
-                                <!--<v-btn class="float-right">
-                                    ...
-                                    <v-menu activator="parent" offset-x>
-                                        <v-list class="opacity-80">
-                                            <router-link v-for="subId in appConfig.indicatorGroups[index].subIndicators"
-                                                :key="subId"
-                                                :to="`/${APP_BASE_ROUTE}/${subId}/${selectedCountryId}`"
-                                                custom v-slot="{ navigate }">
-                                                <v-list-item :value="subId"
-                                                             :title="appConfig.indicators[subId].humanReadableName"
-                                                             :subtitle="appConfig.indicators[subId].description"
-                                                             :active="subId === selectedIndicator"
-                                                             @click="navigate"
-                                                >
-                                                </v-list-item>
-                                            </router-link>
-                                        </v-list>
-                                    </v-menu>
-                                </v-btn>-->
                             </template>
                         </v-list-item>
                     </template>
@@ -101,5 +80,13 @@ import { APP_BASE_ROUTE } from "../../router/utils";
 const { appConfig, selectedIndicator, selectedCountryId } = storeToRefs(useAppStore());
 
 const indicatorGroupIds = computed(() => appConfig.value.indicatorGroups.map((ig) => ig.mainIndicator));
+
+const slideGroupClicked = (event: PointerEvent) => {
+    // stop click on slide controls from closing the menu - only close on button click
+    const el = event.target as HTMLElement;
+    if (!el.className.includes("v-btn")) {
+        event.stopPropagation();
+    }
+};
 
 </script>

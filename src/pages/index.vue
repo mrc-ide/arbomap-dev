@@ -3,18 +3,6 @@
         <Choropleth v-if="selectedIndicator" data-testid="choropleth" />
         <div class="sticky-footer">
             <IndicatorMenu></IndicatorMenu>
-            <!--<div v-for="name in indicatorNames" :key="name">
-                <router-link :to="`/${APP_BASE_ROUTE}/${name}/${selectedCountryId}`" custom v-slot="{ navigate }">
-                    <v-btn
-                        @click="navigate"
-                        role="link"
-                        class="mb-2"
-                        :class="name === selectedIndicator ? 'bg-blue' : 'bg-black'"
-                        rounded="xl"
-                        >{{ name }}
-                    </v-btn>
-                </router-link>
-            </div>-->
         </div>
     </template>
     <not-found v-else :detail="notFoundDetail"></not-found>
