@@ -86,6 +86,8 @@ test.describe("Index page", () => {
 
     test("country outline is shown", async ({ page }) => {
         const firstRegion = await getNthRegion(page, 1);
+        // assuming page is fully loaded
+        await expect(await page.locator(COUNTRY_OUTLINE_SELECTOR)).toHaveCount(0);
         await firstRegion.click();
         await page.waitForURL(/dengue\/may24\/FOI\/AGO/i);
         await expect(await page.locator("div.spinner")).toHaveCount(0);
