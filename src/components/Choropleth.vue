@@ -144,9 +144,8 @@ const style = (f: Feature) => {
 };
 
 const lockBounds = async () => {
-    const rawMap = toRaw(map.value);
-    if (!rawMap) return;
-    const leafletMap = rawMap.leafletObject;
+    const leafletMap = toRaw(map.value)?.leafletObject;
+    if (!leafletMap) return;
 
     if (isNewSelectedCountry.value && selectedCountryId.value) {
         leafletMap.setMaxBounds(leafletMap.getBounds());
@@ -163,9 +162,8 @@ const getBoundsForCountry = (countryId?: string) => {
 };
 
 const updateBounds = async () => {
-    const rawMap = toRaw(map.value);
-    if (!rawMap || Object.keys(countryBoundingBoxes.value).length === 0) return;
-    const leafletMap = rawMap.leafletObject;
+    const leafletMap = toRaw(map.value)?.leafletObject;
+    if (!leafletMap || Object.keys(countryBoundingBoxes.value).length === 0) return;
 
     // need to reset min zoom and max bounds so we can zoom out to world
     const globalBounds = getBoundsForCountry();
@@ -177,9 +175,8 @@ const updateBounds = async () => {
 };
 
 const updateMap = async (newFeatures: Feature[]) => {
-    const rawMap = toRaw(map.value);
-    if (!rawMap) return;
-    const leafletMap = rawMap.leafletObject;
+    const leafletMap = toRaw(map.value)?.leafletObject;
+    if (!leafletMap) return;
 
     // remove layers from map
     geoJsonLayer.value.remove();
