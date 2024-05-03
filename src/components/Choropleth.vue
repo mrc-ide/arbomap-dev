@@ -166,9 +166,10 @@ const updateMap = async (newFeatures: Feature[]) => {
         onEachFeature: configureGeojsonLayer
     }).addTo(leafletMap);
 
+    // adding country outline if we have a admin0geojson
+    // note: the className is just for testing
     if (admin0Geojson.value) {
         const latLngs = GeoJSON.coordsToLatLngs(admin0Geojson.value.geometry.coordinates, 2);
-        // className is just for testing
         countryOutlineLayer.value = polyline(latLngs, {
             color: "black",
             weight: 1,
