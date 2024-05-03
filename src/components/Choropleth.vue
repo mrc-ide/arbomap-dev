@@ -1,6 +1,6 @@
 <template>
     <div>
-        <LMap ref="map" style="height: 100vh; width: 100%" @update:bounds="waitingForMapBounds = false">
+        <LMap class="map" ref="map" style="height: calc(100vh - 48px); width: 100%" @update:bounds="waitingForMapBounds = false">
             <LTileLayer v-once data-testid="tile-layer" v-bind="backgroundLayer"></LTileLayer>
             <LControl position="bottomright">
                 <Legend :numberOfSteps="6" />
@@ -29,7 +29,9 @@ type FeatureProperties = { GID_0: string; GID_1: string; NAME_1: string };
 
 const backgroundLayer = {
     url: "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}",
-    attribution: "Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ",
+    attribution:
+        "Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ; " +
+        "Boundaries: <a href='https://gadm.org' target='_blank'>GADM</a> version 4.1",
     maxZoom: 10,
     minZoom: 3
 };

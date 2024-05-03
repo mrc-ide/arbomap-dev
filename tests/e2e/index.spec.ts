@@ -81,4 +81,9 @@ test.describe("Index page", () => {
         await expect(await firstRegion.getAttribute("fill")).not.toEqual(colour);
         await expect(await firstRegion.getAttribute("stroke")).not.toEqual(stroke);
     });
+
+    test("link to GADM is shown", async ({ page }) => {
+        const gadmLink = await page.getByText("GADM");
+        await expect(await gadmLink.getAttribute("href")).toBe("https://gadm.org");
+    });
 });
