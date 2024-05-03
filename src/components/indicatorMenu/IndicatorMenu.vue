@@ -1,13 +1,15 @@
 <template>
     <v-theme-provider theme="dark">
-        <v-btn v-if="appConfig && selectedIndicator">
+        <v-btn v-if="appConfig && selectedIndicator" style="max-width: 80vw;">
+            <p class="text-wrap">
             {{ appConfig.indicators[selectedIndicator].humanReadableName }}
+            </p>
             <v-icon icon="mdi-chevron-up" end></v-icon>
             <v-menu activator="parent">
-                <v-list class="bg-transparent opacity-50 elevation-0" style="max-width: 35rem;">
+                <v-list class="bg-transparent opacity-80 elevation-0" style="max-width: min(35rem, 80%);">
                     <template v-for="(id, index) in indicatorGroupIds" :key="id">
                         <v-list-item
-                            class="bg-black mb-2 rounded pa-2"
+                            class="bg-black mb-2 rounded pa-2 elevation-4"
                             style="opacity: 0.8;"
                             :value="id"
                             :active="id === selectedIndicator"
