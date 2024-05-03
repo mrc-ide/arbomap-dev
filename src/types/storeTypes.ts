@@ -1,3 +1,4 @@
+import { Feature } from "geojson";
 import { AppConfig, BoundingBox, FeatureIndicators, Geojson } from "./resourceTypes";
 import { Dict } from "./utilTypes";
 
@@ -16,4 +17,5 @@ export interface AppState {
     admin1Geojson: Dict<Geojson>;
     admin2Indicators: Dict<FeatureIndicators>;
     admin2Geojson: Dict<Geojson>;
+    admin0Geojson: Feature | null;
 }
