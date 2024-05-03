@@ -1,0 +1,2 @@
+# Reroute all unknown urls to the app for front-end routing
+ErrorDocument 404 /index.html

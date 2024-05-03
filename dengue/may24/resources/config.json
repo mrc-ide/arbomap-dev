@@ -15,6 +15,7 @@
                 "name": "interpolateRdYlBu"
             },
             "humanReadableName": "Force of infection",
+            "description": "Annual per capita risk of dengue infection for a susceptible person",
             "unit": ""
         },
         "serop9": {
@@ -22,7 +23,212 @@
                 "name": "interpolateGreens"
             },
             "humanReadableName": "Seroprevalence at 9 years of age",
+            "description": "Proportion of 9 year olds exposed to dengue infection",
             "unit": "%"
+        },
+        "hosp": {
+            "colourScale": {
+                "name": "interpolatePurples"
+            },
+            "humanReadableName": "Hospital admissions",
+            "shortName": "all ages",
+            "description": "Annual number of hospital admissions by age group",
+            "unit": ""
+        },
+        "hosp_0_5": {
+            "colourScale": {
+                "name": "interpolatePurples"
+            },
+            "humanReadableName": "Hospital admissions in 0-5 year olds",
+            "shortName": "0-5",
+            "description":"Annual number of hospital admissions in 0-5 year olds",
+            "unit": ""
+        },
+        "hosp_5_10": {
+            "colourScale": {
+                "name": "interpolatePurples"
+            },
+            "humanReadableName": "Hospital admissions in 5-10 year olds",
+            "shortName": "5-10",
+            "description": "Annual number of hospital admissions in 5-10 year olds",
+            "unit": ""
+        },
+        "hosp_10_15": {
+            "colourScale": {
+                "name": "interpolatePurples"
+            },
+            "humanReadableName": "Hospital admissions in 10-15 year olds",
+            "shortName": "10-15",
+            "description":"Annual number of hospital admissions in 10-15 year olds",
+            "unit": ""
+        },
+        "hosp_15_20": {
+            "colourScale": {
+                "name": "interpolatePurples"
+            },
+            "humanReadableName": "Hospital admissions in 15-20 year olds",
+            "shortName": "15-20",
+            "description": "Annual number of hospital admissions in 15-20 year olds",
+            "unit": ""
+        },
+        "hosp_20_25": {
+            "colourScale": {
+                "name": "interpolatePurples"
+            },
+            "humanReadableName": "Hospital admissions in 20-25 year olds",
+            "shortName": "20-25",
+            "description":"Annual number of hospital admissions in 20-25 year olds",
+            "unit": ""
+        },
+        "hosp_25_30": {
+            "colourScale": {
+                "name": "interpolatePurples"
+            },
+            "humanReadableName": "Hospital admissions in 25-30 year olds",
+            "shortName": "25-30",
+            "description": "Annual number of hospital admissions in 25-30 year olds",
+            "unit": ""
+        },
+        "hosp_30_35": {
+            "colourScale": {
+                "name": "interpolatePurples"
+            },
+            "humanReadableName": "Hospital admissions in 30-35 year olds",
+            "shortName": "30-35",
+            "description":"Annual number of hospital admissions in 30-35 year olds",
+            "unit": ""
+        },
+        "hosp_35_40": {
+            "colourScale": {
+                "name": "interpolatePurples"
+            },
+            "humanReadableName": "Hospital admissions in 35-40 year olds",
+            "shortName": "35-40",
+            "description": "Annual number of hospital admissions in 35-40 year olds",
+            "unit": ""
+        },
+        "hosp_40_45": {
+            "colourScale": {
+                "name": "interpolatePurples"
+            },
+            "humanReadableName": "Hospital admissions in 40-45 year olds",
+            "shortName": "40-45",
+            "description":"Annual number of hospital admissions in 40-45 year olds",
+            "unit": ""
+        },
+        "hosp_45_50": {
+            "colourScale": {
+                "name": "interpolatePurples"
+            },
+            "humanReadableName": "Hospital admissions in 45-50 year olds",
+            "shortName": "45-50",
+            "description": "Annual number of hospital admissions in 45-50 year olds",
+            "unit": ""
+        },
+        "hosp_50_55": {
+            "colourScale": {
+                "name": "interpolatePurples"
+            },
+            "humanReadableName": "Hospital admissions in 50-55 year olds",
+            "shortName": "50-55",
+            "description":"Annual number of hospital admissions in 50-55 year olds",
+            "unit": ""
+        },
+        "hosp_55_60": {
+            "colourScale": {
+                "name": "interpolatePurples"
+            },
+            "humanReadableName": "Hospital admissions in 55-60 year olds",
+            "shortName": "55-60",
+            "description": "Annual number of hospital admissions in 55-60 year olds",
+            "unit": ""
+        },
+        "hosp_60_65": {
+            "colourScale": {
+                "name": "interpolatePurples"
+            },
+            "humanReadableName": "Hospital admissions in 60-65 year olds",
+            "shortName": "60-65",
+            "description":"Annual number of hospital admissions in 60-65 year olds",
+            "unit": ""
+        },
+        "hosp_65_70": {
+            "colourScale": {
+                "name": "interpolatePurples"
+            },
+            "humanReadableName": "Hospital admissions in 65-70 year olds",
+            "shortName": "65-70",
+            "description": "Annual number of hospital admissions in 65-70 year olds",
+            "unit": ""
+        },
+        "hosp_70_75": {
+            "colourScale": {
+                "name": "interpolatePurples"
+            },
+            "humanReadableName": "Hospital admissions in 70-75 year olds",
+            "shortName": "70-75",
+            "description":"Annual number of hospital admissions in 70-75 year olds",
+            "unit": ""
+        },
+        "hosp_75_80": {
+            "colourScale": {
+                "name": "interpolatePurples"
+            },
+            "humanReadableName": "Hospital admissions in 75-80 year olds",
+            "shortName": "75-80",
+            "description": "Annual number of hospital admissions in 75-80 year olds",
+            "unit": ""
+        },
+        "hosp_80_85": {
+            "colourScale": {
+                "name": "interpolatePurples"
+            },
+            "humanReadableName": "Hospital admissions in 80-85 year olds",
+            "shortName": "80-85",
+            "description":"Annual number of hospital admissions in 80-85 year olds",
+            "unit": ""
+        },
+        "hosp_85_90": {
+            "colourScale": {
+                "name": "interpolatePurples"
+            },
+            "humanReadableName": "Hospital admissions in 85-90 year olds",
+            "shortName": "85-90",
+            "description": "Annual number of hospital admissions in 85-90 year olds",
+            "unit": ""
+        },
+        "hosp_90_95": {
+            "colourScale": {
+                "name": "interpolatePurples"
+            },
+            "humanReadableName": "Hospital admissions in 90-95 year olds",
+            "shortName": "90-95",
+            "description":"Annual number of hospital admissions in 90-95 year olds",
+            "unit": ""
+        },
+        "hosp_95_100": {
+            "colourScale": {
+                "name": "interpolatePurples"
+            },
+            "humanReadableName": "Hospital admissions in 95-100 year olds",
+            "shortName": "95-100",
+            "description": "Annual number of hospital admissions in 95-100 year olds",
+            "unit": ""
         }
-    }
+    },
+    "indicatorGroups": [
+        {
+            "mainIndicator": "FOI"
+        },
+        {
+            "mainIndicator": "serop9"
+        },
+        {
+            "mainIndicator": "hosp",
+            "subIndicators": ["hosp_0_5", "hosp_5_10", "hosp_10_15", "hosp_15_20", "hosp_20_25", "hosp_25_30",
+                              "hosp_30_35", "hosp_35_40", "hosp_40_45", "hosp_45_50", "hosp_50_55", "hosp_55_60",
+                              "hosp_60_65", "hosp_65_70", "hosp_70_75", "hosp_75_80", "hosp_80_85", "hosp_85_90",
+                              "hosp_90_95", "hosp_95_100"]
+        }
+    ]
 }
