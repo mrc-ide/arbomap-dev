@@ -22,7 +22,7 @@
 <script setup lang="ts">
 import { ref, computed, watch } from "vue";
 import { storeToRefs } from "pinia";
-import { LatLngBounds, Layer, geoJSON, GeoJSON, polyline, Polyline } from "leaflet";
+import { LatLngBounds, Layer, geoJSON, GeoJSON, polyline, Polyline, Map } from "leaflet";
 import { LMap, LTileLayer, LControl } from "@vue-leaflet/vue-leaflet";
 import { Feature, Geometry } from "geojson";
 import { useRouter } from "vue-router";
@@ -35,6 +35,7 @@ import { APP_BASE_ROUTE } from "../router/utils";
 import { debounce } from "../utils";
 
 type FeatureProperties = { GID_0: string; GID_1: string; NAME_1: string };
+type RawLeafletMap = Map | undefined;
 
 const backgroundLayer = {
     url: "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}",
@@ -116,6 +117,8 @@ const tooltipForFeature = (feature: Feature) => {
     return `<div><strong>${name}</strong></div><div>${indicatorValues}</div>`;
 };
 
+const layerWithOpenTooltip = ref<Layer | null>(null);
+
 const configureGeojsonLayer = (feature: Feature, layer: Layer) => {
     layer.bindTooltip(tooltipForFeature(feature));
     layer.on({
@@ -125,6 +128,11 @@ const configureGeojsonLayer = (feature: Feature, layer: Layer) => {
             // select feature's country, or unselect if click on it when already selected
             const countryToSelect = country === selectedCountryId.value ? "" : country;
             debounce(() => router.push(`/${APP_BASE_ROUTE}/${selectedIndicator.value}/${countryToSelect}`))();
+        },
+        tooltipopen: () => {
+            const layerWithOpenTooltipRaw = toRaw(layerWithOpenTooltip.value);
+            if (layerWithOpenTooltipRaw) layerWithOpenTooltipRaw.closeTooltip();
+            layerWithOpenTooltip.value = layer;
         }
     });
 };
@@ -144,7 +152,7 @@ const style = (f: Feature) => {
 };
 
 const lockBounds = async () => {
-    const leafletMap = toRaw(map.value)?.leafletObject;
+    const leafletMap = toRaw(map.value)?.leafletObject as RawLeafletMap;
     if (!leafletMap) return;
 
     if (isNewSelectedCountry.value && selectedCountryId.value) {
@@ -162,7 +170,7 @@ const getBoundsForCountry = (countryId?: string) => {
 };
 
 const updateBounds = async () => {
-    const leafletMap = toRaw(map.value)?.leafletObject;
+    const leafletMap = toRaw(map.value)?.leafletObject as RawLeafletMap;
     if (!leafletMap || Object.keys(countryBoundingBoxes.value).length === 0) return;
 
     // need to reset min zoom and max bounds so we can zoom out to world
@@ -175,7 +183,7 @@ const updateBounds = async () => {
 };
 
 const updateMap = async (newFeatures: Feature[]) => {
-    const leafletMap = toRaw(map.value)?.leafletObject;
+    const leafletMap = toRaw(map.value)?.leafletObject as RawLeafletMap;
     if (!leafletMap) return;
 
     // remove layers from map
