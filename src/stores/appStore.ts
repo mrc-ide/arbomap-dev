@@ -101,7 +101,7 @@ export const useAppStore = defineStore("app", {
             if (!(countryId in this.admin2Geojson)) {
                 this.admin2Geojson[countryId] = await getGeojsonFeatures(countryId, level);
             }
-
+            console.log(countryId)
             this.admin0Geojson = (await getGeojsonFeatures(countryId, 0))[0];
             this.selectedCountryId = countryId;
         }

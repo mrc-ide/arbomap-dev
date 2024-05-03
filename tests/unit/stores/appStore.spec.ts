@@ -2,6 +2,7 @@ import { describe, test, expect, beforeEach } from "vitest";
 import { createPinia, setActivePinia } from "pinia";
 import { useAppStore } from "../../../src/stores/appStore";
 import {
+    MOCK_ADMIN0_GEOJSON,
     MOCK_ADMIN1_GEOJSON,
     MOCK_ADMIN1_INDICATORS,
     MOCK_ADMIN2_GEOJSON,
@@ -34,6 +35,7 @@ describe("appStore", () => {
             expect(store.selectedCountryId).toBe("TZA");
             expect(store.admin2Indicators).toStrictEqual({ TZA: MOCK_ADMIN2_INDICATORS.TZA });
             expect(store.admin2Geojson).toStrictEqual({ TZA: MOCK_ADMIN2_GEOJSON.TZA.features });
+            expect(store.admin0Geojson).toStrictEqual(MOCK_ADMIN0_GEOJSON.features[0]);
         });
     });
 
