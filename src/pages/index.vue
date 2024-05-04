@@ -112,7 +112,7 @@ selectDataForRoute();
 <style lang="scss">
 .sticky-footer {
     position: fixed;
-    bottom: 1rem;
+    top: calc(100dvh - (48px + 1.5rem));
     left: 2rem;
     background-color: rgba(0, 0, 0, 0);
     z-index: 999;

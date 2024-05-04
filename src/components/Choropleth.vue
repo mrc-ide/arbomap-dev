@@ -3,7 +3,7 @@
         <LMap
             class="map"
             ref="map"
-            style="height: calc(100vh - 48px); width: 100%"
+            style="height: calc(100dvh - 48px); width: 100%"
             @update:bounds="waitingForMapBounds = false"
         >
             <LTileLayer v-once data-testid="tile-layer" v-bind="backgroundLayer"></LTileLayer>

@@ -1,5 +1,5 @@
 <template>
-    <v-container class="page-text" style="min-height: 100vh">
+    <v-container class="page-text" style="min-height: 100dvh">
         <v-col>
             <v-row>
                 <h1 class="text-h4">About this site</h1>
