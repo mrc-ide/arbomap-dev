@@ -123,7 +123,7 @@ test.describe("Index page", () => {
         await firstRegion.click();
         await expect(await page.locator("div.spinner")).toHaveCount(0);
         await expect(await page.locator(".leaflet-control-zoom-out.leaflet-disabled")).toHaveCount(1);
-        await page.getByRole('link', { name: 'serop9' }).click();
+        await page.getByRole("link", { name: "serop9" }).click();
         await page.waitForURL(/dengue\/may24\/serop9/);
         await expect(await page.locator(".leaflet-control-zoom-out.leaflet-disabled")).toHaveCount(1);
     });

@@ -220,5 +220,7 @@ watch(selectedFeatures, (newFeatures) => {
 
 watch(selectedIndicator, () => updateMap());
 
-watch(selectedCountryId, () => (isNewSelectedCountry.value = true));
+watch(selectedCountryId, () => {
+    isNewSelectedCountry.value = true;
+});
 </script>
