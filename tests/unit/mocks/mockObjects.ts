@@ -23,6 +23,10 @@ export const MOCK_APP_CONFIG = {
     }
 };
 
+export const MOCK_ADMIN0_GEOJSON = {
+    features: [{ properties: { shapeID: "456-a", shapeName: "Test456-a", shapeGroup: "TZA" } }]
+};
+
 export const MOCK_ADMIN1_GEOJSON = {
     MWI: [{ properties: { shapeID: "123", shapeName: "Test123", shapeGroup: "MWI" } }],
     TZA: [{ properties: { shapeID: "789", shapeName: "Test789", shapeGroup: "TZA" } }]

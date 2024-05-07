@@ -5,6 +5,7 @@
             ref="map"
             style="height: calc(100vh - 48px); width: 100%"
             @update:bounds="waitingForMapBounds = false"
+            @ready="() => updateMap(selectedFeatures)"
         >
             <LTileLayer v-once data-testid="tile-layer" v-bind="backgroundLayer"></LTileLayer>
             <LControl position="bottomright">
@@ -20,7 +21,7 @@
 <script setup lang="ts">
 import { ref, computed, watch } from "vue";
 import { storeToRefs } from "pinia";
-import { LatLngBounds, Layer, geoJSON, GeoJSON } from "leaflet";
+import { LatLngBounds, Layer, geoJSON, GeoJSON, polyline, Polyline } from "leaflet";
 import { LMap, LTileLayer, LControl } from "@vue-leaflet/vue-leaflet";
 import { Feature, Geometry } from "geojson";
 import { useRouter } from "vue-router";
@@ -45,15 +46,23 @@ const backgroundLayer = {
     minZoom: 3
 };
 
-const map = ref<typeof LMap | null>(null);
+const map = shallowRef<typeof LMap | null>(null);
 const bounds = ref<Bounds | null>(null);
-const geoJsonLayer = ref<GeoJSON<FeatureProperties, Geometry>>(geoJSON(undefined));
+const geoJsonLayer = shallowRef<GeoJSON<FeatureProperties, Geometry>>(geoJSON(undefined));
+const countryOutlineLayer = shallowRef<Polyline | null>(null);
 const waitingForMapBounds = ref(true);
 
 const { tooltipForFeature } = useTooltips();
 const router = useRouter();
-const { selectedFeatures, selectedIndicators, selectedIndicator, selectedCountryId, appConfig, countryBoundingBoxes } =
-    storeToRefs(useAppStore());
+const {
+    selectedFeatures,
+    selectedIndicators,
+    selectedIndicator,
+    selectedCountryId,
+    appConfig,
+    countryBoundingBoxes,
+    admin0GeojsonFeature
+} = storeToRefs(useAppStore());
 
 useLoadingSpinner(map, waitingForMapBounds);
 
@@ -118,30 +127,48 @@ const style = (f: Feature) => {
     return { className: "geojson", fillColor, color: fadeColour(fillColor) };
 };
 
+const getLeafletMap = () => map.value?.leafletObject;
+
 const updateBounds = async () => {
-    // update bounds
+    const leafletMap = getLeafletMap();
+    if (!leafletMap) return;
+
     const country = selectedCountryId.value || "GLOBAL";
     const [west, east, south, north] = countryBoundingBoxes.value[country];
     const countryBounds = new LatLngBounds([south, west], [north, east]);
-    await map.value.leafletObject.fitBounds(countryBounds);
+    await leafletMap.fitBounds(countryBounds);
 
     // record bounds for testing
     bounds.value = { west, east, south, north };
 };
 
 const updateMap = async (newFeatures: Feature[]) => {
-    if (!map.value) return;
+    const leafletMap = getLeafletMap();
+    if (!leafletMap) return;
 
-    // remove layer from map
+    // remove layers from map
     geoJsonLayer.value.remove();
+    countryOutlineLayer.value?.remove();
 
     // create new geojson and add to map
     geoJsonLayer.value = geoJSON<FeatureProperties, Geometry>(newFeatures, {
         style,
         onEachFeature: configureGeojsonLayer
-    }).addTo(map.value.leafletObject);
+    }).addTo(leafletMap);
 
-    updateBounds();
+    // adding country outline if we have a admin0GeojsonFeature
+    // note: the className is just for testing
+    if (admin0GeojsonFeature.value) {
+        const latLngs = GeoJSON.coordsToLatLngs(admin0GeojsonFeature.value.geometry.coordinates, 2);
+        countryOutlineLayer.value = polyline(latLngs, {
+            color: "black",
+            weight: 1,
+            opacity: 0.5,
+            className: "country-outline"
+        }).addTo(leafletMap);
+    }
+
+    await updateBounds();
 };
 
 watch([selectedFeatures, selectedIndicator], (newVal) => updateMap(newVal[0]));
