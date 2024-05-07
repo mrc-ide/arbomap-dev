@@ -128,7 +128,7 @@ const configureGeojsonLayer = (feature: Feature, layer: Layer) => {
             debounce(() => router.push(`/${APP_BASE_ROUTE}/${selectedIndicator.value}/${countryToSelect}`))();
         },
         tooltipopen: () => {
-            if (layerWithOpenTooltip.value) layerWithOpenTooltip.value.closeTooltip();
+            layerWithOpenTooltip.value?.closeTooltip();
             layerWithOpenTooltip.value = layer;
         }
     });
