@@ -51,7 +51,7 @@ const geoJsonLayer = shallowRef<GeoJSON<FeatureProperties, Geometry>>(geoJSON(un
 const countryOutlineLayer = shallowRef<Polyline | null>(null);
 const waitingForMapBounds = ref(true);
 const isNewSelectedCountry = ref(false);
-const layerWithOpenTooltip = ref<Layer | null>(null);
+const layerWithOpenTooltip = shallowRef<Layer | null>(null);
 
 const router = useRouter();
 const {
@@ -128,8 +128,7 @@ const configureGeojsonLayer = (feature: Feature, layer: Layer) => {
             debounce(() => router.push(`/${APP_BASE_ROUTE}/${selectedIndicator.value}/${countryToSelect}`))();
         },
         tooltipopen: () => {
-            const layerWithOpenTooltipRaw = toRaw(layerWithOpenTooltip.value);
-            if (layerWithOpenTooltipRaw) layerWithOpenTooltipRaw.closeTooltip();
+            if (layerWithOpenTooltip.value) layerWithOpenTooltip.value.closeTooltip();
             layerWithOpenTooltip.value = layer;
         }
     });
