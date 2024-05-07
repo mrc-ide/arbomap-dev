@@ -140,10 +140,11 @@ const style = (f: Feature) => {
     return { className: "geojson", fillColor, color: fadeColour(fillColor) };
 };
 
+const getRawLeafletMap = () => toRaw(map.value)?.leafletObject;
+
 const updateBounds = async () => {
-    const rawMap = toRaw(map.value);
-    if (!rawMap) return;
-    const leafletMap = rawMap.leafletObject;
+    const leafletMap = getRawLeafletMap();
+    if (!leafletMap) return;
 
     const country = selectedCountryId.value || "GLOBAL";
     const [west, east, south, north] = countryBoundingBoxes.value[country];
@@ -155,9 +156,8 @@ const updateBounds = async () => {
 };
 
 const updateMap = async (newFeatures: Feature[]) => {
-    const rawMap = toRaw(map.value);
-    if (!rawMap) return;
-    const leafletMap = rawMap.leafletObject;
+    const leafletMap = getRawLeafletMap();
+    if (!leafletMap) return;
 
     // remove layers from map
     geoJsonLayer.value.remove();
