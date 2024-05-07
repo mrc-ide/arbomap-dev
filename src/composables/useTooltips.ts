@@ -5,9 +5,13 @@ export const useTooltips = () => {
     const { selectedIndicators, selectedIndicator, appConfig } = storeToRefs(useAppStore());
 
     const sortedIndicators = computed(() => {
-        const sortedKeys = Object.keys(appConfig.value.indicators).sort((indicatorId) =>
-            indicatorId.toLowerCase() === selectedIndicator.value.toLowerCase() ? -1 : 1
-        );
+        // We show currently selected indicator first, then each configured indicator group's
+        // main indicator, as long as that is not the selected indicator
+        const sortedKeys = [
+            selectedIndicator.value,
+            ...appConfig.value.indicatorGroups.map(g => g.mainIndicator)
+                .filter(i => i !== selectedIndicator.value)
+        ];
 
         const sortedMap = new Map();
 
