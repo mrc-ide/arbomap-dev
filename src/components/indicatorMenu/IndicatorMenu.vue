@@ -6,18 +6,18 @@
             </p>
             <v-icon :icon="menuOpen ? 'mdi-chevron-down' : 'mdi-chevron-up'" end></v-icon>
             <v-menu activator="parent" v-model="menuOpen">
-                <v-list class="bg-transparent opacity-70 elevation-0" style="max-width: min(35rem, 80%);">
+                <v-list class="bg-transparent opacity-80 elevation-0" style="max-width: min(35rem, 80%);">
                     <v-list-item
                         v-for="(id, index) in indicatorGroupIds"
                         :key="id"
                         class="bg-black mb-2 rounded pa-2 elevation-4"
+                        :active="(id === selectedIndicator) && (!appConfig.indicatorGroups[index].subIndicators)"
                         :value="id"
-                        :active="id === selectedIndicator && !appConfig.indicatorGroups[index].subIndicators"
-                        active-class="bg-grey-darken-4"
+                        active-class="selected-item"
                     >
                         <router-link :to="`/${APP_BASE_ROUTE}/${id}/${selectedCountryId}`" custom v-slot="{ navigate }">
                                 <div @click="navigate">
-                                    <ColourScaleIcon class="float-left mr-1" size="24" :indicator="id"></ColourScaleIcon>
+                                    <ColourScaleIcon class="float-left mr-1" :size="24" :indicator="id"></ColourScaleIcon>
                                     <v-list-item-title>
                                         {{appConfig.indicators[id].humanReadableName}}
                                     </v-list-item-title>
@@ -41,7 +41,7 @@
                                     :to="`/${APP_BASE_ROUTE}/${id}/${selectedCountryId}`"
                                     custom v-slot="{ navigate }">
                                     <v-btn
-                                        :class="id === selectedIndicator ? 'bg-grey-darken-1' : 'bg-grey-darken-4'"
+                                        :class="id === selectedIndicator ? 'selected-item' : ''"
                                         size="small"
                                         class="ma-2"
                                         rounded
@@ -60,7 +60,7 @@
                                              :to="`/${APP_BASE_ROUTE}/${subId}/${selectedCountryId}`"
                                              custom v-slot="{ navigate }">
                                     <v-btn
-                                        :class="subId === selectedIndicator ? 'bg-grey-darken-1' : 'bg-grey-darken-4'"
+                                        :class="subId === selectedIndicator ? 'selected-item' : ''"
                                         size="small"
                                         class="ma-2"
                                         rounded
@@ -101,5 +101,10 @@ const slideGroupClicked = (event: PointerEvent) => {
   .indicator-menu-activator {
       // don't overlap map legend
       max-width: calc(100vw - 8rem)!important;
+  }
+
+  .selected-item {
+      border-width: medium!important;
+      border-color: rgb(var(--v-theme-secondary))!important;
   }
 </style>
