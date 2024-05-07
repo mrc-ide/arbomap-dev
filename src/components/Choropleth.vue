@@ -59,7 +59,7 @@ const {
     selectedCountryId,
     appConfig,
     countryBoundingBoxes,
-    admin0Geojson
+    admin0GeojsonFeature
 } = storeToRefs(useAppStore());
 
 useLoadingSpinner(map, waitingForMapBounds);
@@ -169,10 +169,10 @@ const updateMap = async (newFeatures: Feature[]) => {
         onEachFeature: configureGeojsonLayer
     }).addTo(leafletMap);
 
-    // adding country outline if we have a admin0geojson
+    // adding country outline if we have a admin0GeojsonFeature
     // note: the className is just for testing
-    if (admin0Geojson.value) {
-        const latLngs = GeoJSON.coordsToLatLngs(admin0Geojson.value.geometry.coordinates, 2);
+    if (admin0GeojsonFeature.value) {
+        const latLngs = GeoJSON.coordsToLatLngs(admin0GeojsonFeature.value.geometry.coordinates, 2);
         countryOutlineLayer.value = polyline(latLngs, {
             color: "black",
             weight: 1,
