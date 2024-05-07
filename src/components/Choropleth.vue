@@ -35,7 +35,6 @@ import { APP_BASE_ROUTE } from "../router/utils";
 import { debounce } from "../utils";
 
 type FeatureProperties = { GID_0: string; GID_1: string; NAME_1: string };
-type RawLeafletMap = Map | undefined;
 
 const backgroundLayer = {
     url: "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}",
@@ -62,7 +61,7 @@ const {
     selectedCountryId,
     appConfig,
     countryBoundingBoxes,
-    admin0Geojson
+    admin0GeojsonFeature
 } = storeToRefs(useAppStore());
 
 useLoadingSpinner(map, waitingForMapBounds);
@@ -150,8 +149,10 @@ const style = (f: Feature) => {
     return { className: "geojson", fillColor, color: fadeColour(fillColor) };
 };
 
+const getLeafletMap = () => map.value?.leafletObject;
+
 const lockBounds = async () => {
-    const leafletMap = toRaw(map.value)?.leafletObject as RawLeafletMap;
+    const leafletMap = getLeafletMap();
     if (!leafletMap) return;
 
     if (isNewSelectedCountry.value && selectedCountryId.value) {
@@ -164,25 +165,35 @@ const lockBounds = async () => {
 };
 
 const getBoundsForCountry = (countryId?: string) => {
+    if (Object.keys(countryBoundingBoxes.value).length === 0) return null;
     const [west, east, south, north] = countryBoundingBoxes.value[countryId || "GLOBAL"];
     return new LatLngBounds([south, west], [north, east]);
 };
 
 const updateBounds = async () => {
-    const leafletMap = toRaw(map.value)?.leafletObject as RawLeafletMap;
-    if (!leafletMap || Object.keys(countryBoundingBoxes.value).length === 0) return;
+    const leafletMap = toRaw(map.value)?.leafletObject;
+    if (!leafletMap) return;
 
-    // need to reset min zoom and max bounds so we can zoom out to world
-    const globalBounds = getBoundsForCountry();
-    leafletMap.setMinZoom(2.5);
-    leafletMap.setMaxBounds(globalBounds);
+    const countryBounds = getBoundsForCountry(selectedCountryId.value);
+    if (!countryBounds) return;
 
-    bounds.value = selectedCountryId.value ? getBoundsForCountry(selectedCountryId.value) : globalBounds;
+    bounds.value = countryBounds;
     await leafletMap.fitBounds(bounds.value);
 };
 
-const updateMap = async (newFeatures: Feature[]) => {
-    const leafletMap = toRaw(map.value)?.leafletObject as RawLeafletMap;
+const resetMaxBoundsAndZoom = () => {
+    const leafletMap = toRaw(map.value)?.leafletObject;
+    if (!leafletMap) return;
+
+    const globalBounds = getBoundsForCountry();
+    if (!globalBounds) return;
+
+    leafletMap.setMinZoom(2.5);
+    leafletMap.setMaxBounds(globalBounds);
+};
+
+const updateMap = async (newFeatures?: Feature[]) => {
+    const leafletMap = getLeafletMap();
     if (!leafletMap) return;
 
     // remove layers from map
@@ -190,15 +201,15 @@ const updateMap = async (newFeatures: Feature[]) => {
     countryOutlineLayer.value?.remove();
 
     // create new geojson and add to map
-    geoJsonLayer.value = geoJSON<FeatureProperties, Geometry>(newFeatures, {
+    geoJsonLayer.value = geoJSON<FeatureProperties, Geometry>(newFeatures || selectedFeatures.value, {
         style,
         onEachFeature: configureGeojsonLayer
     }).addTo(leafletMap);
 
-    // adding country outline if we have a admin0geojson
+    // adding country outline if we have a admin0GeojsonFeature
     // note: the className is just for testing
-    if (admin0Geojson.value) {
-        const latLngs = GeoJSON.coordsToLatLngs(admin0Geojson.value.geometry.coordinates, 2);
+    if (admin0GeojsonFeature.value) {
+        const latLngs = GeoJSON.coordsToLatLngs(admin0GeojsonFeature.value.geometry.coordinates, 2);
         countryOutlineLayer.value = polyline(latLngs, {
             color: "black",
             weight: 1,
@@ -210,7 +221,13 @@ const updateMap = async (newFeatures: Feature[]) => {
     await updateBounds();
 };
 
-watch([selectedFeatures, selectedIndicator], (newVal) => updateMap(newVal[0]));
+watch(selectedFeatures, (newFeatures) => {
+    resetMaxBoundsAndZoom();
+    updateMap(newFeatures);
+});
+
+watch(selectedIndicator, () => updateMap());
+
 watch(selectedCountryId, () => {
     isNewSelectedCountry.value = true;
 });

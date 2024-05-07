@@ -86,7 +86,7 @@ test.describe("Index page", () => {
 
     test("country outline is shown", async ({ page }) => {
         const firstRegion = await getNthRegion(page, 1);
-        // assuming page is fully loaded
+        await expect(await page.locator("div.spinner")).toHaveCount(0);
         await expect(await page.locator(COUNTRY_OUTLINE_SELECTOR)).toHaveCount(0);
         await firstRegion.click();
         await page.waitForURL(/dengue\/may24\/FOI\/AGO/i);
@@ -108,5 +108,23 @@ test.describe("Index page", () => {
         await page.locator('a[title="Reset map"]').click();
         await expect(await allRegions).toHaveCount(1833);
         await expect(page).toHaveURL("/dengue/may24/serop9");
+    });
+
+    test("after selecting country, user can't zoom out", async ({ page }) => {
+        const firstRegion = await getNthRegion(page, 1);
+        await firstRegion.click();
+        await expect(await page.locator("div.spinner")).toHaveCount(0);
+        // zoom out is disabled in leaflet
+        await expect(await page.locator(".leaflet-control-zoom-out.leaflet-disabled")).toHaveCount(1);
+    });
+
+    test("user can't zoom out after selecting country and changing indicator", async ({ page }) => {
+        const firstRegion = await getNthRegion(page, 1);
+        await firstRegion.click();
+        await expect(await page.locator("div.spinner")).toHaveCount(0);
+        await expect(await page.locator(".leaflet-control-zoom-out.leaflet-disabled")).toHaveCount(1);
+        await page.getByRole("link", { name: "serop9" }).click();
+        await page.waitForURL(/dengue\/may24\/serop9/);
+        await expect(await page.locator(".leaflet-control-zoom-out.leaflet-disabled")).toHaveCount(1);
     });
 });
