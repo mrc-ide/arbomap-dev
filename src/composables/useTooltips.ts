@@ -24,7 +24,10 @@ export const useTooltips = () => {
         const featureValues = selectedIndicators.value[featureId];
         let indicatorValues = "";
         sortedIndicators.value.forEach((metadata, indicatorKey) => {
-            const { mean } = featureValues[indicatorKey];
+            if (!featureValues[indicatorKey]) {
+                return; // shouldn't really occur, but may sometimes not have all indicator values for a feature
+            }
+            const {mean} = featureValues[indicatorKey];
             const headlineNumber = mean.toPrecision(3);
             const line = `${metadata.humanReadableName}: ${headlineNumber}${metadata.unit}<br/>`;
             indicatorValues +=
@@ -32,6 +35,7 @@ export const useTooltips = () => {
                     ? `<span class="font-weight-bold">${line}</span>`
                     : line;
         });
+
         return {
             content: `<div class="text-body-1">${featureName}</div><div class="text-body-2">${indicatorValues}</div>`,
             options: tooltipOptions

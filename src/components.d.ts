@@ -10,6 +10,7 @@ declare module 'vue' {
     Choropleth: typeof import('./components/Choropleth.vue')['default']
     ColourScaleIcon: typeof import('./components/indicatorMenu/ColourScaleIcon.vue')['default']
     IndicatorMenu: typeof import('./components/indicatorMenu/IndicatorMenu.vue')['default']
+    IndicatorSlideGroupItem: typeof import('./components/indicatorMenu/IndicatorSlideGroupItem.vue')['default']
     Legend: typeof import('./components/Legend.vue')['default']
     ResetMapButton: typeof import('./components/ResetMapButton.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']

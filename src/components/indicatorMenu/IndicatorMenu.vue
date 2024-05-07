@@ -33,43 +33,15 @@
                             :model-value="selectedIndicator"
                             @click="slideGroupClicked($event)"
                         >
-                            <v-slide-group-item
-                                :key="id"
-                                :value="id"
-                            >
-                                <router-link
-                                    :to="`/${APP_BASE_ROUTE}/${id}/${selectedCountryId}`"
-                                    custom v-slot="{ navigate }">
-                                    <v-btn
-                                        :class="id === selectedIndicator ? 'selected-item' : ''"
-                                        size="small"
-                                        class="ma-2"
-                                        rounded
-                                        @click="navigate"
-                                    >
-                                        {{appConfig.indicators[appConfig.indicatorGroups[index].mainIndicator].shortName}}
-                                    </v-btn>
-                                </router-link>
-                            </v-slide-group-item>
-                            <v-slide-group-item
+                            <IndicatorSlideGroupItem
+                                :indicator-id="id"
+                                :indicator-name="appConfig.indicators[appConfig.indicatorGroups[index].mainIndicator].shortName"
+                            ></IndicatorSlideGroupItem>
+                            <IndicatorSlideGroupItem
                                 v-for="subId in appConfig.indicatorGroups[index].subIndicators"
-                                :key="subId"
-                                :value="subId"
-                             >
-                                <router-link
-                                             :to="`/${APP_BASE_ROUTE}/${subId}/${selectedCountryId}`"
-                                             custom v-slot="{ navigate }">
-                                    <v-btn
-                                        :class="subId === selectedIndicator ? 'selected-item' : ''"
-                                        size="small"
-                                        class="ma-2"
-                                        rounded
-                                        @click="navigate"
-                                    >
-                                        {{appConfig.indicators[subId].shortName}}
-                                    </v-btn>
-                                </router-link>
-                            </v-slide-group-item>
+                                :indicator-id="subId"
+                                :indicator-name="appConfig.indicators[subId].shortName"
+                            ></IndicatorSlideGroupItem>
                         </v-slide-group>
                     </v-list-item>
                 </v-list>
