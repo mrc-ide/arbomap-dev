@@ -17,5 +17,5 @@ export interface AppState {
     admin1Geojson: Dict<Geojson>;
     admin2Indicators: Dict<FeatureIndicators>;
     admin2Geojson: Dict<Geojson>;
-    admin0Geojson: Feature | null;
+    admin0GeojsonFeature: Feature | null;
 }

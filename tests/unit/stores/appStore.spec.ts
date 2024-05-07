@@ -35,7 +35,7 @@ describe("appStore", () => {
             expect(store.selectedCountryId).toBe("TZA");
             expect(store.admin2Indicators).toStrictEqual({ TZA: MOCK_ADMIN2_INDICATORS.TZA });
             expect(store.admin2Geojson).toStrictEqual({ TZA: MOCK_ADMIN2_GEOJSON.TZA.features });
-            expect(store.admin0Geojson).toStrictEqual(MOCK_ADMIN0_GEOJSON.features[0]);
+            expect(store.admin0GeojsonFeature).toStrictEqual(MOCK_ADMIN0_GEOJSON.features[0]);
         });
     });
 
