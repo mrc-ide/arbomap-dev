@@ -140,20 +140,10 @@ const style = (f: Feature) => {
     return { className: "geojson", fillColor, color: fadeColour(fillColor) };
 };
 
-/*
-    the toRaw utility is necessary here because without it you would get console
-    errors about this._map being null from leaflet. vue 3's proxying is deep so
-    interactions with the map object (like adding a layer) will cause updates which
-    means as we process the update we might lose our reference to the map. toRaw will
-    unproxy this object so that we can use it as leaflet intended without vue reactivity
-
-    this is as far as I understand it however you can read more at:
-    https://stackoverflow.com/questions/65981712/uncaught-typeerror-this-map-is-null-vue-js-3-leaflet
-*/
-const getRawLeafletMap = () => toRaw(map.value)?.leafletObject;
+const getLeafletMap = () => map.value?.leafletObject;
 
 const updateBounds = async () => {
-    const leafletMap = getRawLeafletMap();
+    const leafletMap = getLeafletMap();
     if (!leafletMap) return;
 
     const country = selectedCountryId.value || "GLOBAL";
@@ -166,7 +156,7 @@ const updateBounds = async () => {
 };
 
 const updateMap = async (newFeatures: Feature[]) => {
-    const leafletMap = getRawLeafletMap();
+    const leafletMap = getLeafletMap();
     if (!leafletMap) return;
 
     // remove layers from map
