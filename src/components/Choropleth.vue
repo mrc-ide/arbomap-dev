@@ -148,7 +148,7 @@ const style = (f: Feature) => {
     return { className: "geojson", fillColor, color: fadeColour(fillColor) };
 };
 
-const getLeafletMap = () => map.value?.leafletObject;
+const getLeafletMap = () => map.value?.leafletObject as Map | undefined;
 
 const lockBounds = async () => {
     const leafletMap = getLeafletMap();
