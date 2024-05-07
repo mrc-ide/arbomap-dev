@@ -1,11 +1,11 @@
 <template>
     <v-theme-provider theme="dark">
-        <v-btn v-if="appConfig && selectedIndicator" style="max-width: 80vw;">
+        <v-btn v-if="appConfig && selectedIndicator" class="indicator-menu-activator">
             <p class="text-wrap">
             {{ appConfig.indicators[selectedIndicator].humanReadableName }}
             </p>
-            <v-icon icon="mdi-chevron-up" end></v-icon>
-            <v-menu activator="parent">
+            <v-icon :icon="menuOpen ? 'mdi-chevron-down' : 'mdi-chevron-up'" end></v-icon>
+            <v-menu activator="parent" v-model="menuOpen">
                 <v-list class="bg-transparent opacity-70 elevation-0" style="max-width: min(35rem, 80%);">
                     <v-list-item
                         v-for="(id, index) in indicatorGroupIds"
@@ -78,11 +78,12 @@
     </v-theme-provider>
 </template>
 <script setup lang="ts">
-import {computed} from "vue";
+import {computed, ref} from "vue";
 import {storeToRefs} from "pinia";
 import {useAppStore} from "../../stores/appStore";
 import { APP_BASE_ROUTE } from "../../router/utils";
 
+const menuOpen = ref(false);
 const { appConfig, selectedIndicator, selectedCountryId } = storeToRefs(useAppStore());
 
 const indicatorGroupIds = computed(() => appConfig.value.indicatorGroups.map((ig) => ig.mainIndicator));
@@ -96,3 +97,9 @@ const slideGroupClicked = (event: PointerEvent) => {
 };
 
 </script>
+<style lang="scss">
+  .indicator-menu-activator {
+      // don't overlap map legend
+      max-width: calc(100vw - 8rem)!important;
+  }
+</style>
