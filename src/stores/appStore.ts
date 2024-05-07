@@ -27,7 +27,8 @@ export const useAppStore = defineStore("app", {
         admin1Indicators: {},
         admin1Geojson: {},
         admin2Indicators: {},
-        admin2Geojson: {}
+        admin2Geojson: {},
+        admin0GeojsonFeature: null
     }),
     getters: {
         selectedIndicators: (state): FeatureIndicators => {
@@ -82,6 +83,7 @@ export const useAppStore = defineStore("app", {
 
             if (!countryId) {
                 this.selectedCountryId = "";
+                this.admin0GeojsonFeature = null;
                 return;
             }
 
@@ -100,6 +102,7 @@ export const useAppStore = defineStore("app", {
                 this.admin2Geojson[countryId] = await getGeojsonFeatures(countryId, level);
             }
 
+            this.admin0GeojsonFeature = (await getGeojsonFeatures(countryId, 0))[0];
             this.selectedCountryId = countryId;
         }
     }

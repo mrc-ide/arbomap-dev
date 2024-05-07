@@ -1,8 +1,10 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, Page, Locator } from "@playwright/test";
 
 test.describe("Index page", () => {
     const GEOJSON_SELECTOR = ".leaflet-pane path.geojson";
-    const getNthRegion = async (page, n) => page.locator(`:nth-match(${GEOJSON_SELECTOR}, ${n})`);
+    const COUNTRY_OUTLINE_SELECTOR = ".leaflet-pane path.country-outline";
+    const getNthRegion = async (page: Page, n: number): Promise<Locator> =>
+        page.locator(`:nth-match(${GEOJSON_SELECTOR}, ${n})`);
 
     const expectLoadingSpinnerIsShownThenRemoved = async (page) => {
         const locator = await page.locator("div.spinner");
@@ -83,6 +85,16 @@ test.describe("Index page", () => {
         await expect(await page.locator("div.spinner")).toHaveCount(0);
         await expect(await firstRegion.getAttribute("fill")).not.toEqual(colour);
         await expect(await firstRegion.getAttribute("stroke")).not.toEqual(stroke);
+    });
+
+    test("country outline is shown", async ({ page }) => {
+        const firstRegion = await getNthRegion(page, 1);
+        await expect(await page.locator("div.spinner")).toHaveCount(0);
+        await expect(await page.locator(COUNTRY_OUTLINE_SELECTOR)).toHaveCount(0);
+        await firstRegion.click();
+        await page.waitForURL(/dengue\/may24\/FOI\/AGO/i);
+        await expect(await page.locator("div.spinner")).toHaveCount(0);
+        await expect(await page.locator(COUNTRY_OUTLINE_SELECTOR)).toHaveCount(1);
     });
 
     test("link to GADM is shown", async ({ page }) => {
