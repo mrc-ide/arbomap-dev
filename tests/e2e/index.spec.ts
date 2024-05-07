@@ -117,4 +117,14 @@ test.describe("Index page", () => {
         // zoom out is disabled in leaflet
         await expect(await page.locator(".leaflet-control-zoom-out .leaflet-disabled")).toHaveCount(1);
     });
+
+    test("user can't zoom out after selecting country and changing indicator", async ({ page }) => {
+        const firstRegion = await getNthRegion(page, 1);
+        await firstRegion.click();
+        await expect(await page.locator("div.spinner")).toHaveCount(0);
+        await expect(await page.locator(".leaflet-control-zoom-out .leaflet-disabled")).toHaveCount(1);
+        await page.getByText("SEROP9").click();
+        await page.waitForURL(/dengue\/may24\/serop9/);
+        await expect(await page.locator(".leaflet-control-zoom-out .leaflet-disabled")).toHaveCount(1);
+    });
 });

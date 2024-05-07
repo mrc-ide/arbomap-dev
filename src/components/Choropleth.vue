@@ -157,24 +157,34 @@ const lockBounds = async () => {
 };
 
 const getBoundsForCountry = (countryId?: string) => {
+    if (Object.keys(countryBoundingBoxes.value).length === 0) return null;
     const [west, east, south, north] = countryBoundingBoxes.value[countryId || "GLOBAL"];
     return new LatLngBounds([south, west], [north, east]);
 };
 
 const updateBounds = async () => {
     const leafletMap = toRaw(map.value)?.leafletObject;
-    if (!leafletMap || Object.keys(countryBoundingBoxes.value).length === 0) return;
+    if (!leafletMap) return;
 
-    // need to reset min zoom and max bounds so we can zoom out to world
-    const globalBounds = getBoundsForCountry();
-    leafletMap.setMinZoom(2.5);
-    leafletMap.setMaxBounds(globalBounds);
+    const countryBounds = getBoundsForCountry(selectedCountryId.value);
+    if (!countryBounds) return;
 
-    bounds.value = selectedCountryId.value ? getBoundsForCountry(selectedCountryId.value) : globalBounds;
+    bounds.value = countryBounds;
     await leafletMap.fitBounds(bounds.value);
 };
 
-const updateMap = async (newFeatures: Feature[]) => {
+const resetMaxBoundsAndZoom = () => {
+    const leafletMap = toRaw(map.value)?.leafletObject;
+    if (!leafletMap) return;
+
+    const globalBounds = getBoundsForCountry();
+    if (!globalBounds) return;
+
+    leafletMap.setMinZoom(2.5);
+    leafletMap.setMaxBounds(globalBounds);
+};
+
+const updateMap = async (newFeatures?: Feature[]) => {
     const leafletMap = toRaw(map.value)?.leafletObject;
     if (!leafletMap) return;
 
@@ -183,7 +193,7 @@ const updateMap = async (newFeatures: Feature[]) => {
     countryOutlineLayer.value?.remove();
 
     // create new geojson and add to map
-    geoJsonLayer.value = geoJSON<FeatureProperties, Geometry>(newFeatures, {
+    geoJsonLayer.value = geoJSON<FeatureProperties, Geometry>(newFeatures || selectedFeatures.value, {
         style,
         onEachFeature: configureGeojsonLayer
     }).addTo(leafletMap);
@@ -203,8 +213,12 @@ const updateMap = async (newFeatures: Feature[]) => {
     await updateBounds();
 };
 
-watch([selectedFeatures, selectedIndicator], (newVal) => updateMap(newVal[0]));
-watch(selectedCountryId, () => {
-    isNewSelectedCountry.value = true;
+watch(selectedFeatures, (newFeatures) => {
+    resetMaxBoundsAndZoom();
+    updateMap(newFeatures);
 });
+
+watch(selectedIndicator, () => updateMap());
+
+watch(selectedCountryId, () => (isNewSelectedCountry.value = true));
 </script>
