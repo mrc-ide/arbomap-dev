@@ -29,6 +29,7 @@ import { useAppStore } from "../stores/appStore";
 import { useColourScale } from "../composables/useColourScale";
 import "leaflet/dist/leaflet.css";
 import { useLoadingSpinner } from "../composables/useLoadingSpinner";
+import { useTooltips } from "../composables/useTooltips";
 import { APP_BASE_ROUTE } from "../router/utils";
 import { debounce } from "../utils";
 
@@ -49,6 +50,7 @@ const bounds = ref<Bounds | null>(null);
 const geoJsonLayer = ref<GeoJSON<FeatureProperties, Geometry>>(geoJSON(undefined));
 const waitingForMapBounds = ref(true);
 
+const { tooltipForFeature } = useTooltips();
 const router = useRouter();
 const { selectedFeatures, selectedIndicators, selectedIndicator, selectedCountryId, appConfig, countryBoundingBoxes } =
     storeToRefs(useAppStore());
@@ -88,24 +90,9 @@ const dataSummary = computed(() => ({
     bounds: `S: ${bounds.value?.south} W: ${bounds.value?.west} N: ${bounds.value?.north} E: ${bounds.value?.east}`
 }));
 
-// TODO: pull out tooltips stuff into composable when fully implement
-const tooltipForFeature = (feature: Feature) => {
-    let indicatorValues = "";
-    const fid = getFeatureId(feature);
-    if (fid in selectedIndicators.value) {
-        const featureValues = selectedIndicators.value[fid];
-        indicatorValues = Object.keys(featureValues)
-            .map((key) => {
-                return `${key}: ${featureValues[key].mean}<br/>`;
-            })
-            .join("");
-    }
-    const name = getFeatureName(feature) || getFeatureId(feature);
-    return `<div><strong>${name}</strong></div><div>${indicatorValues}</div>`;
-};
-
 const configureGeojsonLayer = (feature: Feature, layer: Layer) => {
-    layer.bindTooltip(tooltipForFeature(feature));
+    const tooltip = tooltipForFeature(getFeatureId(feature), getFeatureName(feature));
+    if (tooltip) layer.bindTooltip(tooltip.content, tooltip.options);
     layer.on({
         click: async () => {
             waitingForMapBounds.value = true;
