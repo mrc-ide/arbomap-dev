@@ -4,16 +4,17 @@ const BASE_URL = "/dengue/may24";
 const expectIndexPage = async (
     page,
     url: string,
-    selectedIndicator: string,
+    selectedIndicatorId: string,
+    selectedIndicatorName: string,
     selectedCountry: string,
     scale: string,
     featureCount: number,
     selectedCountryFeatureCount: number
 ) => {
     await page.waitForURL(new RegExp(`${BASE_URL}${url}`));
-    await expect(await page.textContent("button.bg-blue")).toBe(selectedIndicator);
+    await expect(await page.textContent(".indicator-menu-activator")).toBe(selectedIndicatorName);
     const summary = await page.locator(".choropleth-data-summary");
-    await expect(await summary).toHaveAttribute("selected-indicator", selectedIndicator);
+    await expect(await summary).toHaveAttribute("selected-indicator", selectedIndicatorId);
     await expect(await summary).toHaveAttribute("selected-country-id", selectedCountry);
     await expect(await summary).toHaveAttribute("colour-scale", scale);
     await expect(await summary).toHaveAttribute("feature-count", featureCount.toString());
@@ -24,7 +25,7 @@ const expectIndexPage = async (
 };
 
 const expectDefaultView = async (page) => {
-    await expectIndexPage(page, "/FOI", "FOI", "", "interpolateRdYlBu", 1915, 0);
+    await expectIndexPage(page, "/FOI", "FOI", "Force of infection", "", "interpolateRdYlBu", 1915, 0);
 };
 
 test.describe("Router", () => {
@@ -45,18 +46,18 @@ test.describe("Router", () => {
 
     test("browse to indicator loads expected data", async ({ page }) => {
         await page.goto(`${BASE_URL}/serop9`);
-        await expectIndexPage(page, "/serop9", "serop9", "", "interpolateGreens", 1915, 0);
+        await expectIndexPage(page, "/serop9", "serop9", "Seroprevalence at 9 years of age", "", "interpolateGreens", 1915, 0);
     });
 
     test("browse to indicator and country loads expected data", async ({ page }) => {
         await page.goto(`${BASE_URL}/FOI/TZA`);
-        await expectIndexPage(page, "/FOI/TZA", "FOI", "TZA", "interpolateRdYlBu", 2070, 186);
+        await expectIndexPage(page, "/FOI/TZA", "FOI", "Force of infection", "TZA", "interpolateRdYlBu", 2070, 186);
     });
 
     test("is case-insensitive", async ({ page }) => {
         await page.goto("/DENGUE/May24/SEROP9/tza");
         await page.waitForURL(/\/DENGUE\/May24\/SEROP9\/tza/);
-        await expect(await page.textContent("button.bg-blue")).toBe("serop9");
+        await expect(await page.textContent(".indicator-menu-activator")).toBe("Seroprevalence at 9 years of age");
         const summary = await page.locator(".choropleth-data-summary");
         await expect(await summary).toHaveAttribute("colour-scale", "interpolateGreens");
         await expect(await summary).toHaveAttribute("feature-count", "2070");

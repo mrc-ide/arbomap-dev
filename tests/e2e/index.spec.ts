@@ -58,8 +58,11 @@ test.describe("Index page", () => {
     test("changing selected indicator changes route and colours on map", async ({ page }) => {
         const firstRegion = await getNthRegion(page, 1);
         const colour = await firstRegion.getAttribute("fill");
-        const stroke = await firstRegion.getAttribute("stroke");
-        await page.getByText("SEROP9").click();
+        const stroke = await firstRegion.getAttribute("stroke")
+        // open menu
+        await page.click(".indicator-menu-activator");
+        // click menu item
+        await page.getByText("Seroprevalence at 9 years of age").click();
         await page.waitForURL(/dengue\/may24\/serop9/);
         await expect(await firstRegion.getAttribute("fill")).not.toEqual(colour);
         await expect(await firstRegion.getAttribute("stroke")).not.toEqual(stroke);
@@ -69,9 +72,12 @@ test.describe("Index page", () => {
         const firstRegion = await getNthRegion(page, 1);
         await firstRegion.hover();
         await expect(await page.innerText(".leaflet-tooltip-pane")).toContain("Bengo");
-        await expect(await page.innerText(".leaflet-tooltip-pane")).toContain("Force of infection: 0.0134");
+        await expect(await page.innerText(".leaflet-tooltip-pane")).toContain("Force of infection: 0.0455");
         await expect(await page.innerText(".leaflet-tooltip-pane")).toContain(
-            "Seroprevalence at 9 years of age: 62.0%"
+            "Seroprevalence at 9 years of age: 33.5%"
+        );
+        await expect(await page.innerText(".leaflet-tooltip-pane")).toContain(
+            "Hospital admissions: 126"
         );
     });
 
@@ -111,5 +117,30 @@ test.describe("Index page", () => {
         await page.locator('a[title="Reset map"]').click();
         await expect(await allRegions).toHaveCount(1833);
         await expect(page).toHaveURL("/dengue/may24/serop9");
+    });
+
+    test("indicator menu renders as expected", async ({ page }) => {
+        await page.click(".indicator-menu-activator");
+        await expect(await page.locator(".v-menu .v-list-item").count()).toBe(3);
+        const foiMenuItem = await page.locator(":nth-match(.v-menu .v-list-item, 1)");
+        await expect(await foiMenuItem.locator(".v-list-item-title").innerText()).toBe("Force of infection");
+        await expect(await foiMenuItem.locator(".v-list-item-subtitle").innerText())
+            .toBe("Annual per capita risk of dengue infection for a susceptible person");
+        const hospMenuItem = await page.locator(":nth-match(.v-menu .v-list-item, 3)");
+        await expect(await hospMenuItem.locator(".v-list-item-title").innerText()).toBe("Hospital admissions");
+        await expect(await hospMenuItem.locator(".v-list-item-subtitle").innerText())
+            .toBe("Annual number of hospital admissions per 100,000 population by age group");
+
+        const ageGroupButtons = await page.locator(".v-slide-group button");
+        await expect(await ageGroupButtons.count()).toBe(21);
+        await expect(await ageGroupButtons.first().innerText()).toBe("ALL AGES");
+        await expect(await ageGroupButtons.nth(1).innerText()).toBe("0-4");
+        await expect(await ageGroupButtons.last().innerText()).toBe("95-99");
+    });
+
+    test("clicking hospitalisation age group browses to indicator", async ({ page }) => {
+        await page.click(".indicator-menu-activator");
+        await page.locator(":nth-match(.v-slide-group button, 3)").click();
+        await page.waitForURL(/dengue\/may24\/hosp_5_9/i);
     });
 });
