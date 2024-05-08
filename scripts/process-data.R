@@ -63,8 +63,7 @@ process <- function(path, dest, level) {
   }
 }
 
-#root <- here::here()
-root <- "/home/emma/dev/arbomap"
+root <- here::here()
 process(file.path(root, "data/raw/Adm1_Estimates_v3_gadm41.xlsx"),
         file.path(root, "data/processed/admin1"),
         1)

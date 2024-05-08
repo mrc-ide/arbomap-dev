@@ -71,5 +71,3 @@
         </v-col>
     </v-container>
 </template>
-<script setup>
-</script>
