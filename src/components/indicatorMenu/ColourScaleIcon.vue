@@ -1,5 +1,5 @@
 <template>
-    <svg :width="size" :height="size">
+    <svg role="presentation" :width="size" :height="size">
         <rect :width="size" :height="size" :fill="getColour(0.7)"/>
         <rect :width="size/2" :height="size" :fill="getColour(0.9)"/>
         <polygon :points="`0,0 0,${0.7 * size} ${halfway},${halfway} ${halfway},0`" :fill="getColour(0.4)" />

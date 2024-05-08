@@ -1,6 +1,6 @@
 import {describe, expect, test, beforeEach, vi} from "vitest";
 import { render, screen } from "@testing-library/vue";
-import { userEvent } from "@testing-library/user-event"
+import { userEvent } from "@testing-library/user-event";
 import {mockVuetify} from "../../mocks/mockVuetify";
 import {mockPinia} from "../../mocks/mockPinia";
 import router from "../../../../src/router";
