@@ -69,7 +69,10 @@ test.describe("Index page", () => {
         const firstRegion = await getNthRegion(page, 1);
         await firstRegion.hover();
         await expect(await page.innerText(".leaflet-tooltip-pane")).toContain("Bengo");
-        await expect(await page.innerText(".leaflet-tooltip-pane")).toContain("FOI: 0.0134");
+        await expect(await page.innerText(".leaflet-tooltip-pane")).toContain("Force of infection: 0.0134");
+        await expect(await page.innerText(".leaflet-tooltip-pane")).toContain(
+            "Seroprevalence at 9 years of age: 62.0%"
+        );
     });
 
     test("selecting country fades colours of other countries", async ({ page }) => {
