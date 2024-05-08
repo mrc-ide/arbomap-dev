@@ -4,7 +4,7 @@
             class="map"
             ref="map"
             style="height: calc(100vh - 48px); width: 100%"
-            @update:bounds="mapBoundsUpdated"
+            @update:bounds="finishUpdatingMap"
             @ready="() => updateMap(selectedFeatures)"
             :max-bounds-viscosity="1"
         >
@@ -13,212 +13,87 @@
                 <Legend :numberOfSteps="6" />
             </LControl>
             <LControl position="topleft">
-                <ResetMapButton :selected-indicator="selectedIndicator" @reset-view="updateBounds" />
+                <ResetMapButton :selected-indicator="selectedIndicator" @reset-view="updateRegionBounds" />
             </LControl>
         </LMap>
         <div style="visibility: hidden" class="choropleth-data-summary" v-bind="dataSummary"></div>
     </div>
 </template>
 <script setup lang="ts">
-import { ref, computed, watch } from "vue";
+import { watch } from "vue";
 import { storeToRefs } from "pinia";
-import { LatLngBounds, Layer, geoJSON, GeoJSON, polyline, Polyline, Map } from "leaflet";
 import { LMap, LTileLayer, LControl } from "@vue-leaflet/vue-leaflet";
-import { Feature, Geometry } from "geojson";
+import { Feature } from "geojson";
 import { useRouter } from "vue-router";
-import Color from "color";
 import { useAppStore } from "../stores/appStore";
 import { useColourScale } from "../composables/useColourScale";
+import { useLeaflet } from "../composables/useLeaflet";
 import "leaflet/dist/leaflet.css";
-import { useLoadingSpinner } from "../composables/useLoadingSpinner";
 import { useTooltips } from "../composables/useTooltips";
+import { useDataSummary } from "../composables/useDataSummary";
 import { APP_BASE_ROUTE } from "../router/utils";
-import { debounce } from "../utils";
+import { debounce, backgroundLayer } from "../utils";
+import { useLoadingSpinner } from "../composables/useLoadingSpinner";
 
-type FeatureProperties = { GID_0: string; GID_1: string; NAME_1: string };
-
-const backgroundLayer = {
-    url: "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}",
-    attribution:
-        "Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ; " +
-        "Boundaries: <a href='https://gadm.org' target='_blank'>GADM</a> version 4.1",
-    maxZoom: 10,
-    minZoom: 3
-};
-
-const map = shallowRef<typeof LMap | null>(null);
-const bounds = ref<LatLngBounds | null>(null);
-const geoJsonLayer = shallowRef<GeoJSON<FeatureProperties, Geometry>>(geoJSON(undefined));
-const countryOutlineLayer = shallowRef<Polyline | null>(null);
-const waitingForMapBounds = ref(true);
-const isNewSelectedCountry = ref(false);
-const layerWithOpenTooltip = shallowRef<Layer | null>(null);
-
-const { tooltipForFeature } = useTooltips();
+const mapLoading = ref(true);
 const router = useRouter();
-const {
-    selectedFeatures,
-    selectedIndicators,
-    selectedIndicator,
-    selectedCountryId,
-    appConfig,
-    countryBoundingBoxes,
-    admin0GeojsonFeature
-} = storeToRefs(useAppStore());
-
-useLoadingSpinner(map, waitingForMapBounds);
-
-const { getColour } = useColourScale(selectedIndicators);
-
+const { selectedFeatures, selectedIndicators, selectedIndicator, selectedCountryId, appConfig } =
+    storeToRefs(useAppStore());
 const featureProperties = appConfig.value.geoJsonFeatureProperties;
 
-const featureInSelectedCountry = (feature: Feature, selectedCountry) =>
+const { tooltipForFeature } = useTooltips();
+const { getFillAndOutlineColour } = useColourScale(selectedIndicators);
+
+const featureInSelectedCountry = (feature: Feature, selectedCountry: string) =>
     feature.properties[featureProperties.country] === selectedCountry;
+
 const getFeatureId = (feature: Feature) =>
     featureInSelectedCountry(feature, selectedCountryId.value)
         ? feature.properties![featureProperties.idAdm2]
         : feature.properties![featureProperties.idAdm1];
+
 const getFeatureName = (feature: Feature) =>
     featureInSelectedCountry(feature, selectedCountryId.value)
         ? feature.properties![featureProperties.nameAdm2]
         : feature.properties![featureProperties.nameAdm1];
 
-const getColourForFeature = (feature, indicator) => {
-    const featureId = getFeatureId(feature);
-    const featureIndicators = selectedIndicators.value[featureId];
-    return getColour(indicator, featureIndicators);
+const style = (f: Feature) => {
+    const isFaded = !!selectedCountryId.value && !featureInSelectedCountry(f, selectedCountryId.value);
+    const styleColors = getFillAndOutlineColour(selectedIndicator.value, getFeatureId(f), isFaded);
+    return { className: "geojson", ...styleColors };
 };
 
-// Useful for the e2e tests
-const dataSummary = computed(() => ({
-    "selected-indicator": selectedIndicator.value,
-    "selected-country-id": selectedCountryId.value,
-    "colour-scale": appConfig.value?.indicators[selectedIndicator.value]?.colourScale.name,
-    "feature-count": selectedFeatures.value.length,
-    "selected-country-feature-count": selectedFeatures.value.filter(
-        (f) => f.properties![featureProperties.country] === selectedCountryId.value
-    ).length,
-    bounds:
-        `S: ${bounds.value?.getSouth()} W: ${bounds.value?.getWest()} N: ${bounds.value?.getNorth()}` +
-        `E: ${bounds.value?.getEast()}`
-}));
+const getTooltip = (feature: Feature) => tooltipForFeature(getFeatureId(feature), getFeatureName(feature));
 
-const configureGeojsonLayer = (feature: Feature, layer: Layer) => {
-    const tooltip = tooltipForFeature(getFeatureId(feature), getFeatureName(feature));
-    if (tooltip) layer.bindTooltip(tooltip.content, tooltip.options);
-    layer.on({
-        click: async () => {
-            waitingForMapBounds.value = true;
+const layerOnEvents = (feature: Feature) => {
+    return {
+        click: () => {
+            mapLoading.value = true;
             const country = feature.properties[featureProperties.country];
             // select feature's country, or unselect if click on it when already selected
             const countryToSelect = country === selectedCountryId.value ? "" : country;
             debounce(() => router.push(`/${APP_BASE_ROUTE}/${selectedIndicator.value}/${countryToSelect}`))();
-        },
-        tooltipopen: () => {
-            // in the past tooltips remained open when you clicked and dragged on the
-            // map while the bounds were locked, now we track each layer that will open a
-            // tooltip and close them if they are not the most recent layer to make sure
-            // no old tooltips remain open
-            layerWithOpenTooltip.value?.closeTooltip();
-            layerWithOpenTooltip.value = layer;
         }
-    });
+    };
 };
 
-const fadeColour = (fillColor: string, desaturate = 0.7, fade = 0.7) => {
-    // for drawing borders more subtly and fading our features, desaturate
-    // and fade the color returned from color scale in rgb format
-    const c = Color(fillColor);
-    return c.desaturate(desaturate).fade(fade).rgb();
-};
+const { map, bounds, lockBounds, updateLeafletMap, handleMapBoundsUpdated, updateRegionBounds, resetMaxBoundsAndZoom } =
+    useLeaflet(style, getTooltip, layerOnEvents);
+useLoadingSpinner(map, mapLoading);
+const { dataSummary } = useDataSummary(bounds);
 
-const style = (f: Feature) => {
-    const isFaded = selectedCountryId.value && f.properties![featureProperties.country] !== selectedCountryId.value;
-    const featureColour = getColourForFeature(f, selectedIndicator.value);
-    const fillColor = isFaded ? fadeColour(featureColour, 0.5, 0.6) : featureColour;
-    return { className: "geojson", fillColor, color: fadeColour(fillColor) };
-};
-
-const getLeafletMap = () => map.value?.leafletObject as Map | undefined;
-
-const mapBoundsUpdated = async () => {
-    const leafletMap = getLeafletMap();
-    if (!leafletMap) return;
-
-    if (isNewSelectedCountry.value && selectedCountryId.value) {
-        leafletMap.setMaxBounds(leafletMap.getBounds());
-        leafletMap.setMinZoom(leafletMap.getZoom());
-    }
-
-    isNewSelectedCountry.value = false;
-    waitingForMapBounds.value = false;
-};
-
-const getRegionBounds = (countryId?: string) => {
-    if (Object.keys(countryBoundingBoxes.value).length === 0) return null;
-    const [west, east, south, north] = countryBoundingBoxes.value[countryId || "GLOBAL"];
-    return new LatLngBounds([south, west], [north, east]);
-};
-
-const updateBounds = async () => {
-    const leafletMap = getLeafletMap();
-    if (!leafletMap) return;
-
-    const countryBounds = getRegionBounds(selectedCountryId.value);
-    if (!countryBounds) return;
-
-    bounds.value = countryBounds;
-    await leafletMap.fitBounds(bounds.value);
-};
-
-const resetMaxBoundsAndZoom = () => {
-    const leafletMap = getLeafletMap();
-    if (!leafletMap) return;
-
-    const globalBounds = getRegionBounds();
-    if (!globalBounds) return;
-
-    leafletMap.setMinZoom(3);
-    leafletMap.setMaxBounds(globalBounds);
-};
-
-const updateMap = async (newFeatures?: Feature[]) => {
-    const leafletMap = getLeafletMap();
-    if (!leafletMap) return;
-
-    // remove layers from map
-    geoJsonLayer.value.remove();
-    countryOutlineLayer.value?.remove();
-
-    // create new geojson and add to map
-    geoJsonLayer.value = geoJSON<FeatureProperties, Geometry>(newFeatures || selectedFeatures.value, {
-        style,
-        onEachFeature: configureGeojsonLayer
-    }).addTo(leafletMap);
-
-    // adding country outline if we have a admin0GeojsonFeature
-    // note: the className is just for testing
-    if (admin0GeojsonFeature.value) {
-        const latLngs = GeoJSON.coordsToLatLngs(admin0GeojsonFeature.value.geometry.coordinates, 2);
-        countryOutlineLayer.value = polyline(latLngs, {
-            color: "black",
-            weight: 1,
-            opacity: 0.5,
-            className: "country-outline"
-        }).addTo(leafletMap);
-    }
-
-    await updateBounds();
-};
-
-watch(selectedFeatures, (newFeatures) => {
+const updateMap = (features: Feature[]) => {
     resetMaxBoundsAndZoom();
-    updateMap(newFeatures);
-});
+    if (selectedCountryId.value) {
+        lockBounds.value = true;
+    }
+    updateLeafletMap(features, selectedCountryId.value);
+};
 
-watch(selectedIndicator, () => updateMap());
+const finishUpdatingMap = () => {
+    handleMapBoundsUpdated();
+    mapLoading.value = false;
+};
 
-watch(selectedCountryId, () => {
-    isNewSelectedCountry.value = true;
-});
+watch([selectedFeatures, selectedIndicator], ([newFeatures]) => updateMap(newFeatures));
 </script>
