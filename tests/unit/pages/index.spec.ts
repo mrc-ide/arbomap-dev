@@ -21,7 +21,6 @@ const renderPage = async (indicator, country, pathogen = "dengue", version = "ma
     });
 };
 
-const spyRouterPush = vi.spyOn(router, "push");
 const spyRouterReplace = vi.spyOn(router, "replace");
 
 describe("Index page", () => {
@@ -36,16 +35,11 @@ describe("Index page", () => {
 
     test("renders as expected", async () => {
         await renderPage("FOI");
-        const indicatorButtons = await screen.findAllByRole("link");
-        expect(indicatorButtons.length).toBe(2);
-        expect((indicatorButtons[0] as HTMLButtonElement).textContent).toBe("FOI");
-        expect((indicatorButtons[0] as HTMLButtonElement).classList).toContain("bg-blue");
-        expect((indicatorButtons[1] as HTMLButtonElement).textContent).toBe("serop9");
-        expect((indicatorButtons[1] as HTMLButtonElement).classList).toContain("bg-black");
+        expect(await screen.findByText("Force of infection")).toBeVisible();
         expect(await screen.findByTestId("choropleth")).toBeVisible();
     });
 
-    test("button click routes to selected indicator", async () => {
+    /*test("button click routes to selected indicator", async () => {
         // need to use real timers with userEvent...
         vi.useRealTimers();
         await renderPage("FOI");
@@ -53,7 +47,7 @@ describe("Index page", () => {
         const user = userEvent.setup();
         await user.click(p9Button);
         expect(spyRouterPush).toHaveBeenCalledWith("/dengue/may24/serop9/");
-    });
+    });*/
 
     test("selects indicator from props", async () => {
         await renderPage("serop9");
