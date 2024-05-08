@@ -15,8 +15,11 @@
             <LControl position="topleft">
                 <ResetMapButton :selected-indicator="mapSettings.indicator" @reset-view="updateRegionBounds" />
             </LControl>
-            <LControl position="topright" v-if="mapSettings.country">
-                <AdminLevelToggle @change-admin-level="handleChangeAdminLevel" />
+            <LControl position="topright">
+                <AdminLevelToggle @change-admin-level="handleChangeAdminLevel" v-if="mapSettings.country" />
+                <div class="float-right">
+                    <HelpAlert />
+                </div>
             </LControl>
         </LMap>
         <div style="visibility: hidden" class="choropleth-data-summary" v-bind="dataSummary"></div>
