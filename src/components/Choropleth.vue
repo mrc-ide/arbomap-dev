@@ -4,7 +4,7 @@
             class="map"
             ref="map"
             style="height: calc(100vh - 48px); width: 100%"
-            @update:bounds="lockBounds"
+            @update:bounds="mapBoundsUpdated"
             @ready="() => updateMap(selectedFeatures)"
             :max-bounds-viscosity="1"
         >
@@ -145,7 +145,7 @@ const style = (f: Feature) => {
 
 const getLeafletMap = () => map.value?.leafletObject;
 
-const lockBounds = async () => {
+const mapBoundsUpdated = async () => {
     const leafletMap = getLeafletMap();
     if (!leafletMap) return;
 
@@ -158,17 +158,17 @@ const lockBounds = async () => {
     waitingForMapBounds.value = false;
 };
 
-const getBoundsForCountry = (countryId?: string) => {
+const getRegionBounds = (countryId?: string) => {
     if (Object.keys(countryBoundingBoxes.value).length === 0) return null;
     const [west, east, south, north] = countryBoundingBoxes.value[countryId || "GLOBAL"];
     return new LatLngBounds([south, west], [north, east]);
 };
 
 const updateBounds = async () => {
-    const leafletMap = toRaw(map.value)?.leafletObject;
+    const leafletMap = getLeafletMap();
     if (!leafletMap) return;
 
-    const countryBounds = getBoundsForCountry(selectedCountryId.value);
+    const countryBounds = getRegionBounds(selectedCountryId.value);
     if (!countryBounds) return;
 
     bounds.value = countryBounds;
@@ -176,13 +176,13 @@ const updateBounds = async () => {
 };
 
 const resetMaxBoundsAndZoom = () => {
-    const leafletMap = toRaw(map.value)?.leafletObject;
+    const leafletMap = getLeafletMap();
     if (!leafletMap) return;
 
-    const globalBounds = getBoundsForCountry();
+    const globalBounds = getRegionBounds();
     if (!globalBounds) return;
 
-    leafletMap.setMinZoom(2.5);
+    leafletMap.setMinZoom(3);
     leafletMap.setMaxBounds(globalBounds);
 };
 
