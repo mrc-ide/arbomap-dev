@@ -65,6 +65,9 @@ const style = (f: Feature) => {
 
 const getTooltip = (feature: Feature) => tooltipForFeature(getFeatureId(feature), getFeatureName(feature));
 
+// when rendering the geojson, leaflet will attach event listener specified here to each feature.
+// here we use it to control mapLoading element and changing the URL of the app when they click on
+// a feature based on what country it is
 const layerOnEvents = (feature: Feature) => {
     return {
         click: () => {

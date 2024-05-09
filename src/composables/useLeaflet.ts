@@ -29,17 +29,29 @@ export const useLeaflet = (
     layerEvents: (f: Feature) => LeafletEventHandlerFnMap
 ) => {
     // external refs: map related
+
     const map = shallowRef<typeof LMap | null>(null);
     const getLeafletMap = () => map.value!.leafletObject as Map | undefined;
 
     // external refs: bounds related
+
     const bounds = ref<LatLngBounds | null>(null);
+    // toggling lockBounds on before updating the leaflet map
+    // will lock the minZoom and maxBounds (effectively stops the
+    // user from zooming out to the world when they have selected a
+    // country or moving around the map to see different countries).
+
+    // This toggle will be switched the false at the end of every map
+    // update to make sure the user is not constantly zooming in and being
+    // locked to that zoom and view.
     const lockBounds = ref<boolean>(false);
 
     // external refs: e2e test related
+
     const { dataSummary } = useDataSummary(bounds);
 
     // internal refs
+
     const geoJsonLayer = shallowRef<GeoJSON<FeatureProperties, Geometry>>(geoJSON(undefined));
     const countryOutlineLayer = shallowRef<Polyline | null>(null);
     const layerWithOpenTooltip = shallowRef<Layer | null>(null);
