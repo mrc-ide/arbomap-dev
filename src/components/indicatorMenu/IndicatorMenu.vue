@@ -16,7 +16,7 @@
                         active-class="selected-item"
                     >
                         <router-link :to="`/${APP_BASE_ROUTE}/${id}/${selectedCountryId}`" custom v-slot="{ navigate }">
-                            <button type="button" @click="navigate">
+                            <button class="text-left" type="button" @click="navigate">
                                 <ColourScaleIcon class="float-left mr-1" :size="24" :indicator="id"></ColourScaleIcon>
                                 <v-list-item-title>
                                     {{ appConfig.indicators[id].humanReadableName }}
