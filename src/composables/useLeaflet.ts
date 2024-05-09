@@ -83,10 +83,10 @@ export const useLeaflet = (
     // are added to the map to set the view and zoom of the map
     const updateRegionBounds = (regionId?: string) => {
         const leafletMap = getLeafletMap();
-        const countryBounds = getRegionBounds(regionId);
+        const regionBounds = getRegionBounds(regionId);
 
-        if (leafletMap && countryBounds) {
-            bounds.value = countryBounds;
+        if (leafletMap && regionBounds) {
+            bounds.value = regionBounds;
             leafletMap.fitBounds(bounds.value);
         }
     };
