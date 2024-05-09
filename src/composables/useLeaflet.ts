@@ -40,7 +40,7 @@ export const useLeaflet = (
     // user from zooming out to the world when they have selected a
     // country or moving around the map to see different countries).
 
-    // This toggle will be switched the false at the end of every map
+    // This toggle will be switched to false at the end of every map
     // update to make sure the user is not constantly zooming in and being
     // locked to that zoom and view.
     const lockBounds = ref<boolean>(false);
