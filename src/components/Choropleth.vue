@@ -87,12 +87,10 @@ const {
     updateLeafletMap,
     handleMapBoundsUpdated,
     updateRegionBounds,
-    resetMaxBoundsAndZoom
 } = useLeaflet(style, getTooltip, layerOnEvents);
 useLoadingSpinner(map, mapLoading);
 
 const updateMap = (features: Feature[]) => {
-    resetMaxBoundsAndZoom();
     if (selectedCountryId.value) {
         lockBounds.value = true;
     }

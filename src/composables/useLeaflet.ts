@@ -35,7 +35,6 @@ export const useLeaflet = (
 
     // external refs: bounds related
 
-    const bounds = ref<LatLngBounds | null>(null);
     // toggling lockBounds on before updating the leaflet map
     // will lock the minZoom and maxBounds (effectively stops the
     // user from zooming out to the world when they have selected a
@@ -46,15 +45,16 @@ export const useLeaflet = (
     // locked to that zoom and view.
     const lockBounds = ref<boolean>(false);
 
-    // external refs: e2e test related
-
-    const { dataSummary } = useDataSummary(bounds);
-
     // internal refs
 
     const geoJsonLayer = shallowRef<GeoJSON<FeatureProperties, Geometry>>(geoJSON(undefined));
     const countryOutlineLayer = shallowRef<Polyline | null>(null);
     const layerWithOpenTooltip = shallowRef<Layer | null>(null);
+    const bounds = ref<LatLngBounds | null>(null);
+
+    // external refs: e2e test related
+
+    const { dataSummary } = useDataSummary(bounds);
 
     const { countryBoundingBoxes, admin0GeojsonFeature } = storeToRefs(useAppStore());
 
@@ -64,6 +64,9 @@ export const useLeaflet = (
         return new LatLngBounds([south, west], [north, east]);
     };
 
+    // this is the last function we trigger when the map is updated. we trigger this
+    // to make sure we lock the current bounds if necessary and turn the lockBounds
+    // toggle off so we don't keep locking the bounds
     const handleMapBoundsUpdated = () => {
         const leafletMap = getLeafletMap();
         if (!leafletMap) return;
@@ -76,6 +79,8 @@ export const useLeaflet = (
         lockBounds.value = false;
     };
 
+    // we trigger this at the end of update map, after all the layers
+    // are added to the map to set the view and zoom of the map
     const updateRegionBounds = (regionId?: string) => {
         const leafletMap = getLeafletMap();
         const countryBounds = getRegionBounds(regionId);
@@ -86,6 +91,10 @@ export const useLeaflet = (
         }
     };
 
+    // this is called at the start of any map update because if a user
+    // wants to go back to world view from a country view then we need
+    // to zoom out which is not possible if we have locked the zoom and
+    // country bounds
     const resetMaxBoundsAndZoom = () => {
         const leafletMap = getLeafletMap();
         const globalBounds = getRegionBounds();
@@ -96,6 +105,9 @@ export const useLeaflet = (
         }
     };
 
+    // this is run for every single feature that we display, we can attach
+    // tooltips and any events to our features, the user of useLeaflet can
+    // attach events to features via layerEvents
     const configureGeojsonLayer = (feature: Feature, layer: Layer) => {
         const tooltip = getTooltip(feature);
         layer.bindTooltip(tooltip?.content, tooltip?.options);
@@ -112,9 +124,13 @@ export const useLeaflet = (
         });
     };
 
+    // this is the main function that updates the map, should be called in an appropriate
+    // watcher
     const updateLeafletMap = (newFeatures: Feature[], regionId: string) => {
         const leafletMap = getLeafletMap();
         if (!leafletMap) return;
+
+        resetMaxBoundsAndZoom();
 
         // remove layers from map
         geoJsonLayer.value.remove();
@@ -144,11 +160,9 @@ export const useLeaflet = (
 
     return {
         map,
-        bounds,
         lockBounds,
         dataSummary,
         updateLeafletMap,
-        resetMaxBoundsAndZoom,
         updateRegionBounds,
         handleMapBoundsUpdated
     };
