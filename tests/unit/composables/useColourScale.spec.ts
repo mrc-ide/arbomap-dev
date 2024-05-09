@@ -28,7 +28,10 @@ describe("useColourScale", () => {
         const sut = useColourScale(indicatorValues);
         expect(sut.colourScales.value).toStrictEqual({
             FOI: d3ScaleChromatic.interpolateReds,
-            serop9: d3ScaleChromatic.interpolateBlues
+            serop9: d3ScaleChromatic.interpolateBlues,
+            hosp_total: d3ScaleChromatic.interpolatePurples,
+            hosp_0_4: d3ScaleChromatic.interpolatePurples,
+            hosp_5_9: d3ScaleChromatic.interpolatePurples
         });
     });
 
