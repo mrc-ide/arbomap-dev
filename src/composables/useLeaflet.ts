@@ -20,7 +20,7 @@ import { useDataSummary } from "./useDataSummary";
 
 type FeatureProperties = { GID_0: string; GID_1: string; NAME_1: string };
 type TooltipOptionAndContent = { content: string; options?: TooltipOptions };
-// laeflet geojson options do not include smoothFactor, probably outdated
+// leaflet geojson options do not include smoothFactor, probably outdated
 type GeojsonOptions = GeoJSONOptions<FeatureProperties, Geometry> & { smoothFactor: number };
 
 export const useLeaflet = (
