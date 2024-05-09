@@ -80,8 +80,15 @@ const layerOnEvents = (feature: Feature) => {
     };
 };
 
-const { map, dataSummary, lockBounds, updateLeafletMap, handleMapBoundsUpdated, updateRegionBounds, resetMaxBoundsAndZoom } =
-    useLeaflet(style, getTooltip, layerOnEvents);
+const {
+    map,
+    dataSummary,
+    lockBounds,
+    updateLeafletMap,
+    handleMapBoundsUpdated,
+    updateRegionBounds,
+    resetMaxBoundsAndZoom
+} = useLeaflet(style, getTooltip, layerOnEvents);
 useLoadingSpinner(map, mapLoading);
 
 const updateMap = (features: Feature[]) => {

@@ -15,7 +15,7 @@ import {
 } from "leaflet";
 import { storeToRefs } from "pinia";
 import { useAppStore } from "../stores/appStore";
-import { minZoom } from "../composables/utils";
+import { minZoom } from "./utils";
 import { useDataSummary } from "./useDataSummary";
 
 type FeatureProperties = { GID_0: string; GID_1: string; NAME_1: string };
