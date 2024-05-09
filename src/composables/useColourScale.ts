@@ -66,20 +66,23 @@ export const useColourScale = (selectedIndicators: Ref<Dict<FeatureIndicatorValu
         return c.desaturate(desaturate).fade(fade).rgb().string();
     };
 
+    const noIndicatorsColour = "transparent";
+    const noScalesColour = "rgb(200, 200, 200)";
+    const noScalesColourFaded = fadeColour("rgb(200, 200, 200)");
+
     const getFillAndOutlineColour = (indicator: string, featureId: string, isFaded: boolean): FillAndOutlineColour => {
         const featureIndicators = selectedIndicators.value[featureId] as FeatureIndicatorValues | undefined;
 
         // If indicators do not exist for this feature, return transparent
         if (!featureIndicators) {
             return {
-                fillColor: "transparent",
-                color: "transparent"
+                fillColor: noIndicatorsColour,
+                color: noIndicatorsColour
             };
         }
 
         if (!indicatorExtremes.value || !colourScales.value) {
-            const colour = "rgb(200, 200, 200)";
-            const baseColour = isFaded ? fadeColour(colour) : colour;
+            const baseColour = isFaded ? noScalesColourFaded : noScalesColour;
             return {
                 fillColor: baseColour,
                 color: fadeColour(baseColour)
