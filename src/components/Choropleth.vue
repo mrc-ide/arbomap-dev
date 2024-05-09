@@ -4,8 +4,9 @@
             class="map"
             ref="map"
             style="height: calc(100vh - 48px); width: 100%"
-            @update:bounds="waitingForMapBounds = false"
+            @update:bounds="mapBoundsUpdated"
             @ready="() => updateMap(selectedFeatures)"
+            :max-bounds-viscosity="1"
         >
             <LTileLayer v-once data-testid="tile-layer" v-bind="backgroundLayer"></LTileLayer>
             <LControl position="bottomright">
@@ -34,7 +35,6 @@ import { useTooltips } from "../composables/useTooltips";
 import { APP_BASE_ROUTE } from "../router/utils";
 import { debounce } from "../utils";
 
-type Bounds = { west: number; east: number; south: number; north: number };
 type FeatureProperties = { GID_0: string; GID_1: string; NAME_1: string };
 
 const backgroundLayer = {
@@ -47,10 +47,11 @@ const backgroundLayer = {
 };
 
 const map = shallowRef<typeof LMap | null>(null);
-const bounds = ref<Bounds | null>(null);
+const bounds = ref<LatLngBounds | null>(null);
 const geoJsonLayer = shallowRef<GeoJSON<FeatureProperties, Geometry>>(geoJSON(undefined));
 const countryOutlineLayer = shallowRef<Polyline | null>(null);
 const waitingForMapBounds = ref(true);
+const isNewSelectedCountry = ref(false);
 
 const { tooltipForFeature } = useTooltips();
 const router = useRouter();
@@ -96,7 +97,9 @@ const dataSummary = computed(() => ({
     "selected-country-feature-count": selectedFeatures.value.filter(
         (f) => f.properties![featureProperties.country] === selectedCountryId.value
     ).length,
-    bounds: `S: ${bounds.value?.south} W: ${bounds.value?.west} N: ${bounds.value?.north} E: ${bounds.value?.east}`
+    bounds:
+        `S: ${bounds.value?.getSouth()} W: ${bounds.value?.getWest()} N: ${bounds.value?.getNorth()}` +
+        `E: ${bounds.value?.getEast()}`
 }));
 
 const configureGeojsonLayer = (feature: Feature, layer: Layer) => {
@@ -129,20 +132,48 @@ const style = (f: Feature) => {
 
 const getLeafletMap = () => map.value?.leafletObject;
 
+const mapBoundsUpdated = async () => {
+    const leafletMap = getLeafletMap();
+    if (!leafletMap) return;
+
+    if (isNewSelectedCountry.value && selectedCountryId.value) {
+        leafletMap.setMaxBounds(leafletMap.getBounds());
+        leafletMap.setMinZoom(leafletMap.getZoom());
+    }
+
+    isNewSelectedCountry.value = false;
+    waitingForMapBounds.value = false;
+};
+
+const getRegionBounds = (countryId?: string) => {
+    if (Object.keys(countryBoundingBoxes.value).length === 0) return null;
+    const [west, east, south, north] = countryBoundingBoxes.value[countryId || "GLOBAL"];
+    return new LatLngBounds([south, west], [north, east]);
+};
+
 const updateBounds = async () => {
     const leafletMap = getLeafletMap();
     if (!leafletMap) return;
 
-    const country = selectedCountryId.value || "GLOBAL";
-    const [west, east, south, north] = countryBoundingBoxes.value[country];
-    const countryBounds = new LatLngBounds([south, west], [north, east]);
-    await leafletMap.fitBounds(countryBounds);
+    const countryBounds = getRegionBounds(selectedCountryId.value);
+    if (!countryBounds) return;
 
-    // record bounds for testing
-    bounds.value = { west, east, south, north };
+    bounds.value = countryBounds;
+    await leafletMap.fitBounds(bounds.value);
 };
 
-const updateMap = async (newFeatures: Feature[]) => {
+const resetMaxBoundsAndZoom = () => {
+    const leafletMap = getLeafletMap();
+    if (!leafletMap) return;
+
+    const globalBounds = getRegionBounds();
+    if (!globalBounds) return;
+
+    leafletMap.setMinZoom(3);
+    leafletMap.setMaxBounds(globalBounds);
+};
+
+const updateMap = async (newFeatures?: Feature[]) => {
     const leafletMap = getLeafletMap();
     if (!leafletMap) return;
 
@@ -151,7 +182,7 @@ const updateMap = async (newFeatures: Feature[]) => {
     countryOutlineLayer.value?.remove();
 
     // create new geojson and add to map
-    geoJsonLayer.value = geoJSON<FeatureProperties, Geometry>(newFeatures, {
+    geoJsonLayer.value = geoJSON<FeatureProperties, Geometry>(newFeatures || selectedFeatures.value, {
         style,
         onEachFeature: configureGeojsonLayer
     }).addTo(leafletMap);
@@ -171,5 +202,14 @@ const updateMap = async (newFeatures: Feature[]) => {
     await updateBounds();
 };
 
-watch([selectedFeatures, selectedIndicator], (newVal) => updateMap(newVal[0]));
+watch(selectedFeatures, (newFeatures) => {
+    resetMaxBoundsAndZoom();
+    updateMap(newFeatures);
+});
+
+watch(selectedIndicator, () => updateMap());
+
+watch(selectedCountryId, () => {
+    isNewSelectedCountry.value = true;
+});
 </script>
