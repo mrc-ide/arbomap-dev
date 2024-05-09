@@ -1,5 +1,4 @@
 import { render, screen } from "@testing-library/vue";
-import { userEvent } from "@testing-library/user-event";
 import { describe, expect, test, vi, beforeEach, afterAll } from "vitest";
 import Index from "@/pages/index.vue";
 import router from "@/router";
@@ -39,7 +38,7 @@ describe("Index page", () => {
         expect(await screen.findByTestId("choropleth")).toBeVisible();
     });
 
-    /*test("button click routes to selected indicator", async () => {
+    /* test("button click routes to selected indicator", async () => {
         // need to use real timers with userEvent...
         vi.useRealTimers();
         await renderPage("FOI");
@@ -47,7 +46,7 @@ describe("Index page", () => {
         const user = userEvent.setup();
         await user.click(p9Button);
         expect(spyRouterPush).toHaveBeenCalledWith("/dengue/may24/serop9/");
-    });*/
+    }); */
 
     test("selects indicator from props", async () => {
         await renderPage("serop9");

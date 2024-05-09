@@ -1,8 +1,8 @@
-import {describe, expect, test, beforeEach, vi} from "vitest";
+import { describe, expect, test, beforeEach, vi } from "vitest";
 import { render, screen } from "@testing-library/vue";
 import { userEvent } from "@testing-library/user-event";
-import {mockVuetify} from "../../mocks/mockVuetify";
-import {mockPinia} from "../../mocks/mockPinia";
+import { mockVuetify } from "../../mocks/mockVuetify";
+import { mockPinia } from "../../mocks/mockPinia";
 import router from "../../../../src/router";
 import IndicatorMenu from "../../../../src/components/indicatorMenu/IndicatorMenu.vue";
 
@@ -13,7 +13,7 @@ describe("IndicatorMenu", () => {
     const renderComponent = async () => {
         await render(IndicatorMenu, {
             global: {
-                plugins: [mockVuetify, mockPinia(), router],
+                plugins: [mockVuetify, mockPinia(), router]
             }
         });
     };
@@ -24,7 +24,7 @@ describe("IndicatorMenu", () => {
     };
 
     beforeEach(async () => {
-        await renderComponent()
+        await renderComponent();
         user = userEvent.setup();
     });
 

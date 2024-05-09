@@ -9,8 +9,7 @@ export const useTooltips = () => {
         // main indicator, as long as that is not the selected indicator
         const sortedKeys = [
             selectedIndicator.value,
-            ...appConfig.value.indicatorGroups.map(g => g.mainIndicator)
-                .filter(i => i !== selectedIndicator.value)
+            ...appConfig.value.indicatorGroups.map((g) => g.mainIndicator).filter((i) => i !== selectedIndicator.value)
         ];
 
         const sortedMap = new Map();
@@ -31,7 +30,7 @@ export const useTooltips = () => {
             if (!featureValues[indicatorKey]) {
                 return; // shouldn't really occur, but may sometimes not have all indicator values for a feature
             }
-            const {mean} = featureValues[indicatorKey];
+            const { mean } = featureValues[indicatorKey];
             const headlineNumber = mean.toPrecision(3);
             const line = `${metadata.humanReadableName}: ${headlineNumber}${metadata.unit}<br/>`;
             indicatorValues +=

@@ -10,21 +10,17 @@
                     surveillance data including case-notification data and cross-sectional serological surveys. Full
                     details of the methods used to generate these estimates are provided in Cattarino et al. [1].
                 </p>
-                <p class="text-body-1">
-                    We provide estimates of:
-                </p>
+                <p class="text-body-1">We provide estimates of:</p>
             </v-row>
             <v-row>
-                <p class="text-body-1">
-                    <ul class="text-body-1">
-                        <li>
-                            The average dengue force of infection (i.e. the per capita annual risk of dengue infection for a
-                            susceptible individual)
-                        </li>
-                        <li>The seroprevalence at 9 years of age</li>
-                        <li>The annual expected number of hospital admissions by age</li>
-                    </ul>
-                </p>
+                <ul class="text-body-1">
+                    <li>
+                        The average dengue force of infection (i.e. the per capita annual risk of dengue infection for a
+                        susceptible individual)
+                    </li>
+                    <li>The seroprevalence at 9 years of age</li>
+                    <li>The annual expected number of hospital admissions by age</li>
+                </ul>
                 <p class="text-body-1">
                     Estimates of these metrics are available at the first and second administrative unit level.
                 </p>
@@ -36,8 +32,8 @@
                     Neglected Diseases initiative.
                 </p>
                 <p class="text-body-1 font-italic">
-                    [1] L. Cattarino, I. Rodriguez-Barraquer, N. Imai, D. A. T. Cummings, and N. M. Ferguson, “Mapping global
-                    variation in dengue transmission intensity,” Sci. Transl. Med., vol. 12, no. 528, Jan. 2020.
+                    [1] L. Cattarino, I. Rodriguez-Barraquer, N. Imai, D. A. T. Cummings, and N. M. Ferguson, “Mapping
+                    global variation in dengue transmission intensity,” Sci. Transl. Med., vol. 12, no. 528, Jan. 2020.
                 </p>
             </v-row>
             <v-row class="justify-center mt-12">

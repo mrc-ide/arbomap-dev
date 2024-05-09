@@ -46,7 +46,16 @@ test.describe("Router", () => {
 
     test("browse to indicator loads expected data", async ({ page }) => {
         await page.goto(`${BASE_URL}/serop9`);
-        await expectIndexPage(page, "/serop9", "serop9", "Seroprevalence at 9 years of age", "", "interpolateGreens", 1915, 0);
+        await expectIndexPage(
+            page,
+            "/serop9",
+            "serop9",
+            "Seroprevalence at 9 years of age",
+            "",
+            "interpolateGreens",
+            1915,
+            0
+        );
     });
 
     test("browse to indicator and country loads expected data", async ({ page }) => {

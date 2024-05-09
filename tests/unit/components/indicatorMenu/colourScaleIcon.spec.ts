@@ -1,8 +1,7 @@
-import {describe, expect, test, beforeEach, vi} from "vitest";
-import {interpolatePurples} from "d3-scale-chromatic";
+import { describe, expect, test } from "vitest";
+import { interpolatePurples } from "d3-scale-chromatic";
 import { render, screen } from "@testing-library/vue";
-import {render} from "@testing-library/vue";
-import {mockPinia} from "../../mocks/mockPinia";
+import { mockPinia } from "../../mocks/mockPinia";
 import ColourScaleIcon from "../../../../src/components/indicatorMenu/ColourScaleIcon.vue";
 
 describe("ColourScaleIcon", () => {
@@ -13,7 +12,7 @@ describe("ColourScaleIcon", () => {
                 indicator: "hosp_total"
             },
             global: {
-                plugins: [mockPinia()],
+                plugins: [mockPinia()]
             }
         });
 

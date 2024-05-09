@@ -58,7 +58,7 @@ test.describe("Index page", () => {
     test("changing selected indicator changes route and colours on map", async ({ page }) => {
         const firstRegion = await getNthRegion(page, 1);
         const colour = await firstRegion.getAttribute("fill");
-        const stroke = await firstRegion.getAttribute("stroke")
+        const stroke = await firstRegion.getAttribute("stroke");
         // open menu
         await page.click(".indicator-menu-activator");
         // click menu item
@@ -76,9 +76,7 @@ test.describe("Index page", () => {
         await expect(await page.innerText(".leaflet-tooltip-pane")).toContain(
             "Seroprevalence at 9 years of age: 33.5%"
         );
-        await expect(await page.innerText(".leaflet-tooltip-pane")).toContain(
-            "Hospital admissions: 126"
-        );
+        await expect(await page.innerText(".leaflet-tooltip-pane")).toContain("Hospital admissions: 126");
     });
 
     test("selecting country fades colours of other countries", async ({ page }) => {
@@ -124,12 +122,14 @@ test.describe("Index page", () => {
         await expect(await page.locator(".v-menu .v-list-item").count()).toBe(3);
         const foiMenuItem = await page.locator(":nth-match(.v-menu .v-list-item, 1)");
         await expect(await foiMenuItem.locator(".v-list-item-title").innerText()).toBe("Force of infection");
-        await expect(await foiMenuItem.locator(".v-list-item-subtitle").innerText())
-            .toBe("Annual per capita risk of dengue infection for a susceptible person");
+        await expect(await foiMenuItem.locator(".v-list-item-subtitle").innerText()).toBe(
+            "Annual per capita risk of dengue infection for a susceptible person"
+        );
         const hospMenuItem = await page.locator(":nth-match(.v-menu .v-list-item, 3)");
         await expect(await hospMenuItem.locator(".v-list-item-title").innerText()).toBe("Hospital admissions");
-        await expect(await hospMenuItem.locator(".v-list-item-subtitle").innerText())
-            .toBe("Annual number of hospital admissions per 100,000 population by age group");
+        await expect(await hospMenuItem.locator(".v-list-item-subtitle").innerText()).toBe(
+            "Annual number of hospital admissions per 100,000 population by age group"
+        );
 
         const ageGroupButtons = await page.locator(".v-slide-group button");
         await expect(await ageGroupButtons.count()).toBe(21);

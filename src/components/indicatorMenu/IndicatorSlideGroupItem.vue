@@ -1,11 +1,6 @@
 <template>
-    <v-slide-group-item
-        :key="indicatorId"
-        :value="indicatorId"
-    >
-        <router-link
-            :to="`/${APP_BASE_ROUTE}/${indicatorId}/${selectedCountryId}`"
-            custom v-slot="{ navigate }">
+    <v-slide-group-item :key="indicatorId" :value="indicatorId">
+        <router-link :to="`/${APP_BASE_ROUTE}/${indicatorId}/${selectedCountryId}`" custom v-slot="{ navigate }">
             <v-btn
                 :class="indicatorId === selectedIndicator ? 'selected-item' : ''"
                 size="small"
@@ -19,16 +14,18 @@
     </v-slide-group-item>
 </template>
 <script setup>
-import {APP_BASE_ROUTE} from "../../router/utils";
-import {storeToRefs} from "pinia";
-import {useAppStore} from "../../stores/appStore";
+import { storeToRefs } from "pinia";
+import { APP_BASE_ROUTE } from "../../router/utils";
+import { useAppStore } from "../../stores/appStore";
 
-const props = defineProps({
+defineProps({
     indicatorId: {
-        type: String
+        type: String,
+        required: true
     },
     indicatorName: {
-        type: String
+        type: String,
+        required: true
     }
 });
 

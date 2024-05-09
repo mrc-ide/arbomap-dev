@@ -17,9 +17,9 @@ describe("useTooltips", () => {
                 '<div class="text-body-1">My region</div>' +
                     '<div class="text-body-2">' +
                     '<span class="font-weight-bold">Force of infection: 0.100<br/></span>' +
-                    'Seroprevalence at 9 years of age: 0.200%<br/>' +
-                    'Hospital admissions: 0.300<br/>' +
-                '</div>'
+                    "Seroprevalence at 9 years of age: 0.200%<br/>" +
+                    "Hospital admissions: 0.300<br/>" +
+                    "</div>"
             );
         });
     });
@@ -38,9 +38,9 @@ describe("useTooltips", () => {
                 '<div class="text-body-1">My area</div>' +
                     '<div class="text-body-2">' +
                     '<span class="font-weight-bold">Seroprevalence at 9 years of age: 0.400%<br/></span>' +
-                    'Force of infection: 0.300<br/>' +
-                    'Hospital admissions: 0.500<br/>' +
-                '</div>'
+                    "Force of infection: 0.300<br/>" +
+                    "Hospital admissions: 0.500<br/>" +
+                    "</div>"
             );
         });
     });
@@ -57,11 +57,11 @@ describe("useTooltips", () => {
 
             expect(tooltip.content).toEqual(
                 '<div class="text-body-1">My area</div>' +
-                '<div class="text-body-2">' +
-                '<span class="font-weight-bold">Hospital admissions: 0.500<br/></span>' +
-                'Force of infection: 0.300<br/>' +
-                'Seroprevalence at 9 years of age: 0.400%<br/>' +
-                '</div>'
+                    '<div class="text-body-2">' +
+                    '<span class="font-weight-bold">Hospital admissions: 0.500<br/></span>' +
+                    "Force of infection: 0.300<br/>" +
+                    "Seroprevalence at 9 years of age: 0.400%<br/>" +
+                    "</div>"
             );
         });
     });
@@ -78,12 +78,12 @@ describe("useTooltips", () => {
 
             expect(tooltip.content).toEqual(
                 '<div class="text-body-1">My area</div>' +
-                '<div class="text-body-2">' +
-                '<span class="font-weight-bold">Hospital admissions in 5-9 year olds: 0.700<br/></span>' +
-                'Force of infection: 0.300<br/>' +
-                'Seroprevalence at 9 years of age: 0.400%<br/>' +
-                'Hospital admissions: 0.500<br/>' +
-                '</div>'
+                    '<div class="text-body-2">' +
+                    '<span class="font-weight-bold">Hospital admissions in 5-9 year olds: 0.700<br/></span>' +
+                    "Force of infection: 0.300<br/>" +
+                    "Seroprevalence at 9 years of age: 0.400%<br/>" +
+                    "Hospital admissions: 0.500<br/>" +
+                    "</div>"
             );
         });
     });
