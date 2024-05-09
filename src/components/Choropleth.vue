@@ -30,9 +30,9 @@ import { useColourScale } from "../composables/useColourScale";
 import { useLeaflet } from "../composables/useLeaflet";
 import "leaflet/dist/leaflet.css";
 import { useTooltips } from "../composables/useTooltips";
-import { useDataSummary } from "../composables/useDataSummary";
 import { APP_BASE_ROUTE } from "../router/utils";
-import { debounce, backgroundLayer } from "../utils";
+import { debounce } from "../utils";
+import { backgroundLayer } from "../composables/utils";
 import { useLoadingSpinner } from "../composables/useLoadingSpinner";
 
 const mapLoading = ref(true);
@@ -77,10 +77,9 @@ const layerOnEvents = (feature: Feature) => {
     };
 };
 
-const { map, bounds, lockBounds, updateLeafletMap, handleMapBoundsUpdated, updateRegionBounds, resetMaxBoundsAndZoom } =
+const { map, dataSummary, lockBounds, updateLeafletMap, handleMapBoundsUpdated, updateRegionBounds, resetMaxBoundsAndZoom } =
     useLeaflet(style, getTooltip, layerOnEvents);
 useLoadingSpinner(map, mapLoading);
-const { dataSummary } = useDataSummary(bounds);
 
 const updateMap = (features: Feature[]) => {
     resetMaxBoundsAndZoom();

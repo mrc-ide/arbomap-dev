@@ -15,7 +15,8 @@ import {
 } from "leaflet";
 import { storeToRefs } from "pinia";
 import { useAppStore } from "../stores/appStore";
-import { minZoom } from "../utils";
+import { minZoom } from "../composables/utils";
+import { useDataSummary } from "./useDataSummary";
 
 type FeatureProperties = { GID_0: string; GID_1: string; NAME_1: string };
 type TooltipOptionAndContent = { content: string; options?: TooltipOptions };
@@ -34,6 +35,9 @@ export const useLeaflet = (
     // external refs: bounds related
     const bounds = ref<LatLngBounds | null>(null);
     const lockBounds = ref<boolean>(false);
+
+    // external refs: e2e test related
+    const { dataSummary } = useDataSummary(bounds);
 
     // internal refs
     const geoJsonLayer = shallowRef<GeoJSON<FeatureProperties, Geometry>>(geoJSON(undefined));
@@ -130,6 +134,7 @@ export const useLeaflet = (
         map,
         bounds,
         lockBounds,
+        dataSummary,
         updateLeafletMap,
         resetMaxBoundsAndZoom,
         updateRegionBounds,
