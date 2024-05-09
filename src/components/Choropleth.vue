@@ -22,7 +22,7 @@
 <script setup lang="ts">
 import { ref, computed, watch } from "vue";
 import { storeToRefs } from "pinia";
-import { LatLngBounds, Layer, geoJSON, GeoJSON, polyline, Polyline } from "leaflet";
+import { LatLngBounds, Layer, geoJSON, GeoJSON, polyline, Polyline, Map } from "leaflet";
 import { LMap, LTileLayer, LControl } from "@vue-leaflet/vue-leaflet";
 import { Feature, Geometry } from "geojson";
 import { useRouter } from "vue-router";
@@ -52,6 +52,7 @@ const geoJsonLayer = shallowRef<GeoJSON<FeatureProperties, Geometry>>(geoJSON(un
 const countryOutlineLayer = shallowRef<Polyline | null>(null);
 const waitingForMapBounds = ref(true);
 const isNewSelectedCountry = ref(false);
+const layerWithOpenTooltip = shallowRef<Layer | null>(null);
 
 const { tooltipForFeature } = useTooltips();
 const router = useRouter();
@@ -112,6 +113,14 @@ const configureGeojsonLayer = (feature: Feature, layer: Layer) => {
             // select feature's country, or unselect if click on it when already selected
             const countryToSelect = country === selectedCountryId.value ? "" : country;
             debounce(() => router.push(`/${APP_BASE_ROUTE}/${selectedIndicator.value}/${countryToSelect}`))();
+        },
+        tooltipopen: () => {
+            // in the past tooltips remained open when you clicked and dragged on the
+            // map while the bounds were locked, now we track each layer that will open a
+            // tooltip and close them if they are not the most recent layer to make sure
+            // no old tooltips remain open
+            layerWithOpenTooltip.value?.closeTooltip();
+            layerWithOpenTooltip.value = layer;
         }
     });
 };
@@ -130,7 +139,7 @@ const style = (f: Feature) => {
     return { className: "geojson", fillColor, color: fadeColour(fillColor) };
 };
 
-const getLeafletMap = () => map.value?.leafletObject;
+const getLeafletMap = () => map.value?.leafletObject as Map | undefined;
 
 const mapBoundsUpdated = async () => {
     const leafletMap = getLeafletMap();
