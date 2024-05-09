@@ -13,7 +13,9 @@ interface IndicatorRange {
 }
 
 type FillAndOutlineColour = {
+    // the fill colour of the feature
     fillColor: string;
+    // the outline colour of the feature
     color: string;
 };
 
