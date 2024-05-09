@@ -76,6 +76,11 @@ export const useColourScale = (selectedIndicators: Ref<Dict<FeatureIndicatorValu
         }
 
         const scale = colourScales.value[indicator];
+        const reverse = appConfig.value.indicators[indicator].colourScale?.reverse;
+        if (reverse) {
+            colorValue = 1 - colorValue;
+        }
+
         return scale(colorValue);
     };
 

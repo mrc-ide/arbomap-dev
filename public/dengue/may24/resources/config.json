@@ -12,7 +12,8 @@
     "indicators": {
         "FOI": {
             "colourScale": {
-                "name": "interpolateRdYlBu"
+                "name": "interpolateRdYlBu",
+                "reverse": true
             },
             "humanReadableName": "Force of infection",
             "unit": ""
