@@ -5,7 +5,12 @@
                 {{ appConfig.indicators[selectedIndicator].humanReadableName }}
             </p>
             <v-icon :icon="menuOpen ? 'mdi-chevron-down' : 'mdi-chevron-up'" end></v-icon>
-            <v-menu activator="parent" v-model="menuOpen">
+            <v-menu
+                activator="parent"
+                v-model="menuOpen"
+                :close-on-content-click="false"
+                :close-on-back="false"
+            >
                 <v-list class="bg-transparent opacity-80 elevation-0" style="max-width: min(35rem, 80%)">
                     <v-list-item
                         v-for="(id, index) in indicatorGroupIds"

@@ -32,7 +32,7 @@ defineProps({
 const { selectedIndicator, selectedCountryId } = storeToRefs(useAppStore());
 </script>
 <style lang="scss">
-.selected-item {
-border-width: medium;
+.selected-slide-group-item {
+  border-width: medium!important;
 }
 </style>
