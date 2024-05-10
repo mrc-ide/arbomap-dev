@@ -32,7 +32,7 @@ import "leaflet/dist/leaflet.css";
 import { useTooltips } from "../composables/useTooltips";
 import { APP_BASE_ROUTE } from "../router/utils";
 import { debounce } from "../utils";
-import { backgroundLayer } from "../composables/utils";
+import { backgroundLayer } from "./utils";
 import { useLoadingSpinner } from "../composables/useLoadingSpinner";
 
 const mapLoading = ref(true);
