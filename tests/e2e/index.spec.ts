@@ -17,7 +17,7 @@ test.describe("Index page", () => {
     });
 
     test("can see app title", async ({ page }) => {
-        await expect(await page.getByText("DengueMap")).toBeVisible();
+        await expect(await page.locator(".v-app-bar-title:has-text('DengueMap')")).toBeVisible();
     });
 
     test("loading spinner is shown on page load", async ({ page }) => {
