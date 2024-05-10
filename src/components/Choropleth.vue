@@ -48,7 +48,8 @@ const featureInSelectedCountry = (feature: Feature, selectedCountry: string) =>
     feature.properties[featureProperties.country] === selectedCountry;
 
 const featureAdminLevel = (feature: Feature, selectedCountry) => {
-    return featureInSelectedCountry(feature, selectedCountry) && !appConfig.value.countriesWithoutAdmin2.includes(selectedCountry)
+    return featureInSelectedCountry(feature, selectedCountry) &&
+        !appConfig.value.countriesWithoutAdmin2.includes(selectedCountry)
         ? 2
         : 1;
 };

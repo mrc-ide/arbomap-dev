@@ -33,6 +33,6 @@ const { selectedIndicator, selectedCountryId } = storeToRefs(useAppStore());
 </script>
 <style lang="scss">
 .selected-slide-group-item {
-  border-width: medium!important;
+    border-width: medium !important;
 }
 </style>
