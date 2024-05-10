@@ -142,5 +142,24 @@ test.describe("Index page", () => {
         await page.click(".indicator-menu-activator");
         await page.locator(":nth-match(.v-slide-group button, 3)").click();
         await page.waitForURL(/dengue\/may24\/hosp_5_9/i);
+
+    });
+
+    test("after selecting country, user can't zoom out", async ({ page }) => {
+        const firstRegion = await getNthRegion(page, 1);
+        await firstRegion.click();
+        await expect(await page.locator("div.spinner")).toHaveCount(0);
+        // zoom out is disabled in leaflet
+        await expect(await page.locator(".leaflet-control-zoom-out.leaflet-disabled")).toHaveCount(1);
+    });
+
+    test("user can't zoom out after selecting country and changing indicator", async ({ page }) => {
+        const firstRegion = await getNthRegion(page, 1);
+        await firstRegion.click();
+        await expect(await page.locator("div.spinner")).toHaveCount(0);
+        await expect(await page.locator(".leaflet-control-zoom-out.leaflet-disabled")).toHaveCount(1);
+        await page.getByRole("link", { name: "serop9" }).click();
+        await page.waitForURL(/dengue\/may24\/serop9/);
+        await expect(await page.locator(".leaflet-control-zoom-out.leaflet-disabled")).toHaveCount(1);
     });
 });

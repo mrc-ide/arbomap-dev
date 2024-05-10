@@ -1,6 +1,7 @@
 import { Ref, computed } from "vue";
 import { storeToRefs } from "pinia";
 import * as d3ScaleChromatic from "d3-scale-chromatic";
+import Color from "color";
 import { FeatureIndicatorValues, IndicatorValue } from "../types/resourceTypes";
 import { Dict } from "../types/utilTypes";
 import { useAppStore } from "../stores/appStore";
@@ -10,6 +11,11 @@ interface IndicatorRange {
     max: number;
     range: number;
 }
+
+type FillAndOutlineColour = {
+    fillColor: string;
+    outlineColor: string;
+};
 
 export const useColourScale = (selectedIndicators: Ref<Dict<FeatureIndicatorValues>>) => {
     // TODO: we currently just scale colours to min and max in data, but
@@ -53,35 +59,56 @@ export const useColourScale = (selectedIndicators: Ref<Dict<FeatureIndicatorValu
         return result;
     });
 
-    const getColour = (indicator: string, featureIndicators: FeatureIndicatorValues | undefined) => {
+    const fadeColour = (fillColor: string, desaturate = 0.5, fade = 0.6) => {
+        // for drawing borders more subtly and fading our features, desaturate
+        // and fade the color returned from color scale in rgb format
+        const c = Color(fillColor);
+        return c.desaturate(desaturate).fade(fade).rgb().string();
+    };
+
+    const noIndicatorsColour = "transparent";
+    const noScalesColour = "rgb(200, 200, 200)";
+    const noScalesColourFaded = fadeColour("rgb(200, 200, 200)");
+
+    const getFillAndOutlineColour = (indicator: string, featureId: string, isFaded: boolean): FillAndOutlineColour => {
+        const featureIndicators = selectedIndicators.value[featureId] as FeatureIndicatorValues | undefined;
+
         // If indicators do not exist for this feature, return transparent
         if (!featureIndicators || !featureIndicators[indicator]) {
-            return "rgba(0, 0, 0, 0)";
+            return {
+                fillColor: noIndicatorsColour,
+                outlineColor: noIndicatorsColour
+            };
+        }
+
+        if (!indicatorExtremes.value || !colourScales.value) {
+            const baseColour = isFaded ? noScalesColourFaded : noScalesColour;
+            return {
+                fillColor: baseColour,
+                outlineColor: fadeColour(baseColour)
+            };
         }
 
         const value = featureIndicators[indicator].mean;
-
-        if (!indicatorExtremes.value || !colourScales.value) {
-            return "rgb(200, 200, 200)";
-        }
-
         const range = indicatorExtremes.value[indicator];
 
         let colorValue = (value - range.min) / range.range;
-        if (colorValue > 1) {
-            colorValue = 1;
-        }
-        if (colorValue < 0) {
-            colorValue = 0;
-        }
+        colorValue = Math.min(1, colorValue);
+        colorValue = Math.max(0, colorValue);
 
         const scale = colourScales.value[indicator];
-        return scale(colorValue);
+        const colour = scale(colorValue);
+        const baseColour = isFaded ? fadeColour(colour) : colour;
+        return {
+            fillColor: baseColour,
+            outlineColor: fadeColour(baseColour)
+        };
     };
 
     return {
         colourScales,
-        getColour,
-        indicatorExtremes
+        indicatorExtremes,
+        fadeColour,
+        getFillAndOutlineColour
     };
 };

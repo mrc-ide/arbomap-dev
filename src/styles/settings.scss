@@ -9,6 +9,10 @@
 //   $color-pack: false
 // );
 
+html {
+  overflow-y: auto;
+}
+
 .geojson {
   stroke-width: 1;
   fill-opacity: 0.7;
@@ -53,3 +57,8 @@
   }
 }
 
+@media (max-width: 455px) {
+  .leaflet-control-attribution {
+    font-size: 0.61rem;
+  }
+}
