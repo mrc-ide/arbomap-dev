@@ -13,10 +13,8 @@ interface IndicatorRange {
 }
 
 type FillAndOutlineColour = {
-    // the fill colour of the feature
     fillColor: string;
-    // the outline colour of the feature
-    color: string;
+    outlineColor: string;
 };
 
 export const useColourScale = (selectedIndicators: Ref<Dict<FeatureIndicatorValues>>) => {
@@ -79,7 +77,7 @@ export const useColourScale = (selectedIndicators: Ref<Dict<FeatureIndicatorValu
         if (!featureIndicators) {
             return {
                 fillColor: noIndicatorsColour,
-                color: noIndicatorsColour
+                outlineColor: noIndicatorsColour
             };
         }
 
@@ -87,7 +85,7 @@ export const useColourScale = (selectedIndicators: Ref<Dict<FeatureIndicatorValu
             const baseColour = isFaded ? noScalesColourFaded : noScalesColour;
             return {
                 fillColor: baseColour,
-                color: fadeColour(baseColour)
+                outlineColor: fadeColour(baseColour)
             };
         }
 
@@ -103,7 +101,7 @@ export const useColourScale = (selectedIndicators: Ref<Dict<FeatureIndicatorValu
         const baseColour = isFaded ? fadeColour(colour) : colour;
         return {
             fillColor: baseColour,
-            color: fadeColour(baseColour)
+            outlineColor: fadeColour(baseColour)
         };
     };
 

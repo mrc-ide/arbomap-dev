@@ -60,7 +60,7 @@ const getFeatureName = (feature: Feature) =>
 const style = (f: Feature) => {
     const isFaded = !!selectedCountryId.value && !featureInSelectedCountry(f, selectedCountryId.value);
     const styleColors = getFillAndOutlineColour(selectedIndicator.value, getFeatureId(f), isFaded);
-    return { className: "geojson", ...styleColors };
+    return { className: "geojson", fillColor: styleColors.fillColor, color: styleColors.outlineColor };
 };
 
 const getTooltip = (feature: Feature) => tooltipForFeature(getFeatureId(feature), getFeatureName(feature));
