@@ -31,6 +31,7 @@
                             v-if="appConfig.indicatorGroups[index].subIndicators"
                             class="cursor-default"
                             center-active
+                            show-arrows="always"
                             :model-value="selectedIndicator"
                             @click="slideGroupClicked($event)"
                         >
