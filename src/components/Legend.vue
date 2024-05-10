@@ -60,7 +60,7 @@ const stepStyle = (val: number) => {
         ? (val - indicatorMin.value) / (indicatorMax.value - indicatorMin.value)
         : 0;
     if (appConfig.value.indicators[selectedIndicator.value].colourScale?.reverse) {
-        valAsProportion =  1 - valAsProportion;
+        valAsProportion = 1 - valAsProportion;
     }
     return { background: colourFunction.value(valAsProportion) };
 };

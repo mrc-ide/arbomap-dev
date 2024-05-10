@@ -3,6 +3,7 @@ import { ref } from "vue";
 import * as d3ScaleChromatic from "d3-scale-chromatic";
 import { useColourScale } from "../../../src/composables/useColourScale";
 import { mockPinia } from "../mocks/mockPinia";
+import { useAppStore } from "../../../src/stores/appStore";
 
 const indicatorValues = ref({
     "123": {
@@ -43,5 +44,17 @@ describe("useColourScale", () => {
 
         // mid value for FOI
         expect(sut.getColour("FOI", indicatorValues.value["456"])).toBe(d3ScaleChromatic.interpolateReds(0.5));
+    });
+
+    test("can get colour for value when scale is reversed", () => {
+        const { appConfig } = useAppStore();
+        appConfig.indicators.FOI.colourScale.reverse = true;
+
+        const sut = useColourScale(indicatorValues);
+        // min value for FOI, should return max value for colour scale
+        expect(sut.getColour("FOI", indicatorValues.value["123"])).toBe("rgb(103, 0, 13)");
+
+        // max value for FOI, should return min value for colour scale
+        expect(sut.getColour("FOI", indicatorValues.value["789"])).toBe("rgb(255, 245, 240)");
     });
 });
