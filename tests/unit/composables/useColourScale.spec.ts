@@ -71,9 +71,15 @@ describe("useColourScale", () => {
 
         const sut = useColourScale(indicatorValues);
         // min value for FOI, should return max value for colour scale
-        expect(sut.getColour("FOI", indicatorValues.value["123"])).toBe("rgb(103, 0, 13)");
+        expect(sut.getFillAndOutlineColour("FOI", "123")).toStrictEqual({
+            fillColor: "rgb(103, 0, 13)",
+            outlineColor: "rgba(77, 26, 32, 0.4)"
+        });
 
         // max value for FOI, should return min value for colour scale
-        expect(sut.getColour("FOI", indicatorValues.value["789"])).toBe("rgb(255, 245, 240)");
+        expect(sut.getFillAndOutlineColour("FOI", "789")).toStrictEqual({
+            fillColor: "rgb(255, 245, 240)",
+            outlineColor: "rgba(251, 246, 244, 0.4)"
+        });
     });
 });
