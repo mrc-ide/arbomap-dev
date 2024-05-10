@@ -37,13 +37,32 @@ describe("useColourScale", () => {
         const sut = useColourScale(indicatorValues);
 
         // min value for FOI
-        expect(sut.getColour("FOI", indicatorValues.value["123"])).toBe("rgb(255, 245, 240)");
+        expect(sut.getFillAndOutlineColour("FOI", "123", false)).toStrictEqual({
+            fillColor: "rgb(255, 245, 240)",
+            outlineColor: "rgba(251, 246, 244, 0.4)"
+        });
 
         // max value for FOI
-        expect(sut.getColour("FOI", indicatorValues.value["789"])).toBe("rgb(103, 0, 13)");
+        expect(sut.getFillAndOutlineColour("FOI", "789", false)).toStrictEqual({
+            fillColor: "rgb(103, 0, 13)",
+            outlineColor: "rgba(77, 26, 32, 0.4)"
+        });
 
         // mid value for FOI
-        expect(sut.getColour("FOI", indicatorValues.value["456"])).toBe(d3ScaleChromatic.interpolateReds(0.5));
+        expect(sut.getFillAndOutlineColour("FOI", "456", false)).toStrictEqual({
+            fillColor: d3ScaleChromatic.interpolateReds(0.5),
+            outlineColor: "rgba(206, 134, 119, 0.4)"
+        });
+    });
+
+    test("can get faded colour for value", () => {
+        const sut = useColourScale(indicatorValues);
+
+        // min value for FOI
+        expect(sut.getFillAndOutlineColour("FOI", "123", true)).toStrictEqual({
+            fillColor: "rgba(251, 246, 244, 0.4)",
+            outlineColor: "rgba(249, 247, 246, 0.16000000000000003)"
+        });
     });
 
     test("can get colour for value when scale is reversed", () => {

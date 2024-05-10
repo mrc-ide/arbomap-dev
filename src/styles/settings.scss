@@ -53,3 +53,8 @@ html {
   }
 }
 
+@media (max-width: 455px) {
+  .leaflet-control-attribution {
+    font-size: 0.61rem;
+  }
+}
