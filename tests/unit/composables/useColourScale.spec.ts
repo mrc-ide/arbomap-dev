@@ -3,6 +3,7 @@ import { ref } from "vue";
 import * as d3ScaleChromatic from "d3-scale-chromatic";
 import { useColourScale } from "../../../src/composables/useColourScale";
 import { mockPinia } from "../mocks/mockPinia";
+import { useAppStore } from "../../../src/stores/appStore";
 
 const indicatorValues = ref({
     "123": {
@@ -61,6 +62,24 @@ describe("useColourScale", () => {
         expect(sut.getFillAndOutlineColour("FOI", "123", true)).toStrictEqual({
             fillColor: "rgba(251, 246, 244, 0.4)",
             outlineColor: "rgba(249, 247, 246, 0.16000000000000003)"
+        });
+    });
+
+    test("can get colour for value when scale is reversed", () => {
+        const { appConfig } = useAppStore();
+        appConfig.indicators.FOI.colourScale.reverse = true;
+
+        const sut = useColourScale(indicatorValues);
+        // min value for FOI, should return max value for colour scale
+        expect(sut.getFillAndOutlineColour("FOI", "123")).toStrictEqual({
+            fillColor: "rgb(103, 0, 13)",
+            outlineColor: "rgba(77, 26, 32, 0.4)"
+        });
+
+        // max value for FOI, should return min value for colour scale
+        expect(sut.getFillAndOutlineColour("FOI", "789")).toStrictEqual({
+            fillColor: "rgb(255, 245, 240)",
+            outlineColor: "rgba(251, 246, 244, 0.4)"
         });
     });
 });
