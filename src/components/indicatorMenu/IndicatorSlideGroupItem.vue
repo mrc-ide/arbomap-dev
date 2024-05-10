@@ -2,7 +2,7 @@
     <v-slide-group-item :key="indicatorId" :value="indicatorId">
         <router-link :to="`/${APP_BASE_ROUTE}/${indicatorId}/${selectedCountryId}`" custom v-slot="{ navigate }">
             <v-btn
-                :class="indicatorId === selectedIndicator ? 'selected-item' : ''"
+                :class="indicatorId === selectedIndicator ? 'selected-item selected-slide-group-item' : ''"
                 size="small"
                 class="ma-2"
                 rounded
@@ -31,3 +31,8 @@ defineProps({
 
 const { selectedIndicator, selectedCountryId } = storeToRefs(useAppStore());
 </script>
+<style lang="scss">
+.selected-item {
+border-width: medium;
+}
+</style>

@@ -10,10 +10,11 @@
                     <v-list-item
                         v-for="(id, index) in indicatorGroupIds"
                         :key="id"
-                        class="bg-black mb-2 rounded pa-2 elevation-4"
+                        class="bg-black mb-2 rounded pa-2 elevation-4 border-lg"
                         :active="id === selectedIndicator && !appConfig.indicatorGroups[index].subIndicators"
                         :value="id"
                         active-class="selected-item"
+                        :ripple="false"
                     >
                         <router-link :to="`/${APP_BASE_ROUTE}/${id}/${selectedCountryId}`" custom v-slot="{ navigate }">
                             <button class="text-left" type="button" @click="navigate">
@@ -78,7 +79,6 @@ const slideGroupClicked = (event: PointerEvent) => {
 }
 
 .selected-item {
-    border-width: medium !important;
-    border-color: rgb(var(--v-theme-secondary)) !important;
+    border-color: rgb(var(--v-theme-primary)) !important;
 }
 </style>
