@@ -61,7 +61,7 @@ const {
     selectedCountryId,
     appConfig,
     countryBoundingBoxes,
-    admin0GeojsonFeature,
+    admin0GeojsonFeature
 } = storeToRefs(useAppStore());
 
 useLoadingSpinner(map, waitingForMapBounds);

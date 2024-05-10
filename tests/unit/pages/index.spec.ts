@@ -38,16 +38,6 @@ describe("Index page", () => {
         expect(await screen.findByTestId("choropleth")).toBeVisible();
     });
 
-    /* test("button click routes to selected indicator", async () => {
-        // need to use real timers with userEvent...
-        vi.useRealTimers();
-        await renderPage("FOI");
-        const p9Button = (await screen.findAllByRole("link"))[1];
-        const user = userEvent.setup();
-        await user.click(p9Button);
-        expect(spyRouterPush).toHaveBeenCalledWith("/dengue/may24/serop9/");
-    }); */
-
     test("selects indicator from props", async () => {
         await renderPage("serop9");
         expect(useAppStore().selectedIndicator).toBe("serop9");
