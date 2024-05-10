@@ -1,6 +1,6 @@
 <template>
     <v-theme-provider theme="dark">
-        <v-btn v-if="appConfig && selectedIndicator" class="indicator-menu-activator">
+        <v-btn v-if="appConfig && selectedIndicator" class="indicator-menu-activator" role="button">
             <p class="text-wrap">
                 {{ appConfig.indicators[selectedIndicator].humanReadableName }}
             </p>

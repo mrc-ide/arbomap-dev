@@ -19,7 +19,8 @@ describe("IndicatorMenu", () => {
     };
 
     const openMenu = async () => {
-        const button = await screen.findByText("Force of infection");
+        const button = await screen.findByRole("button");
+        await expect(await button.textContent).toBe("Force of infection");
         await user.click(button);
     };
 
