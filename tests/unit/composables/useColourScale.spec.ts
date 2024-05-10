@@ -38,19 +38,19 @@ describe("useColourScale", () => {
         // min value for FOI
         expect(sut.getFillAndOutlineColour("FOI", "123", false)).toStrictEqual({
             fillColor: "rgb(255, 245, 240)",
-            color: "rgba(251, 246, 244, 0.4)"
+            outlineColor: "rgba(251, 246, 244, 0.4)"
         });
 
         // max value for FOI
         expect(sut.getFillAndOutlineColour("FOI", "789", false)).toStrictEqual({
             fillColor: "rgb(103, 0, 13)",
-            color: "rgba(77, 26, 32, 0.4)"
+            outlineColor: "rgba(77, 26, 32, 0.4)"
         });
 
         // mid value for FOI
         expect(sut.getFillAndOutlineColour("FOI", "456", false)).toStrictEqual({
             fillColor: d3ScaleChromatic.interpolateReds(0.5),
-            color: "rgba(206, 134, 119, 0.4)"
+            outlineColor: "rgba(206, 134, 119, 0.4)"
         });
     });
 
@@ -60,7 +60,7 @@ describe("useColourScale", () => {
         // min value for FOI
         expect(sut.getFillAndOutlineColour("FOI", "123", true)).toStrictEqual({
             fillColor: "rgba(251, 246, 244, 0.4)",
-            color: "rgba(249, 247, 246, 0.16000000000000003)"
+            outlineColor: "rgba(249, 247, 246, 0.16000000000000003)"
         });
     });
 });
