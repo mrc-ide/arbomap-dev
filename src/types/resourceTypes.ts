@@ -4,7 +4,7 @@ import { Dict } from "./utilTypes";
 export interface IndicatorConfig {
     colourScale: {
         name: string;
-        reverse: boolean;
+        reverse: boolean | undefined;
     };
     unit: string;
     humanReadableName: string;
