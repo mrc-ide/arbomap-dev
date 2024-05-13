@@ -29,7 +29,8 @@
     "spin.js": "^4.1.1",
     "vue": "^3.4.21",
     "vue-leaflet": "^0.1.0",
-    "vuetify": "^3.5.8"
+    "vuetify": "^3.5.8",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.2/xlsx-0.20.2.tgz"
   },
   "devDependencies": {
     "@babel/types": "^7.24.0",
