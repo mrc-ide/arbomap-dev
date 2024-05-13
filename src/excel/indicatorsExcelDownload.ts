@@ -1,39 +1,55 @@
-import {FeatureIndicators, Geojson} from "../types/resourceTypes";
+import {AppConfig, FeatureIndicators, Geojson} from "../types/resourceTypes";
 import {Dict} from "../types/utilTypes";
 import * as XLSX from "xlsx";
-import {AppState} from "../types/storeTypes";
-import {useAppStore} from "../stores/appStore";
 
 export class IndicatorsExcelDownload {
     private readonly _fileName: string;
     private readonly _workbook: XLSX.WorkBook;
-    private readonly _appState: AppState;
+    private readonly _appConfig: AppConfig;
 
-    constructor(fileName: string) {
+    constructor(fileName: string, appConfig) {
         this._fileName = fileName;
+        this._appConfig = appConfig;
         this._workbook = XLSX.utils.book_new();
-        this._appState = useAppStore();
     }
 
-    private _writeTab(level: number, indicators: Dict<FeatureIndicators>, geojson: Dict<Geojson>, countryId?: string) {
+    private _writeTab(level: number, indicatorValues: Dict<FeatureIndicators>, country?: string) {
         const sheetData = [];
 
-        const countries = countryId ? [countryId] : this._appState.appConfig.countries;
+        const { indicators, countries, geoJsonFeatureProperties } = this._appConfig;
+
+        const countryIds = country ? [country] : countries;
         // TODO: cope with countriesWithoutAdmin2
 
+        const indicatorIds = Object.keys(indicators);
+
+        // We use the configured feature prop names as the column headers for ID and names
         const headers = [];
         for (let i = 0; i <= level; i++) {
-            headers.push(`GID_${i}`, `NAME_${i}`);
+            headers.push(geoJsonFeatureProperties[`idAdm${i}`], geoJsonFeatureProperties[`nameAdm${i}`]);
         }
-        Object.keys(this._appState.appConfig.indicators).forEach((i) => headers.push(`mean_${i}`, `sd_${i}`));
-
+        indicatorIds.forEach((i) => headers.push(`mean_${i}`, `sd_${i}`));
         sheetData.push(headers);
+
+        countryIds.forEach((countryId) => {
+            const countryValues = indicatorValues[countryId];
+           // const countryGeojson = geojson[countryId];
+            Object.values(countryValues).forEach((featureValues) => {
+                const row = [];
+                indicatorIds.forEach((indicatorId) => {
+                    row.push(featureValues[indicatorId].mean, featureValues[indicatorId].sd)
+                });
+                sheetData.push(row);
+            });
+        });
+
+
         const sheet = XLSX.utils.aoa_to_sheet(sheetData);
         XLSX.utils.book_append_sheet(this._workbook, sheet, `admin${level}`)
     }
 
-    private _buildGlobalIndicatorsWorkbook(): void {
-        this._writeTab(1, this._appState.admin1Indicators, this._appState.admin1Geojson);
+    private _buildGlobalIndicatorsWorkbook(admin1Indicators: Dict<FeatureIndicators>): void {
+        this._writeTab(1, admin1Indicators);
     }
 
     private _writeFile(buildWorkbook: () => void): void {
@@ -42,10 +58,11 @@ export class IndicatorsExcelDownload {
             XLSX.writeFile(this._workbook, this._fileName);
         } catch (e) {
             // TODO: error handling
+            console.log(e)
         }
     }
 
-    downloadGlobalIndicators = () => {
-        this._writeFile(this._buildGlobalIndicatorsWorkbook);
+    downloadGlobalIndicators = (admin1Indicators: Dict<FeatureIndicators>) => {
+        this._writeFile(() => { this._buildGlobalIndicatorsWorkbook(admin1Indicators); });
     }
 }

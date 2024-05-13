@@ -15,6 +15,9 @@
             <LControl position="topleft">
                 <ResetMapButton :selected-indicator="selectedIndicator" @reset-view="updateRegionBounds" />
             </LControl>
+            <LControl position="topright">
+                <v-btn @click="downloadExcel()">Download Excel</v-btn>
+            </LControl>
         </LMap>
         <div style="visibility: hidden" class="choropleth-data-summary" v-bind="dataSummary"></div>
     </div>
@@ -39,6 +42,7 @@ const mapLoading = ref(true);
 const router = useRouter();
 const { selectedFeatures, selectedIndicators, selectedIndicator, selectedCountryId, appConfig } =
     storeToRefs(useAppStore());
+const { downloadExcel } = useAppStore();
 const featureProperties = appConfig.value.geoJsonFeatureProperties;
 
 const { tooltipForFeature } = useTooltips();

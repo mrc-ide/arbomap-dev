@@ -10,6 +10,8 @@ import {
 } from "../resources/utils";
 import { AppState } from "../types/storeTypes";
 import { FeatureIndicators } from "../types/resourceTypes";
+import {IndicatorsExcelDownload} from "../excel/indicatorsExcelDownload";
+import {debounce} from "../utils";
 
 export const useAppStore = defineStore("app", {
     state: (): AppState => ({
@@ -104,6 +106,13 @@ export const useAppStore = defineStore("app", {
 
             this.admin0GeojsonFeature = (await getGeojsonFeatures(countryId, 0))[0];
             this.selectedCountryId = countryId;
+        },
+        async downloadExcel() {
+            // TODO: download selected country if there is one
+            const download = new IndicatorsExcelDownload("arbomap.xlsx", this.appConfig);
+            debounce(() => {
+                download.downloadGlobalIndicators(this.admin1Indicators);
+            })();
         }
     }
 });
