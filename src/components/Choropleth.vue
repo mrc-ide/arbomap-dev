@@ -5,7 +5,7 @@
             ref="map"
             style="height: calc(100vh - 48px); width: 100%"
             @update:bounds="finishUpdatingMap"
-            @ready="() => updateMap(selectedFeatures)"
+            @ready="updateMap"
             :max-bounds-viscosity="1"
         >
             <LTileLayer v-once data-testid="tile-layer" v-bind="backgroundLayer"></LTileLayer>
@@ -13,7 +13,7 @@
                 <Legend :numberOfSteps="6" />
             </LControl>
             <LControl position="topleft">
-                <ResetMapButton :selected-indicator="selectedIndicator" @reset-view="updateRegionBounds" />
+                <ResetMapButton :selected-indicator="mapSettings.indicator" @reset-view="updateRegionBounds" />
             </LControl>
         </LMap>
         <div style="visibility: hidden" class="choropleth-data-summary" v-bind="dataSummary"></div>
@@ -34,36 +34,39 @@ import { APP_BASE_ROUTE } from "../router/utils";
 import { debounce } from "../utils";
 import { backgroundLayer } from "./utils";
 import { useLoadingSpinner } from "../composables/useLoadingSpinner";
+import { useSelectedMapInfo } from "../composables/useSelectedMapInfo";
 
 const mapLoading = ref(true);
 const router = useRouter();
-const { selectedFeatures, selectedIndicators, selectedIndicator, selectedCountryId, appConfig } =
-    storeToRefs(useAppStore());
+const { mapSettings, appConfig } = storeToRefs(useAppStore());
 const featureProperties = appConfig.value.geoJsonFeatureProperties;
 
 const { tooltipForFeature } = useTooltips();
-const { getFillAndOutlineColour } = useColourScale(selectedIndicators);
+const { getFillAndOutlineColour } = useColourScale();
 
 const featureInSelectedCountry = (feature: Feature, selectedCountry: string) =>
     feature.properties[featureProperties.country] === selectedCountry;
 
-const getFeatureId = (feature: Feature) =>
-    featureInSelectedCountry(feature, selectedCountryId.value)
-        ? feature.properties![featureProperties.idAdm2]
-        : feature.properties![featureProperties.idAdm1];
-
-const getFeatureName = (feature: Feature) =>
-    featureInSelectedCountry(feature, selectedCountryId.value)
-        ? feature.properties![featureProperties.nameAdm2]
-        : feature.properties![featureProperties.nameAdm1];
+const getFeatureProp = (feature: Feature, key: "name" | "id") => {
+    const isAdmin2 = featureInSelectedCountry(feature, mapSettings.value.country) && mapSettings.value.adminLevel === 2;
+    let propertyKey: string;
+    if (key === "id") {
+        propertyKey = isAdmin2 ? featureProperties.idAdm2 : featureProperties.idAdm1;
+    } else {
+        propertyKey = isAdmin2 ? featureProperties.nameAdm2 : featureProperties.nameAdm1;
+    }
+    return feature.properties[propertyKey];
+};
 
 const style = (f: Feature) => {
-    const isFaded = !!selectedCountryId.value && !featureInSelectedCountry(f, selectedCountryId.value);
-    const styleColors = getFillAndOutlineColour(selectedIndicator.value, getFeatureId(f), isFaded);
+    const { country, indicator } = mapSettings.value;
+    const isFaded = !!country && !featureInSelectedCountry(f, country);
+    const styleColors = getFillAndOutlineColour(indicator, getFeatureProp(f, "id"), isFaded);
     return { className: "geojson", fillColor: styleColors.fillColor, color: styleColors.outlineColor };
 };
 
-const getTooltip = (feature: Feature) => tooltipForFeature(getFeatureId(feature), getFeatureName(feature));
+const getTooltip = (feature: Feature) =>
+    tooltipForFeature(getFeatureProp(feature, "id"), getFeatureProp(feature, "name"));
 
 // when rendering the geojson, leaflet will attach event listener specified here to each feature.
 // here we use it to control mapLoading element and changing the URL of the app when they click on
@@ -74,8 +77,8 @@ const layerOnEvents = (feature: Feature) => {
             mapLoading.value = true;
             const country = feature.properties[featureProperties.country];
             // select feature's country, or unselect if click on it when already selected
-            const countryToSelect = country === selectedCountryId.value ? "" : country;
-            debounce(() => router.push(`/${APP_BASE_ROUTE}/${selectedIndicator.value}/${countryToSelect}`))();
+            const countryToSelect = country === mapSettings.value.country ? "" : country;
+            debounce(() => router.push(`/${APP_BASE_ROUTE}/${mapSettings.value.indicator}/${countryToSelect}`))();
         }
     };
 };
@@ -86,12 +89,13 @@ const { map, dataSummary, lockBounds, updateLeafletMap, handleMapBoundsUpdated, 
     layerOnEvents
 );
 useLoadingSpinner(map, mapLoading);
+const { selectedFeatures } = useSelectedMapInfo();
 
-const updateMap = (features: Feature[]) => {
-    if (selectedCountryId.value) {
+const updateMap = () => {
+    if (mapSettings.value.country) {
         lockBounds.value = true;
     }
-    updateLeafletMap(features, selectedCountryId.value);
+    updateLeafletMap(selectedFeatures.value, mapSettings.value.country);
 };
 
 const finishUpdatingMap = () => {
@@ -99,5 +103,5 @@ const finishUpdatingMap = () => {
     mapLoading.value = false;
 };
 
-watch([selectedFeatures, selectedIndicator], ([newFeatures]) => updateMap(newFeatures));
+watch(mapSettings, updateMap);
 </script>

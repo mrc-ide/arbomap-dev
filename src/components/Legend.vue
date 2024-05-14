@@ -15,9 +15,9 @@ import { storeToRefs } from "pinia";
 import { useAppStore } from "../stores/appStore";
 import { useColourScale } from "../composables/useColourScale";
 
-const { appConfig, selectedIndicators, selectedIndicator } = storeToRefs(useAppStore());
+const { appConfig, mapSettings } = storeToRefs(useAppStore());
 
-const { colourScales, indicatorExtremes } = useColourScale(selectedIndicators);
+const { colourScales, indicatorExtremes } = useColourScale();
 
 const props = defineProps({
     numberOfSteps: {
@@ -28,21 +28,21 @@ const props = defineProps({
 });
 
 const colourFunction = computed(() => {
-    return colourScales.value[selectedIndicator.value];
+    return colourScales.value[mapSettings.value.indicator];
 });
 
 const indicatorUnit = computed(() => {
-    const { unit } = appConfig.value.indicators[selectedIndicator.value];
+    const { unit } = appConfig.value.indicators[mapSettings.value.indicator];
     if (!unit) return "";
     return unit === "%" ? unit : ` ${unit}`;
 });
 
 const indicatorMin = computed(() => {
-    return indicatorExtremes.value[selectedIndicator.value].min;
+    return indicatorExtremes.value[mapSettings.value.indicator].min;
 });
 
 const indicatorMax = computed(() => {
-    return indicatorExtremes.value[selectedIndicator.value].max;
+    return indicatorExtremes.value[mapSettings.value.indicator].max;
 });
 
 const indicatorHasSomeVariance = computed(() => {
@@ -59,14 +59,14 @@ const stepStyle = (val: number) => {
     let valAsProportion = indicatorHasSomeVariance.value
         ? (val - indicatorMin.value) / (indicatorMax.value - indicatorMin.value)
         : 0;
-    if (appConfig.value.indicators[selectedIndicator.value].colourScale?.reverse) {
+    if (appConfig.value.indicators[mapSettings.value.indicator].colourScale?.reverse) {
         valAsProportion = 1 - valAsProportion;
     }
     return { background: colourFunction.value(valAsProportion) };
 };
 
 const scaleLevels = computed(() => {
-    if (!(selectedIndicator.value in indicatorExtremes.value)) return [];
+    if (!(mapSettings.value.indicator in indicatorExtremes.value)) return [];
     const stepSize = (indicatorMax.value - indicatorMin.value) / (props.numberOfSteps - 1);
     return Array.from({ length: indicatorHasSomeVariance.value ? props.numberOfSteps : 1 }, (_, index) => {
         const stepValue = indicatorMin.value + index * stepSize;

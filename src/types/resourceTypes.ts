@@ -1,4 +1,4 @@
-import { Feature } from "geojson";
+import { Feature, MultiPolygon, Polygon } from "geojson";
 import { Dict } from "./utilTypes";
 
 export interface IndicatorConfig {
@@ -32,8 +32,10 @@ export interface IndicatorValue {
 // Indicator values for a singe feature area - a dictionary of indicator ids to  values
 export type FeatureIndicatorValues = Dict<IndicatorValue>;
 
+export type MapFeature = Feature<Polygon | MultiPolygon>;
+
 export interface Geojson {
-    features: Feature[];
+    features: MapFeature[];
 }
 
 // Dictionary of feature ids to indicator values
@@ -41,3 +43,11 @@ export type FeatureIndicators = Dict<FeatureIndicatorValues>;
 
 // Country bounding boxes are numeric arrays with order West, East, North, South
 export type BoundingBox = [number, number, number, number];
+
+export type MapSettings = {
+    pathogen: string;
+    version: string;
+    indicator: string;
+    country: string;
+    adminLevel: number;
+};

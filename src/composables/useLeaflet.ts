@@ -47,7 +47,7 @@ export const useLeaflet = (
 
     // internal refs
 
-    const geoJsonLayer = shallowRef<GeoJSON<FeatureProperties, Geometry>>(geoJSON(undefined));
+    const geoJsonLayer = shallowRef<GeoJSON<FeatureProperties, Geometry>>(null);
     const countryOutlineLayer = shallowRef<Polyline | null>(null);
     const layerWithOpenTooltip = shallowRef<Layer | null>(null);
     const bounds = ref<LatLngBounds | null>(null);
@@ -130,10 +130,12 @@ export const useLeaflet = (
         const leafletMap = getLeafletMap();
         if (!leafletMap) return;
 
+        console.log("updating leaflet map")
+
         resetMaxBoundsAndZoom();
 
         // remove layers from map
-        geoJsonLayer.value.remove();
+        geoJsonLayer.value?.remove();
         countryOutlineLayer.value?.remove();
 
         // create new geojson and add to map
@@ -141,7 +143,7 @@ export const useLeaflet = (
             style,
             onEachFeature: configureGeojsonLayer,
             smoothFactor: 0
-        } as GeojsonOptions).addTo(leafletMap);
+        } as GeojsonOptions);
 
         // adding country outline if we have a admin0GeojsonFeature
         // note: the className is just for testing
@@ -152,8 +154,13 @@ export const useLeaflet = (
                 weight: 1,
                 opacity: 0.5,
                 className: "country-outline"
-            }).addTo(leafletMap);
+            });
+        } else {
+            countryOutlineLayer.value = null;
         }
+
+        countryOutlineLayer.value?.addTo(leafletMap);
+        geoJsonLayer.value?.addTo(leafletMap);
 
         updateRegionBounds(regionId);
     };

@@ -1,11 +1,11 @@
 import { describe, test, expect, beforeEach } from "vitest";
 import { useTooltips } from "../../../src/composables/useTooltips";
-import { mockPinia } from "../mocks/mockPinia";
+import { mockMapSettings, mockPinia } from "../mocks/mockPinia";
 
 describe("useTooltips", () => {
     describe("with selected indicator FOI", () => {
         beforeEach(() => {
-            mockPinia({ selectedIndicator: "FOI" });
+            mockPinia({ mapSettings: mockMapSettings({ indicator: "FOI" }) });
         });
 
         test("generates correct tooltip content", () => {
@@ -24,7 +24,7 @@ describe("useTooltips", () => {
 
     describe("with selected indicator serop9", () => {
         beforeEach(() => {
-            mockPinia({ selectedIndicator: "serop9" });
+            mockPinia({ mapSettings: mockMapSettings({ indicator: "serop9" }) });
         });
 
         test("generates correct tooltip content", () => {

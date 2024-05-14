@@ -20,7 +20,7 @@ import { defineProps, defineEmits } from "vue";
 import { APP_BASE_ROUTE } from "../router/utils";
 import { useAppStore } from "../stores/appStore";
 
-const { selectedCountryId } = storeToRefs(useAppStore());
+const { mapSettings } = storeToRefs(useAppStore());
 const router = useRouter();
 
 const props = defineProps({
@@ -34,7 +34,7 @@ const emit = defineEmits(["resetView"]);
 
 const resetView = () => {
     const homePath = `/${APP_BASE_ROUTE}/${props.selectedIndicator}`;
-    if (selectedCountryId.value) {
+    if (mapSettings.value.country) {
         router.push(homePath);
     } else {
         emit("resetView");

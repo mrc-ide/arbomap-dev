@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/vue";
 import * as d3ScaleChromatic from "d3-scale-chromatic";
 import { describe, expect, test } from "vitest";
-import { mockPinia } from "../mocks/mockPinia";
+import { mockMapSettings, mockPinia } from "../mocks/mockPinia";
 import Legend from "../../../src/components/Legend.vue";
 import { MOCK_APP_CONFIG } from "../mocks/mockObjects";
 
@@ -19,7 +19,7 @@ const appConfig = {
             unit: "%"
         }
     }
-};
+} as any;
 const admin1Indicators = {
     TZA: {
         Region1: {
@@ -66,7 +66,7 @@ const renderComponent = () => {
 
 const expectLegendIconColour = (index: number, expectedColor: string) => {
     const legendItems = screen.getAllByTestId("legendItem");
-    expect((legendItems[index] as HTMLElement).children.item(0).style.background).toBe(expectedColor);
+    expect(((legendItems[index] as HTMLElement).children.item(0) as HTMLElement).style.background).toBe(expectedColor);
 };
 
 describe("Legend", () => {
@@ -88,8 +88,11 @@ describe("Legend", () => {
                     admin1Indicators,
                     admin2Indicators,
                     appConfig,
-                    selectedCountryId,
-                    selectedIndicator: "indicatorThatHasSmallNumbers"
+                    mapSettings: mockMapSettings({
+                        country: selectedCountryId,
+                        indicator: "indicatorThatHasSmallNumbers",
+                        adminLevel: 2
+                    })
                 });
             });
 
@@ -127,8 +130,11 @@ describe("Legend", () => {
                     admin1Indicators,
                     admin2Indicators,
                     appConfig,
-                    selectedCountryId,
-                    selectedIndicator: "indicatorMeasuredInPercent"
+                    mapSettings: mockMapSettings({
+                        country: selectedCountryId,
+                        indicator: "indicatorMeasuredInPercent",
+                        adminLevel: 2
+                    })
                 });
             });
 
@@ -171,8 +177,11 @@ describe("Legend", () => {
                     admin1Indicators,
                     admin2Indicators,
                     appConfig,
-                    selectedCountryId,
-                    selectedIndicator: "indicatorThatHasSmallNumbers"
+                    mapSettings: mockMapSettings({
+                        country: selectedCountryId,
+                        indicator: "indicatorThatHasSmallNumbers",
+                        adminLevel: 2
+                    })
                 });
             });
 
@@ -200,8 +209,11 @@ describe("Legend", () => {
                     admin1Indicators,
                     admin2Indicators,
                     appConfig,
-                    selectedCountryId,
-                    selectedIndicator: "indicatorMeasuredInPercent"
+                    mapSettings: mockMapSettings({
+                        country: selectedCountryId,
+                        indicator: "indicatorMeasuredInPercent",
+                        adminLevel: 2
+                    })
                 });
             });
 
