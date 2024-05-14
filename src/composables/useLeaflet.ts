@@ -135,6 +135,12 @@ export const useLeaflet = (
 
         resetMaxBoundsAndZoom();
 
+        // please keep addition of empty layer first
+        // more info: https://github.com/mrc-ide/arbomap/pull/31#issuecomment-2110480157
+        if (!leafletMap.hasLayer(emptyLayer.value)) {
+            emptyLayer.value.addTo(leafletMap);
+        }
+
         // remove layers from map
         geoJsonLayer.value?.remove();
         countryOutlineLayer.value?.remove();
@@ -144,7 +150,7 @@ export const useLeaflet = (
             style,
             onEachFeature: configureGeojsonLayer,
             smoothFactor: 0
-        } as GeojsonOptions);
+        } as GeojsonOptions).addTo(leafletMap);
 
         // adding country outline if we have a admin0GeojsonFeature
         // note: the className is just for testing
@@ -155,18 +161,10 @@ export const useLeaflet = (
                 weight: 1,
                 opacity: 0.5,
                 className: "country-outline"
-            });
+            }).addTo(leafletMap);
         } else {
             countryOutlineLayer.value = null;
         }
-
-        // please keep addition of empty layer first
-        // more info: https://github.com/mrc-ide/arbomap/pull/31#issuecomment-2110480157
-        if (!leafletMap.hasLayer(emptyLayer.value)) {
-            emptyLayer.value.addTo(leafletMap);
-        }
-        geoJsonLayer.value?.addTo(leafletMap);
-        countryOutlineLayer.value?.addTo(leafletMap);
 
         updateRegionBounds(regionId);
     };
