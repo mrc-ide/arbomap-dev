@@ -157,6 +157,8 @@ export const useLeaflet = (
             countryOutlineLayer.value = null;
         }
 
+        // please add all layers at the end of creation
+        // more info: https://github.com/mrc-ide/arbomap/pull/31/files#r1600202783
         countryOutlineLayer.value?.addTo(leafletMap);
         geoJsonLayer.value?.addTo(leafletMap);
 
