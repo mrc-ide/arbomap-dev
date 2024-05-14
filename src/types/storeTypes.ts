@@ -9,6 +9,7 @@ export interface AppState {
     selectedCountryId: string;
 
     appConfig: AppConfig | null;
+    countryNames: Dict<string> | null;
 
     countryBoundingBoxes: Dict<BoundingBox>;
 

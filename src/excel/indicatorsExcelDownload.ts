@@ -8,10 +8,12 @@ export class IndicatorsExcelDownload {
     private readonly _fileName: string;
     private readonly _workbook: XLSX.WorkBook;
     private readonly _appConfig: AppConfig;
+    private readonly _countryNames: Dict<string>;
 
-    constructor(fileName: string, appConfig) {
+    constructor(fileName: string, appConfig: AppConfig, countryNames: Dict<string>) {
         this._fileName = fileName;
         this._appConfig = appConfig;
+        this._countryNames = countryNames;
         this._workbook = XLSX.utils.book_new();
     }
 
@@ -21,6 +23,7 @@ export class IndicatorsExcelDownload {
         const { indicators, countries, geoJsonFeatureProperties } = this._appConfig;
 
         const countryIds = country ? [country] : countries;
+        // TODO: make notes about which scripts to run when in the README
         // TODO: cope with countriesWithoutAdmin2
 
         const indicatorIds = Object.keys(indicators);
@@ -36,6 +39,7 @@ export class IndicatorsExcelDownload {
         const levelFeatureIdProp = geoJsonFeatureProperties[`idAdm${level}`];
 
         countryIds.forEach((countryId) => {
+            const countryName = this._countryNames[countryId] || "";
             const countryValues = indicatorValues[countryId];
             const countryGeojson = geojson[countryId];
 
@@ -49,10 +53,12 @@ export class IndicatorsExcelDownload {
                 if (featureValues) {
                     const row = [];
 
-                    for (let i = 0; i <= level; i++) {
+                    //country level
+                    row.push(countryId, countryName);
+
+                    //sub-country levels
+                    for (let i = 1; i <= level; i++) {
                         // TODO: do something cleverer to save the level ids in an array
-                        // TODO: there's a problem with country not being available in admin1 features.. but we probably
-                        // don't need to look up country name from every feature anyway...?
                         const idProp = geoJsonFeatureProperties[`idAdm${i}`];
                         const nameProp = geoJsonFeatureProperties[`nameAdm${i}`];
                         row.push(feature.properties[idProp], feature.properties[nameProp]);

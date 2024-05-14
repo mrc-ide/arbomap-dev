@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 import { Feature } from "geojson";
 import {
     getAppConfig,
-    getCountryBoundingBoxes,
+    getCountryBoundingBoxes, getCountryNames,
     getGeojsonFeatures,
     getGlobalGeojsonFeatures,
     getGlobalIndicators,
@@ -22,6 +22,7 @@ export const useAppStore = defineStore("app", {
         selectedCountryId: "",
 
         appConfig: null,
+        countryNames: null,
 
         countryBoundingBoxes: {},
 
@@ -67,6 +68,7 @@ export const useAppStore = defineStore("app", {
     actions: {
         async initialiseData() {
             this.appConfig = await getAppConfig();
+            this.countryNames = await getCountryNames();
 
             // Read all adm1 indicators from a single file
             const allIndicators = await getGlobalIndicators(1);
@@ -109,7 +111,7 @@ export const useAppStore = defineStore("app", {
         },
         async downloadExcel() {
             // TODO: download selected country if there is one
-            const download = new IndicatorsExcelDownload("arbomap.xlsx", this.appConfig);
+            const download = new IndicatorsExcelDownload("arbomap.xlsx", this.appConfig, this.countryNames);
             debounce(() => {
                 download.downloadGlobalIndicators(this.admin1Indicators, this.admin1Geojson);
             })();
