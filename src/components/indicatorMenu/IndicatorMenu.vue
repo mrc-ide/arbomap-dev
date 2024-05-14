@@ -1,8 +1,8 @@
 <template>
     <v-theme-provider theme="dark">
-        <v-btn v-if="appConfig && selectedIndicator" class="indicator-menu-activator" role="button">
+        <v-btn v-if="appConfig && mapSettings.indicator" class="indicator-menu-activator" role="button">
             <p class="text-wrap">
-                {{ appConfig.indicators[selectedIndicator].humanReadableName }}
+                {{ appConfig.indicators[mapSettings.indicator].humanReadableName }}
             </p>
             <v-icon :icon="menuOpen ? 'mdi-chevron-down' : 'mdi-chevron-up'" end></v-icon>
             <v-menu
@@ -17,12 +17,12 @@
                         v-for="(id, index) in indicatorGroupIds"
                         :key="id"
                         class="bg-black mb-2 rounded pa-2 elevation-4 border-lg"
-                        :active="id === selectedIndicator && !appConfig.indicatorGroups[index].subIndicators"
+                        :active="id === mapSettings.indicator && !appConfig.indicatorGroups[index].subIndicators"
                         :value="id"
                         active-class="selected-item"
                         :ripple="false"
                     >
-                        <router-link :to="`/${APP_BASE_ROUTE}/${id}/${selectedCountryId}`" custom v-slot="{ navigate }">
+                        <router-link :to="`/${APP_BASE_ROUTE}/${id}/${mapSettings.country}`" custom v-slot="{ navigate }">
                             <button class="text-left w-100" type="button" @click="navigate">
                                 <ColourScaleIcon class="float-left mr-1" :size="24" :indicator="id"></ColourScaleIcon>
                                 <v-list-item-title>
@@ -38,7 +38,7 @@
                             class="cursor-default"
                             center-active
                             show-arrows="always"
-                            :model-value="selectedIndicator"
+                            :model-value="mapSettings.indicator"
                             @click="slideGroupClicked($event)"
                         >
                             <IndicatorSlideGroupItem
@@ -67,7 +67,7 @@ import { useAppStore } from "../../stores/appStore";
 import { APP_BASE_ROUTE } from "../../router/utils";
 
 const menuOpen = ref(false);
-const { appConfig, selectedIndicator, selectedCountryId } = storeToRefs(useAppStore());
+const { appConfig, mapSettings } = storeToRefs(useAppStore());
 
 const indicatorGroupIds = computed(() => appConfig.value.indicatorGroups.map((ig) => ig.mainIndicator));
 
