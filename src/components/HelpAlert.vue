@@ -50,7 +50,7 @@ be different if the help text is changed.
 */
 $alert-max-width: 950px;
 $large-screen-breakpoint: calc(
-    (2*$admin-toggle-width) + $alert-max-width + $leaflet-touch-bar-anchor-width + (4*$leaflet-control-margin)
+    (2 * $admin-toggle-width) + $alert-max-width + $leaflet-touch-bar-anchor-width + (4 * $leaflet-control-margin)
 );
 .v-alert {
     padding: $v-alert-padding;
@@ -72,7 +72,7 @@ $large-screen-breakpoint: calc(
     @media screen and (min-width: $large-screen-breakpoint) {
         position: fixed !important;
         top: $navbar-height + $leaflet-control-margin;
-        left: calc((100vw - $alert-max-width)/2);
+        left: calc((100vw - $alert-max-width) / 2);
     }
 }
 .v-alert__close {
