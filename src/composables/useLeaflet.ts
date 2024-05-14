@@ -47,7 +47,8 @@ export const useLeaflet = (
 
     // internal refs
 
-    const geoJsonLayer = shallowRef<GeoJSON<FeatureProperties, Geometry>>(null);
+    const emptyLayer = shallowRef<Polyline>(polyline([]));
+    const geoJsonLayer = shallowRef<GeoJSON<FeatureProperties, Geometry> | null>(null);
     const countryOutlineLayer = shallowRef<Polyline | null>(null);
     const layerWithOpenTooltip = shallowRef<Layer | null>(null);
     const bounds = ref<LatLngBounds | null>(null);
@@ -159,10 +160,13 @@ export const useLeaflet = (
             countryOutlineLayer.value = null;
         }
 
-        // please add all layers at the end of creation
+        // please keep addition of empty layer first
         // more info: https://github.com/mrc-ide/arbomap/pull/31#issuecomment-2110480157
-        countryOutlineLayer.value?.addTo(leafletMap);
+        if (!leafletMap.hasLayer(emptyLayer.value)) {
+            emptyLayer.value.addTo(leafletMap);
+        }
         geoJsonLayer.value?.addTo(leafletMap);
+        countryOutlineLayer.value?.addTo(leafletMap);
 
         updateRegionBounds(regionId);
     };
