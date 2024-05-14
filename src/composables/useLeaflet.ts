@@ -130,8 +130,6 @@ export const useLeaflet = (
         const leafletMap = getLeafletMap();
         if (!leafletMap) return;
 
-        console.log("updating leaflet map");
-
         resetMaxBoundsAndZoom();
 
         // remove layers from map
