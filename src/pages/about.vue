@@ -53,7 +53,7 @@
             <v-row class="justify-center">
                 <v-img
                     alt="Logo of the MRC Centre for Global Infectious Disease Analysis (MRC GIDA)"
-                    src="@/assets/MRC GIDA logo.png"
+                    src="@/assets/MRC Logo (full colour).png"
                     max-height="80px"
                 />
             </v-row>
