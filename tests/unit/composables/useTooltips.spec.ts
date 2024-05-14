@@ -47,7 +47,7 @@ describe("useTooltips", () => {
 
     describe("with selected indicator hosp_total", () => {
         beforeEach(() => {
-            mockPinia({ selectedIndicator: "hosp_total" });
+            mockPinia({ mapSettings: mockMapSettings({ indicator: "hosp_total" }) });
         });
 
         test("generates correct tooltip content", () => {
@@ -68,7 +68,7 @@ describe("useTooltips", () => {
 
     describe("with selected indicator hosp_5_9", () => {
         beforeEach(() => {
-            mockPinia({ selectedIndicator: "hosp_5_9" });
+            mockPinia({ mapSettings: mockMapSettings({ indicator: "hosp_5_9" }) });
         });
 
         test("generates correct tooltip content", () => {
