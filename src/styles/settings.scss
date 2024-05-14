@@ -31,6 +31,10 @@ html {
   color: rgba(var(--v-theme-on-surface), var(--v-high-emphasis-opacity)) !important;
 }
 
+.v-navigation-drawer {
+  z-index: 9999!important;
+}
+
 .page-text {
   p {
     margin-top: 0.4rem;

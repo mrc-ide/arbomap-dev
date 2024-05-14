@@ -8,6 +8,15 @@ export interface IndicatorConfig {
     };
     unit: string;
     humanReadableName: string;
+    description: string;
+}
+
+// Used for display in the indicator selection menu -
+// top level main indicator with optional (stratified)
+// sub-indicators
+export interface IndicatorGroup {
+    mainIndicator: string;
+    subIndicators?: string[];
 }
 
 export interface AppConfig {
@@ -22,6 +31,7 @@ export interface AppConfig {
         country: string;
     };
     indicators: Dict<IndicatorConfig>;
+    indicatorGroups: IndicatorGroup[];
 }
 
 export interface IndicatorValue {

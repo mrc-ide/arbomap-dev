@@ -64,14 +64,8 @@ describe("appStore", () => {
             const store = useAppStore();
             await store.initialiseData();
             expect(store.selectedIndicators).toStrictEqual({
-                "123": {
-                    FOI: { mean: 0.1, sd: 0.01 },
-                    serop9: { mean: 0.2, sd: 0.02 }
-                },
-                "789": {
-                    FOI: { mean: 0.3, sd: 0.03 },
-                    serop9: { mean: 0.4, sd: 0.04 }
-                }
+                "123": MOCK_ADMIN1_INDICATORS.MWI["123"],
+                "789": MOCK_ADMIN1_INDICATORS.TZA["789"]
             });
         });
 
@@ -80,18 +74,8 @@ describe("appStore", () => {
             await store.initialiseData();
             await store.selectCountry("TZA");
             expect(store.selectedIndicators).toStrictEqual({
-                "123": {
-                    FOI: { mean: 0.1, sd: 0.01 },
-                    serop9: { mean: 0.2, sd: 0.02 }
-                },
-                "789-a": {
-                    FOI: { mean: 0.31, sd: 0.031 },
-                    serop9: { mean: 0.41, sd: 0.041 }
-                },
-                "789-b": {
-                    FOI: { mean: 0.32, sd: 0.032 },
-                    serop9: { mean: 0.42, sd: 0.042 }
-                }
+                "123": MOCK_ADMIN1_INDICATORS.MWI["123"],
+                ...MOCK_ADMIN2_INDICATORS.TZA
             });
         });
     });

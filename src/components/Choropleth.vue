@@ -47,13 +47,20 @@ const { getFillAndOutlineColour } = useColourScale(selectedIndicators);
 const featureInSelectedCountry = (feature: Feature, selectedCountry: string) =>
     feature.properties[featureProperties.country] === selectedCountry;
 
+const featureAdminLevel = (feature: Feature, selectedCountry) => {
+    return featureInSelectedCountry(feature, selectedCountry) &&
+        !appConfig.value.countriesWithoutAdmin2.includes(selectedCountry)
+        ? 2
+        : 1;
+};
+
 const getFeatureId = (feature: Feature) =>
-    featureInSelectedCountry(feature, selectedCountryId.value)
+    featureAdminLevel(feature, selectedCountryId.value) === 2
         ? feature.properties![featureProperties.idAdm2]
         : feature.properties![featureProperties.idAdm1];
 
 const getFeatureName = (feature: Feature) =>
-    featureInSelectedCountry(feature, selectedCountryId.value)
+    featureAdminLevel(feature, selectedCountryId.value) === 2
         ? feature.properties![featureProperties.nameAdm2]
         : feature.properties![featureProperties.nameAdm1];
 
