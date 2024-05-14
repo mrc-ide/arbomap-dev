@@ -17,9 +17,7 @@
             </LControl>
             <LControl position="topright">
                 <AdminLevelToggle @change-admin-level="handleChangeAdminLevel" v-if="mapSettings.country" />
-                <div class="float-right">
-                    <HelpAlert />
-                </div>
+                <HelpAlert />
             </LControl>
         </LMap>
         <div style="visibility: hidden" class="choropleth-data-summary" v-bind="dataSummary"></div>
@@ -118,3 +116,16 @@ const finishUpdatingMap = () => {
 
 watch(mapSettings, updateMap);
 </script>
+<style>
+.leaflet-top.leaflet-right .leaflet-control {
+    display: flex;
+    column-gap: 8px;
+    /* margin-left must belong here rather than HelpAlert, or HelpAlert's margin prevents clicks on zoom controls */
+    margin-left: 55px;
+
+    @media screen and (max-width: 768px) {
+        flex-direction: column;
+        row-gap: 8px;
+    }
+}
+</style>

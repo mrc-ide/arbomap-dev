@@ -1,5 +1,5 @@
 <template>
-    <v-btn aria-label="Help" icon density="compact" v-show="!isActive" @click="isActive = true">
+    <v-btn id="helpButton" aria-label="Help" icon density="compact" v-show="!isActive" @click="isActive = true">
         <v-icon>mdi-help-circle-outline</v-icon>
         <v-tooltip activator="parent">Help</v-tooltip>
     </v-btn>
@@ -35,15 +35,37 @@ watch(isActive, (newValue) => {
     }
 });
 </script>
-
-<style>
+<style lang="scss">
+$v-alert-padding: 12px; // This is a little more compact than Vuetify's default (16px)
+$leaflet-control-margin: 10px;
+$leaflet-touch-bar-anchor-width: 30px;
+$navbar-height: 48px;
+$admin-toggle-height: 36px;
+$admin-toggle-width: 198px;
 .v-alert {
-    position: fixed !important;
-    top: 58px;
-    left: 55px;
-    max-width: calc(100vw - (55px + 5px));
+    /* Undo vuetify styling which is space-inefficient in that it gives close-button a whole grid-column */
+    display: unset !important;
+    padding: $v-alert-padding;
+    text-align: justify;
+
+    @media screen and (max-width: 768px) {
+        order: 2;
+    }
+}
+.v-alert__close {
+    position: absolute;
+    top: $v-alert-padding;
+    right: $v-alert-padding;
 }
 .v-alert-title {
     margin-bottom: 0.5rem;
+}
+#helpButton {
+    align-self: center;
+
+    @media screen and (max-width: 768px) {
+        order: 2;
+        align-self: flex-end;
+    }
 }
 </style>

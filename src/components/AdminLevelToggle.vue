@@ -27,4 +27,7 @@ const emit = defineEmits(["change-admin-level"]);
 .selected-button {
     font-weight: bolder;
 }
+#admin-toggle {
+    text-align: right; /* For compatibility with HelpAlert on small screens */
+}
 </style>
