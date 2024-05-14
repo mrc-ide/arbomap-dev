@@ -43,14 +43,36 @@ $leaflet-touch-bar-anchor-width: 30px;
 $navbar-height: 48px;
 $admin-toggle-height: 36px;
 $admin-toggle-width: 198px;
+/*
+At time of writing, keeping constant the number of lines in the paragraph (3 at this width),
+this max-width maximizes the efficient use of space within the alert. This optimal width will
+be different if the help text is changed.
+*/
+$alert-max-width: 950px;
+$large-screen-breakpoint: calc(
+    (2*$admin-toggle-width) + $alert-max-width + $leaflet-touch-bar-anchor-width + (4*$leaflet-control-margin)
+);
 .v-alert {
-    /* Undo vuetify styling which is space-inefficient in that it gives close-button a whole grid-column */
-    display: unset !important;
     padding: $v-alert-padding;
     text-align: justify;
+    max-width: $alert-max-width;
+
+    /* Undo vuetify styling which is space-inefficient in that it gives close-button a whole grid-column */
+    display: unset !important;
 
     @media screen and (max-width: 768px) {
         order: 2;
+    }
+
+    /*
+    Centering the alert (once its max-width is setting an upper limit on its width) means that
+    when the admin level toggle alternates between being present/absent, the alert does not
+    jump around.
+    */
+    @media screen and (min-width: $large-screen-breakpoint) {
+        position: fixed !important;
+        top: $navbar-height + $leaflet-control-margin;
+        left: calc((100vw - $alert-max-width)/2);
     }
 }
 .v-alert__close {
