@@ -162,4 +162,15 @@ test.describe("Index page", () => {
         await page.waitForURL(/dengue\/may24\/serop9/);
         await expect(await page.locator(".leaflet-control-zoom-out.leaflet-disabled")).toHaveCount(1);
     });
+
+    test.only("admin level 1 outlines show when admin level 2 selected", async ({ page }) => {
+        const admin1Outlines = await page.locator(".admin-1-outline");
+        await expect(await admin1Outlines).toHaveCount(0);
+
+        const firstRegion = await getNthRegion(page, 1);
+        await firstRegion.click();
+        await page.waitForURL(/dengue\/may24\/FOI\/AGO/i);
+
+        await expect(await admin1Outlines).toHaveCount(18);
+    });
 });

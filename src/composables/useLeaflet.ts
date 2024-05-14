@@ -50,6 +50,7 @@ export const useLeaflet = (
     const emptyLayer = shallowRef<Polyline>(polyline([]));
     const geoJsonLayer = shallowRef<GeoJSON<FeatureProperties, Geometry> | null>(null);
     const countryOutlineLayer = shallowRef<Polyline | null>(null);
+    const countryAdmin1OutlineLayer = shallowRef<(Polyline | null)[] | null>(null);
     const layerWithOpenTooltip = shallowRef<Layer | null>(null);
     const bounds = ref<LatLngBounds | null>(null);
 
@@ -57,7 +58,7 @@ export const useLeaflet = (
 
     const { dataSummary } = useDataSummary(bounds);
 
-    const { countryBoundingBoxes, admin0GeojsonFeature } = storeToRefs(useAppStore());
+    const { countryBoundingBoxes, admin0GeojsonFeature, admin1Geojson, mapSettings } = storeToRefs(useAppStore());
 
     const getRegionBounds = (countryId?: string) => {
         if (Object.keys(countryBoundingBoxes.value).length === 0) return null;
@@ -144,6 +145,7 @@ export const useLeaflet = (
         // remove layers from map
         geoJsonLayer.value?.remove();
         countryOutlineLayer.value?.remove();
+        countryAdmin1OutlineLayer.value?.forEach((layer) => layer?.remove());
 
         // create new geojson and add to map
         geoJsonLayer.value = geoJSON<FeatureProperties, Geometry>(newFeatures, {
@@ -158,12 +160,32 @@ export const useLeaflet = (
             const latLngs = GeoJSON.coordsToLatLngs(admin0GeojsonFeature.value.geometry.coordinates, 2);
             countryOutlineLayer.value = polyline(latLngs, {
                 color: "black",
-                weight: 1,
-                opacity: 0.5,
+                weight: 1.2,
+                opacity: 0.9,
                 className: "country-outline"
             }).addTo(leafletMap);
         } else {
             countryOutlineLayer.value = null;
+        }
+
+        // add admin 1 outlines if the selected admin level is 2
+        if (mapSettings.value.adminLevel === 2) {
+            const selectedAdmin1Features = admin1Geojson.value[regionId];
+            countryAdmin1OutlineLayer.value = selectedAdmin1Features?.map((f) => {
+                if (!f?.geometry?.type || !f?.geometry?.coordinates) return null;
+                const latLngs = GeoJSON.coordsToLatLngs(
+                    f.geometry.coordinates,
+                    f.geometry.type === "MultiPolygon" ? 2 : 1 // nesting level
+                );
+                return polyline(latLngs, {
+                    color: "grey",
+                    weight: 0.4,
+                    opacity: 0.75,
+                    className: "admin-1-outline"
+                }).addTo(leafletMap);
+            });
+        } else {
+            countryAdmin1OutlineLayer.value = null;
         }
 
         updateRegionBounds(regionId);
