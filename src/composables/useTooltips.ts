@@ -3,7 +3,7 @@ import { useAppStore } from "../stores/appStore";
 import { useSelectedMapInfo } from "./useSelectedMapInfo";
 
 export const useTooltips = () => {
-    const { mapSettings, appConfig, admin1Indicators, admin2Indicators } = storeToRefs(useAppStore());
+    const { mapSettings, appConfig } = storeToRefs(useAppStore());
 
     const { selectedIndicators } = useSelectedMapInfo();
 

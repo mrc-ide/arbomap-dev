@@ -104,10 +104,10 @@ const selectDataForRoute = async () => {
     }
 
     const newMapSettings: MapSettings = {
-        pathogen: checkRouteProp("pathogen", possibleValuesForProps["pathogen"]),
-        version: checkRouteProp("version", possibleValuesForProps["version"]),
-        indicator: checkRouteProp("indicator", possibleValuesForProps["indicator"]),
-        country: checkRouteProp("country", possibleValuesForProps["country"]),
+        pathogen: checkRouteProp("pathogen", possibleValuesForProps.pathogen),
+        version: checkRouteProp("version", possibleValuesForProps.version),
+        indicator: checkRouteProp("indicator", possibleValuesForProps.indicator),
+        country: checkRouteProp("country", possibleValuesForProps.country),
         adminLevel: props.country ? 2 : 1
     };
     if (!mapSettingsAreEqual(mapSettings.value, newMapSettings)) {

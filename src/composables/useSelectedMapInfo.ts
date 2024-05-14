@@ -2,7 +2,8 @@ import { storeToRefs } from "pinia";
 import { useAppStore } from "../stores/appStore";
 
 export const useSelectedMapInfo = () => {
-    const { mapSettings, admin1Indicators, admin2Indicators, admin1Geojson, admin2Geojson } = storeToRefs(useAppStore());
+    const { mapSettings, admin1Indicators, admin2Indicators, admin1Geojson, admin2Geojson } =
+        storeToRefs(useAppStore());
 
     const selectedIndicators = computed(() => {
         // get single dictionary of feature id to indicator values
@@ -38,5 +39,5 @@ export const useSelectedMapInfo = () => {
     return {
         selectedFeatures,
         selectedIndicators
-    }
-}
+    };
+};

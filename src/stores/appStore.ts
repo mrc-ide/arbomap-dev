@@ -9,7 +9,6 @@ import {
 } from "../resources/utils";
 import { AppState } from "../types/storeTypes";
 import { MapSettings } from "../types/resourceTypes";
-import { PATHOGEN, VERSION } from "../router/utils";
 
 export const useAppStore = defineStore("app", {
     state: (): AppState => ({
@@ -61,7 +60,6 @@ export const useAppStore = defineStore("app", {
             if (!(country in state.admin2Geojson)) {
                 state.admin2Geojson[country] = await getGeojsonFeatures(country, level);
             }
-
 
             state.admin0GeojsonFeature = (await getGeojsonFeatures(country, 0))[0];
             // need to account for the fact that some countries do not have admin level 2 data

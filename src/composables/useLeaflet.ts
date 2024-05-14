@@ -130,7 +130,7 @@ export const useLeaflet = (
         const leafletMap = getLeafletMap();
         if (!leafletMap) return;
 
-        console.log("updating leaflet map")
+        console.log("updating leaflet map");
 
         resetMaxBoundsAndZoom();
 

@@ -4,6 +4,17 @@ import { AppState } from "../../../src/types/storeTypes";
 import { MapSettings } from "../../../src/types/resourceTypes";
 import { PATHOGEN, VERSION } from "../../../src/router/utils";
 
+export const mockMapSettings = (mapSettings: Partial<MapSettings> = {}): MapSettings => {
+    return {
+        pathogen: PATHOGEN,
+        version: VERSION,
+        indicator: "FOI",
+        country: "",
+        adminLevel: 1,
+        ...mapSettings
+    };
+};
+
 export const mockPinia = (appState: Partial<AppState> = {}) => {
     const initialState = {
         app: {
@@ -18,15 +29,4 @@ export const mockPinia = (appState: Partial<AppState> = {}) => {
     };
 
     return createTestingPinia({ initialState });
-};
-
-export const mockMapSettings = (mapSettings: Partial<MapSettings> = {}): MapSettings => {
-    return {
-        pathogen: PATHOGEN,
-        version: VERSION,
-        indicator: "FOI",
-        country: "",
-        adminLevel: 1,
-        ...mapSettings
-    };
 };

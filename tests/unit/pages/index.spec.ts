@@ -2,8 +2,8 @@ import { render, screen } from "@testing-library/vue";
 import { userEvent } from "@testing-library/user-event";
 import { describe, expect, test, vi, beforeEach, afterAll } from "vitest";
 import Index from "@/pages/index.vue";
-import router from "../../../src/router";
 import { flushPromises } from "@vue/test-utils";
+import router from "../../../src/router";
 import { mockVuetify } from "../mocks/mockVuetify";
 import { mockMapSettings, mockPinia } from "../mocks/mockPinia";
 import { useAppStore } from "../../../src/stores/appStore";
@@ -66,11 +66,13 @@ describe("Index page", () => {
         await renderPage("serop9", "TZA");
         const { updateMapSettings } = useAppStore();
         vi.runAllTimers();
-        expect(updateMapSettings).toHaveBeenCalledWith(mockMapSettings({
-            country: "TZA",
-            indicator: "serop9",
-            adminLevel: 2
-        }));
+        expect(updateMapSettings).toHaveBeenCalledWith(
+            mockMapSettings({
+                country: "TZA",
+                indicator: "serop9",
+                adminLevel: 2
+            })
+        );
     });
 
     test("unselects country if empty country prop, and country is set in store", async () => {

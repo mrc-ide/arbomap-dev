@@ -1,10 +1,8 @@
 import { describe, test, expect, beforeAll } from "vitest";
-import { ref } from "vue";
 import * as d3ScaleChromatic from "d3-scale-chromatic";
 import { useColourScale } from "../../../src/composables/useColourScale";
 import { mockPinia } from "../mocks/mockPinia";
 import { useAppStore } from "../../../src/stores/appStore";
-
 
 vi.mock("../../../src/composables/useSelectedMapInfo", async () => {
     const indicatorValues = {
@@ -25,7 +23,7 @@ vi.mock("../../../src/composables/useSelectedMapInfo", async () => {
         useSelectedMapInfo: vi.fn().mockReturnValue({
             selectedIndicators: { value: indicatorValues }
         })
-    }
+    };
 });
 
 describe("useColourScale", () => {

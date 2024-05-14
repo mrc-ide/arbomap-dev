@@ -21,7 +21,7 @@ type FillAndOutlineColour = {
 export const useColourScale = () => {
     // TODO: we currently just scale colours to min and max in data, but
     // we can also provide option to scale to config
-    const { appConfig, mapSettings, admin1Indicators, admin2Indicators } = storeToRefs(useAppStore());
+    const { appConfig } = storeToRefs(useAppStore());
 
     const colourScales = computed(() => {
         const result = {};
@@ -73,7 +73,11 @@ export const useColourScale = () => {
     const noScalesColour = "rgb(200, 200, 200)";
     const noScalesColourFaded = fadeColour("rgb(200, 200, 200)");
 
-    const getFillAndOutlineColour = (indicator: string, featureId: string, isFaded: boolean = false): FillAndOutlineColour => {
+    const getFillAndOutlineColour = (
+        indicator: string,
+        featureId: string,
+        isFaded: boolean = false
+    ): FillAndOutlineColour => {
         const featureIndicators = selectedIndicators.value[featureId] as FeatureIndicatorValues | undefined;
 
         // If indicators do not exist for this feature, return transparent
