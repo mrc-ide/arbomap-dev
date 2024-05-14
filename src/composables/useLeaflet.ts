@@ -15,7 +15,7 @@ import {
 } from "leaflet";
 import { storeToRefs } from "pinia";
 import { useAppStore } from "../stores/appStore";
-import { minZoom } from "../components/utils";
+import { countryAdmin1OutlineStyle, countryOutlineStyle, minZoom } from "../components/utils";
 import { useDataSummary } from "./useDataSummary";
 
 type FeatureProperties = { GID_0: string; GID_1: string; NAME_1: string };
@@ -155,15 +155,9 @@ export const useLeaflet = (
         } as GeojsonOptions).addTo(leafletMap);
 
         // adding country outline if we have a admin0GeojsonFeature
-        // note: the className is just for testing
         if (admin0GeojsonFeature.value) {
             const latLngs = GeoJSON.coordsToLatLngs(admin0GeojsonFeature.value.geometry.coordinates, 2);
-            countryOutlineLayer.value = polyline(latLngs, {
-                color: "black",
-                weight: 1.2,
-                opacity: 0.9,
-                className: "country-outline"
-            }).addTo(leafletMap);
+            countryOutlineLayer.value = polyline(latLngs, countryOutlineStyle).addTo(leafletMap);
         } else {
             countryOutlineLayer.value = null;
         }
@@ -177,12 +171,7 @@ export const useLeaflet = (
                     f.geometry.coordinates,
                     f.geometry.type === "MultiPolygon" ? 2 : 1 // nesting level
                 );
-                return polyline(latLngs, {
-                    color: "grey",
-                    weight: 0.4,
-                    opacity: 0.75,
-                    className: "admin-1-outline"
-                }).addTo(leafletMap);
+                return polyline(latLngs, countryAdmin1OutlineStyle).addTo(leafletMap);
             });
         } else {
             countryAdmin1OutlineLayer.value = null;
