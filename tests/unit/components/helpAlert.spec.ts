@@ -9,31 +9,47 @@ const renderComponent = () => {
     });
 };
 
+let helpAlertHasBeenDismissed: string | null;
+const localStorageMock = (() => {
+    return {
+        getItem: vi.fn(() => helpAlertHasBeenDismissed),
+        setItem: vi.fn()
+    };
+})();
+
+const originalLocalStorage = (window as any).localStorage;
+beforeAll((): void => {
+    (window as any).localStorage = localStorageMock;
+});
+afterAll((): void => {
+    (window as any).localStorage = originalLocalStorage;
+});
+
 describe("HelpAlert", () => {
     describe("When the alert has not been dismissed before", () => {
+        beforeAll((): void => {
+            helpAlertHasBeenDismissed = null;
+        });
+
         it("should show the alert", () => {
             renderComponent();
             expect(screen.getByRole("alert")).toBeVisible();
         });
+
+        describe("When the alert is dismissed", () => {
+            it("should call localStorage.setItem and not show alert", async () => {
+                renderComponent();
+                const closeButton = screen.getByLabelText("Close");
+                await fireEvent.click(closeButton);
+                expect(localStorageMock.setItem).toHaveBeenCalled();
+                expect(screen.queryByRole("alert")).toBeNull();
+            });
+        });
     });
 
     describe("When the alert was dismissed in the past", () => {
-        let originalLocalStorage;
-
         beforeAll((): void => {
-            const localStorageMock = (() => {
-                return {
-                    getItem: vi.fn(() => "true"),
-                    setItem: vi.fn()
-                };
-            })();
-
-            originalLocalStorage = window.localStorage;
-            (window as any).localStorage = localStorageMock;
-        });
-
-        afterAll((): void => {
-            (window as any).localStorage = originalLocalStorage;
+            helpAlertHasBeenDismissed = "true";
         });
 
         it("should not show the alert", () => {

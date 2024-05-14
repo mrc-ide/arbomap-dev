@@ -25,6 +25,7 @@ const helpText = `
     and at the top left to control the zoom level. To toggle admin level when viewing a selected country,
     use the controls in the top right.
 `;
+
 // Initialize alert as open or closed based on localStorage
 const isActive = ref(localStorage.getItem("helpAlertHasBeenDismissed") !== "true");
 
