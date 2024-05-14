@@ -22,7 +22,11 @@
                         active-class="selected-item"
                         :ripple="false"
                     >
-                        <router-link :to="`/${APP_BASE_ROUTE}/${id}/${mapSettings.country}`" custom v-slot="{ navigate }">
+                        <router-link
+                            :to="`/${APP_BASE_ROUTE}/${id}/${mapSettings.country}`"
+                            custom
+                            v-slot="{ navigate }"
+                        >
                             <button class="text-left w-100" type="button" @click="navigate">
                                 <ColourScaleIcon class="float-left mr-1" :size="24" :indicator="id"></ColourScaleIcon>
                                 <v-list-item-title>
