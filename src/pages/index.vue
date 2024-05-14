@@ -16,7 +16,7 @@ import { computed, Ref, watch, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useAppStore } from "../stores/appStore";
 import NotFound from "./notFound.vue";
-import { APP_BASE_ROUTE, PATHOGEN, VERSION } from "../router/utils";
+import { PATHOGEN, VERSION } from "../router/utils";
 import { mapSettingsAreEqual } from "../utils";
 import { MapSettings } from "../types/resourceTypes";
 

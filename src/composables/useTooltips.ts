@@ -12,7 +12,9 @@ export const useTooltips = () => {
         // main indicator, as long as that is not the selected indicator
         const sortedKeys = [
             mapSettings.value.indicator,
-            ...appConfig.value.indicatorGroups.map((g) => g.mainIndicator).filter((i) => i !== mapSettings.value.indicator)
+            ...appConfig.value.indicatorGroups
+                .map((g) => g.mainIndicator)
+                .filter((i) => i !== mapSettings.value.indicator)
         ];
 
         const sortedMap = new Map();
