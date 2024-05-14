@@ -5,7 +5,13 @@
                 {{ appConfig.indicators[selectedIndicator].humanReadableName }}
             </p>
             <v-icon :icon="menuOpen ? 'mdi-chevron-down' : 'mdi-chevron-up'" end></v-icon>
-            <v-menu class="indicator-menu" activator="parent" v-model="menuOpen" :close-on-content-click="false" :close-on-back="false">
+            <v-menu
+                class="indicator-menu"
+                activator="parent"
+                v-model="menuOpen"
+                :close-on-content-click="false"
+                :close-on-back="false"
+            >
                 <v-list class="bg-transparent opacity-80 elevation-0">
                     <v-list-item
                         v-for="(id, index) in indicatorGroupIds"
@@ -85,7 +91,7 @@ const slideGroupClicked = (event: PointerEvent) => {
 
 .indicator-menu {
     .v-overlay__content {
-        max-width: min(34rem, 80%)!important;
+        max-width: min(34rem, 80%) !important;
     }
 }
 </style>
