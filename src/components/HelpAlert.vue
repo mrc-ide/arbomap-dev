@@ -1,7 +1,7 @@
 <template>
     <v-btn id="helpButton" aria-label="Help" icon density="compact" v-show="!isActive" @click="isActive = true">
         <v-icon>mdi-help-circle-outline</v-icon>
-        <v-tooltip activator="parent">Help</v-tooltip>
+        <v-tooltip location="bottom" activator="parent">Help</v-tooltip>
     </v-btn>
     <v-alert
         v-model="isActive"
