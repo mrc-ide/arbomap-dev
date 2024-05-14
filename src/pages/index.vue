@@ -3,18 +3,7 @@
         <template v-if="mapSettings">
             <Choropleth v-if="mapSettings.indicator" data-testid="choropleth" />
             <div class="sticky-footer">
-                <div v-for="name in indicatorNames" :key="name">
-                    <router-link :to="`/${APP_BASE_ROUTE}/${name}/${mapSettings.country}`" custom v-slot="{ navigate }">
-                        <v-btn
-                            @click="navigate"
-                            role="link"
-                            class="mb-2"
-                            :class="name === mapSettings.indicator ? 'bg-blue' : 'bg-black'"
-                            rounded="xl"
-                            >{{ name }}
-                        </v-btn>
-                    </router-link>
-                </div>
+                <IndicatorMenu></IndicatorMenu>
             </div>
         </template>
     </template>
@@ -122,7 +111,7 @@ onBeforeMount(selectDataForRoute);
 <style lang="scss">
 .sticky-footer {
     position: fixed;
-    bottom: 1rem;
+    top: calc(100dvh - (48px + 1.5rem));
     left: 2rem;
     background-color: rgba(0, 0, 0, 0);
     z-index: 999;

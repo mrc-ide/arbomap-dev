@@ -81,7 +81,7 @@ export const useColourScale = () => {
         const featureIndicators = selectedIndicators.value[featureId] as FeatureIndicatorValues | undefined;
 
         // If indicators do not exist for this feature, return transparent
-        if (!featureIndicators) {
+        if (!featureIndicators || !featureIndicators[indicator]) {
             return {
                 fillColor: noIndicatorsColour,
                 outlineColor: noIndicatorsColour

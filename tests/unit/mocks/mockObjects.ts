@@ -19,8 +19,38 @@ export const MOCK_APP_CONFIG = {
             colourScale: { name: "interpolateBlues" },
             humanReadableName: "Seroprevalence at 9 years of age",
             unit: "%"
+        },
+        hosp_total: {
+            colourScale: { name: "interpolatePurples" },
+            humanReadableName: "Hospital admissions",
+            shortName: "All ages",
+            unit: ""
+        },
+        hosp_0_4: {
+            colourScale: { name: "interpolatePurples" },
+            humanReadableName: "Hospital admissions in 0-4 year olds",
+            shortName: "0-4",
+            unit: ""
+        },
+        hosp_5_9: {
+            colourScale: { name: "interpolatePurples" },
+            humanReadableName: "Hospital admissions in 5-9 year olds",
+            shortName: "5-9",
+            unit: ""
         }
-    }
+    },
+    indicatorGroups: [
+        {
+            mainIndicator: "FOI"
+        },
+        {
+            mainIndicator: "serop9"
+        },
+        {
+            mainIndicator: "hosp_total",
+            subIndicators: ["hosp_0_4", "hosp_5_9"]
+        }
+    ]
 };
 
 export const MOCK_ADMIN0_GEOJSON = {
@@ -48,13 +78,19 @@ export const MOCK_ADMIN1_INDICATORS = {
     MWI: {
         "123": {
             FOI: { mean: 0.1, sd: 0.01 },
-            serop9: { mean: 0.2, sd: 0.02 }
+            serop9: { mean: 0.2, sd: 0.02 },
+            hosp_total: { mean: 0.3, sd: 0.03 },
+            hosp_0_4: { mean: 0.4, sd: 0.04 },
+            hosp_5_9: { mean: 0.5, sd: 0.05 }
         }
     },
     TZA: {
         "789": {
             FOI: { mean: 0.3, sd: 0.03 },
-            serop9: { mean: 0.4, sd: 0.04 }
+            serop9: { mean: 0.4, sd: 0.04 },
+            hosp_total: { mean: 0.5, sd: 0.05 },
+            hosp_0_4: { mean: 0.6, sd: 0.06 },
+            hosp_5_9: { mean: 0.7, sd: 0.07 }
         }
     }
 };
