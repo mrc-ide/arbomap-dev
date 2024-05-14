@@ -205,4 +205,12 @@ test.describe("Index page", () => {
 
         await expect(await admin1Outlines).toHaveCount(18);
     });
+
+    test("help alert is shown, can be dismissed, and stays dismissed after reloading map", async ({ page }) => {
+        await expect(await page.getByText("How to use this map")).toBeVisible();
+        await page.getByRole("button", { name: "Close" }).click();
+        await expect(await page.getByText("How to use this map")).not.toBeVisible();
+        await page.goto("/dengue/may24/FOI/AGO/admin1");
+        await expect(await page.getByText("How to use this map")).not.toBeVisible();
+    });
 });
