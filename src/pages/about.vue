@@ -31,10 +31,27 @@
                     was co-funded by the World Health Organization and developed in collaboration with the Drugs for
                     Neglected Diseases initiative.
                 </p>
+                <p>
+                    You are viewing {{ appConfig?.title }} version {{ PACKAGE_VERSION }}.
+                    <v-btn variant="plain"
+                           size="small"
+                           :ripple="false"
+                           class=""
+                           @click="showVersionDetails=!showVersionDetails;"
+                    >
+                        {{ showVersionDetails ? "Hide" : "Show" }} details
+                    </v-btn>
+                    <div v-if="showVersionDetails">
+                        Git branch: {{ GIT_BRANCH }} | Git commit: {{ GIT_COMMIT }}
+                    </div>
+                </p>
                 <p class="text-body-1 font-italic">
                     [1] L. Cattarino, I. Rodriguez-Barraquer, N. Imai, D. A. T. Cummings, and N. M. Ferguson, “Mapping
                     global variation in dengue transmission intensity,” Sci. Transl. Med., vol. 12, no. 528, Jan. 2020.
                 </p>
+            </v-row>
+            <v-row>
+
             </v-row>
             <v-row class="justify-center mt-12">
                 <v-img
@@ -67,3 +84,12 @@
         </v-col>
     </v-container>
 </template>
+<script setup>
+import {GIT_BRANCH, GIT_COMMIT, PACKAGE_VERSION} from "../version";
+import {storeToRefs} from "pinia";
+import {useAppStore} from "../stores/appStore";
+
+const { appConfig } = storeToRefs(useAppStore());
+
+const showVersionDetails = ref(false);
+</script>
