@@ -136,7 +136,7 @@ export const useLeaflet = (
         resetMaxBoundsAndZoom();
 
         // please keep addition of empty layer first
-        // more info: https://github.com/mrc-ide/arbomap/pull/31#issuecomment-2110480157
+        // more info: https://github.com/mrc-ide/arbomap/pull/31#discussion_r1601660916
         if (!leafletMap.hasLayer(emptyLayer.value)) {
             emptyLayer.value.addTo(leafletMap);
         }
