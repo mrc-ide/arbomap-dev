@@ -13,12 +13,14 @@ export const countryOutlineStyle = {
     color: "black",
     weight: 1.2,
     opacity: 0.9,
-    className: "country-outline"
+    className: "country-outline",
+    smoothFactor: 0
 };
 
 export const countryAdmin1OutlineStyle = {
     color: "grey",
     weight: 0.4,
     opacity: 0.75,
-    className: "admin-1-outline"
+    className: "admin-1-outline",
+    smoothFactor: 0
 };
