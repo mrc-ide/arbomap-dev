@@ -87,7 +87,10 @@ const selectDataForRoute = async () => {
     if (unknownProps.value.length) return;
 
     // we pick dengue, may24 and FOI as defaults for pathogen, version and indicator respectively
-    if (!props.indicator) router.replace(`/${APP_BASE_ROUTE}/${possibleValuesForProps.indicator[0]}`);
+    if (!props.indicator) {
+        router.replace(`/${APP_BASE_ROUTE}/${possibleValuesForProps.indicator[0]}`);
+        return;
+    }
 
     const newMapSettings: MapSettings = {
         pathogen: propsWithCorrectCase.pathogen,
