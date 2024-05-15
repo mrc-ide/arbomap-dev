@@ -13,7 +13,7 @@
 <script lang="ts" setup>
 import { storeToRefs } from "pinia";
 import { computed, Ref, watch, ref } from "vue";
-import { routerKey, useRouter } from "vue-router";
+import { useRouter } from "vue-router";
 import { useAppStore } from "../stores/appStore";
 import NotFound from "./notFound.vue";
 import { APP_BASE_ROUTE, PATHOGEN, VERSION } from "../router/utils";
