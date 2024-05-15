@@ -16,7 +16,7 @@ import { computed, Ref, watch, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useAppStore } from "../stores/appStore";
 import NotFound from "./notFound.vue";
-import { PATHOGEN, VERSION } from "../router/utils";
+import { APP_BASE_ROUTE, PATHOGEN, VERSION } from "../router/utils";
 import { mapSettingsAreEqual } from "../utils";
 import { MapSettings } from "../types/resourceTypes";
 
@@ -48,7 +48,6 @@ const props = defineProps({
 });
 type PropName = keyof typeof props;
 
-const indicatorNames = computed(() => (appConfig.value ? Object.keys(appConfig.value.indicators) : {}));
 const unknownProps: Ref<string[]> = ref([]);
 
 const notFoundMsg = (valueType: string, value: string) => `Unknown ${valueType}: ${value}.`;
@@ -58,7 +57,7 @@ const notFoundDetail = computed(() => {
 });
 
 const checkRouteProp = (propName: PropName, candidates: string[]) => {
-    // Do case-insensitive check against route prop - add to unknown props if not found
+    // Do case-insensitive check against route prop
     if (props[propName] === "") return "";
     const pattern = new RegExp(`^${props[propName]}$`, "i");
     return candidates.find((i) => pattern.test(i));
@@ -74,30 +73,28 @@ const selectDataForRoute = async () => {
         indicator: Object.keys(appConfig.value.indicators),
         country: appConfig.value.countries
     };
+    const propsWithCorrectCase: Partial<Record<PropName, string>> = {};
     Object.keys(possibleValuesForProps).forEach((prop: PropName) => {
-        if (checkRouteProp(prop, possibleValuesForProps[prop]) === undefined) {
+        const correctCase = checkRouteProp(prop, possibleValuesForProps[prop]);
+        if (correctCase === undefined) {
             unknown.push(prop);
+            return;
         }
+        propsWithCorrectCase[prop] = correctCase;
     });
 
     unknownProps.value = unknown;
     if (unknownProps.value.length) return;
 
-    let path = "";
-    path += `/${props.pathogen || PATHOGEN}`;
-    path += `/${props.version || VERSION}`;
-    path += `/${props.indicator || indicatorNames.value[0]}`;
-    const currentPath = router.currentRoute.value.path;
-    if (currentPath.indexOf(path) !== 0) {
-        router.replace(path);
-    }
+    // we pick dengue, may24 and FOI as defaults for pathogen, version and indicator respectively
+    if (!props.indicator) router.replace(`/${APP_BASE_ROUTE}/${possibleValuesForProps.indicator[0]}`);
 
     const newMapSettings: MapSettings = {
-        pathogen: checkRouteProp("pathogen", possibleValuesForProps.pathogen),
-        version: checkRouteProp("version", possibleValuesForProps.version),
-        indicator: checkRouteProp("indicator", possibleValuesForProps.indicator),
-        country: checkRouteProp("country", possibleValuesForProps.country),
-        adminLevel: props.country ? 2 : 1
+        pathogen: propsWithCorrectCase.pathogen,
+        version: propsWithCorrectCase.version,
+        indicator: propsWithCorrectCase.indicator,
+        country: propsWithCorrectCase.country,
+        adminLevel: propsWithCorrectCase.country ? 2 : 1
     };
     if (!mapSettingsAreEqual(mapSettings.value, newMapSettings)) {
         await updateMapSettings(newMapSettings);

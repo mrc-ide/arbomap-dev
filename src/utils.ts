@@ -15,11 +15,5 @@ export function debounce(fn, wait = 0) {
 export const mapSettingsAreEqual = (mapSettings1: MapSettings, mapSettings2: MapSettings) => {
     if (mapSettings1 === null && !!mapSettings2) return false;
     if (mapSettings2 === null && !!mapSettings1) return false;
-    return (
-        mapSettings1.pathogen === mapSettings2.pathogen &&
-        mapSettings1.version === mapSettings2.version &&
-        mapSettings1.indicator === mapSettings2.indicator &&
-        mapSettings1.country === mapSettings2.country &&
-        mapSettings1.adminLevel === mapSettings2.adminLevel
-    );
+    return Object.keys(mapSettings1).every((key: keyof MapSettings) => mapSettings1[key] === mapSettings2[key]);
 };
