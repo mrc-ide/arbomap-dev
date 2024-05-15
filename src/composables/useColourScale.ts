@@ -97,6 +97,12 @@ export const useColourScale = (selectedIndicators: Ref<Dict<FeatureIndicatorValu
         colorValue = Math.max(0, colorValue);
 
         const scale = colourScales.value[indicator];
+
+        const reverse = appConfig.value.indicators[indicator].colourScale?.reverse;
+        if (reverse) {
+            colorValue = 1 - colorValue;
+        }
+
         const colour = scale(colorValue);
         const baseColour = isFaded ? fadeColour(colour) : colour;
         return {

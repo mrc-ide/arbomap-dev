@@ -1,4 +1,5 @@
 import { render, screen } from "@testing-library/vue";
+import * as d3ScaleChromatic from "d3-scale-chromatic";
 import { describe, expect, test } from "vitest";
 import { mockPinia } from "../mocks/mockPinia";
 import Legend from "../../../src/components/Legend.vue";
@@ -13,7 +14,7 @@ const appConfig = {
             unit: "widgets"
         },
         indicatorMeasuredInPercent: {
-            colourScale: { name: "interpolateBlues" },
+            colourScale: { name: "interpolateBlues", reverse: true },
             humanReadableName: "Comorbidity with diabetes",
             unit: "%"
         }
@@ -63,6 +64,11 @@ const renderComponent = () => {
     });
 };
 
+const expectLegendIconColour = (index: number, expectedColor: string) => {
+    const legendItems = screen.getAllByTestId("legendItem");
+    expect((legendItems[index] as HTMLElement).children.item(0).style.background).toBe(expectedColor);
+};
+
 describe("Legend", () => {
     describe("when a number of steps is specified", () => {
         test("renders the specified no. of steps", () => {
@@ -103,6 +109,16 @@ describe("Legend", () => {
                 // Test units are displayed
                 expect(legendItems[0].textContent).toEqual("0.0004 widgets");
             });
+
+            test("renders expected colours", () => {
+                renderComponent();
+                expectLegendIconColour(0, d3ScaleChromatic.interpolateReds(1));
+                expectLegendIconColour(1, d3ScaleChromatic.interpolateReds(0.8));
+                expectLegendIconColour(2, d3ScaleChromatic.interpolateReds(0.6));
+                expectLegendIconColour(3, d3ScaleChromatic.interpolateReds(0.4));
+                expectLegendIconColour(4, d3ScaleChromatic.interpolateReds(0.2));
+                expectLegendIconColour(5, d3ScaleChromatic.interpolateReds(0));
+            });
         });
 
         describe("when the selected indicator is indicatorMeasuredInPercent", () => {
@@ -131,6 +147,17 @@ describe("Legend", () => {
                 expect(displayedValues[5]).toEqual(0.412);
                 // Test units are displayed
                 expect(legendItems[0].textContent).toEqual("0.422%");
+            });
+
+            test("renders expected colours", () => {
+                renderComponent();
+                // Colours are in reversed scale
+                expectLegendIconColour(0, d3ScaleChromatic.interpolateBlues(0));
+                expectLegendIconColour(1, d3ScaleChromatic.interpolateBlues(0.2));
+                expectLegendIconColour(2, d3ScaleChromatic.interpolateBlues(0.4));
+                expectLegendIconColour(3, d3ScaleChromatic.interpolateBlues(0.6));
+                expectLegendIconColour(4, d3ScaleChromatic.interpolateBlues(0.8));
+                expectLegendIconColour(5, d3ScaleChromatic.interpolateBlues(1));
             });
         });
     });
