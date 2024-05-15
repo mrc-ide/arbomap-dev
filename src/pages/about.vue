@@ -33,26 +33,29 @@
                 </p>
                 <p>
                     You are viewing {{ appConfig?.title }} version {{ PACKAGE_VERSION }}.
-                    <v-btn variant="plain"
-                           size="small"
-                           :ripple="false"
-                           class=""
-                           @click="showVersionDetails=!showVersionDetails;"
+                    <v-btn
+                        variant="plain"
+                        size="small"
+                        :ripple="false"
+                        class=""
+                        @click="showVersionDetails = !showVersionDetails"
                     >
                         {{ showVersionDetails ? "Hide" : "Show" }} details
                     </v-btn>
-                    <div v-if="showVersionDetails">
-                        Git branch: {{ GIT_BRANCH }} | Git commit: {{ GIT_COMMIT }}
-                    </div>
                 </p>
+            </v-row>
+            <v-row>
+                <div v-if="showVersionDetails" class="text-body-1">
+                    Git branch: {{ GIT_BRANCH }} | Git commit: {{ GIT_COMMIT }}
+                </div>
+            </v-row>
+            <v-row>
                 <p class="text-body-1 font-italic">
                     [1] L. Cattarino, I. Rodriguez-Barraquer, N. Imai, D. A. T. Cummings, and N. M. Ferguson, “Mapping
                     global variation in dengue transmission intensity,” Sci. Transl. Med., vol. 12, no. 528, Jan. 2020.
                 </p>
             </v-row>
-            <v-row>
-
-            </v-row>
+            <v-row> </v-row>
             <v-row class="justify-center mt-12">
                 <v-img
                     alt="Logo of the Drugs for Neglected Diseases initiative (DNDi)"
@@ -85,9 +88,9 @@
     </v-container>
 </template>
 <script setup>
-import {GIT_BRANCH, GIT_COMMIT, PACKAGE_VERSION} from "../version";
-import {storeToRefs} from "pinia";
-import {useAppStore} from "../stores/appStore";
+import { storeToRefs } from "pinia";
+import { GIT_BRANCH, GIT_COMMIT, PACKAGE_VERSION } from "../version";
+import { useAppStore } from "../stores/appStore";
 
 const { appConfig } = storeToRefs(useAppStore());
 
