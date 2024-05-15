@@ -11,7 +11,7 @@ describe("useSelectedMapInfo", () => {
     test("selectedFeatures includes all admin 1 features when there is no selected country", async () => {
         const store = useAppStore();
         await store.initialiseData();
-        await store.updateMapSettings(mockMapSettings());
+        await store.updateMapSettings(mockMapSettings({ adminLevel: 0 }));
         const { selectedFeatures } = useSelectedMapInfo();
         expect(selectedFeatures.value).toStrictEqual([
             { properties: { shapeID: "123", shapeName: "Test123", shapeGroup: "MWI" } },
@@ -45,7 +45,7 @@ describe("useSelectedMapInfo", () => {
     test("selectedIndicators includes all admin 1 features when there is no selected country", async () => {
         const store = useAppStore();
         await store.initialiseData();
-        await store.updateMapSettings(mockMapSettings());
+        await store.updateMapSettings(mockMapSettings({ adminLevel: 0 }));
         const { selectedIndicators } = useSelectedMapInfo();
         expect(selectedIndicators.value).toStrictEqual({
             "123": {
