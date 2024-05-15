@@ -13,10 +13,10 @@
 <script lang="ts" setup>
 import { storeToRefs } from "pinia";
 import { computed, Ref, watch, ref } from "vue";
-import { useRouter } from "vue-router";
+import { routerKey, useRouter } from "vue-router";
 import { useAppStore } from "../stores/appStore";
 import NotFound from "./notFound.vue";
-import { PATHOGEN, VERSION } from "../router/utils";
+import { APP_BASE_ROUTE, PATHOGEN, VERSION } from "../router/utils";
 import { mapSettingsAreEqual } from "../utils";
 import { MapSettings } from "../types/resourceTypes";
 
@@ -48,7 +48,6 @@ const props = defineProps({
 });
 type PropName = keyof typeof props;
 
-const indicatorNames = computed(() => (appConfig.value ? Object.keys(appConfig.value.indicators) : {}));
 const unknownProps: Ref<string[]> = ref([]);
 
 const notFoundMsg = (valueType: string, value: string) => `Unknown ${valueType}: ${value}.`;
@@ -87,14 +86,8 @@ const selectDataForRoute = async () => {
     unknownProps.value = unknown;
     if (unknownProps.value.length) return;
 
-    let path = "";
-    path += `/${props.pathogen || PATHOGEN}`;
-    path += `/${props.version || VERSION}`;
-    path += `/${props.indicator || indicatorNames.value[0]}`;
-    const currentPath = router.currentRoute.value.path;
-    if (currentPath.indexOf(path) !== 0) {
-        router.replace(path);
-    }
+    // we pick dengue, may24 and FOI as defaults for pathogen, version and indicator respectively
+    if (!props.indicator) router.replace(`/${APP_BASE_ROUTE}/${appConfig.value.indicators[0]}`);
 
     const newMapSettings: MapSettings = {
         pathogen: propsWithCorrectCase.pathogen,
