@@ -163,7 +163,7 @@ test.describe("Index page", () => {
         await expect(await page.locator(".leaflet-control-zoom-out.leaflet-disabled")).toHaveCount(1);
     });
 
-    test.only("admin level 1 outlines show when admin level 2 selected", async ({ page }) => {
+    test("admin level 1 outlines show when admin level 2 selected", async ({ page }) => {
         const admin1Outlines = await page.locator(".admin-1-outline");
         await expect(await admin1Outlines).toHaveCount(0);
 
