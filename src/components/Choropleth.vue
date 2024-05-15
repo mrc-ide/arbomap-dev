@@ -47,7 +47,7 @@ const { getFillAndOutlineColour } = useColourScale();
 const featureInSelectedCountry = (feature: Feature, selectedCountry: string) =>
     feature.properties[featureProperties.country] === selectedCountry;
 
-const getFeatureProp = (feature: Feature, key: "name" | "id") => {
+const getFeatureProperty = (feature: Feature, key: "name" | "id") => {
     const isAdmin2 = featureInSelectedCountry(feature, mapSettings.value.country) && mapSettings.value.adminLevel === 2;
     let propertyKey: string;
     if (key === "id") {
@@ -61,12 +61,12 @@ const getFeatureProp = (feature: Feature, key: "name" | "id") => {
 const style = (f: Feature) => {
     const { country, indicator } = mapSettings.value;
     const isFaded = !!country && !featureInSelectedCountry(f, country);
-    const styleColors = getFillAndOutlineColour(indicator, getFeatureProp(f, "id"), isFaded);
+    const styleColors = getFillAndOutlineColour(indicator, getFeatureProperty(f, "id"), isFaded);
     return { className: "geojson", fillColor: styleColors.fillColor, color: styleColors.outlineColor };
 };
 
 const getTooltip = (feature: Feature) =>
-    tooltipForFeature(getFeatureProp(feature, "id"), getFeatureProp(feature, "name"));
+    tooltipForFeature(getFeatureProperty(feature, "id"), getFeatureProperty(feature, "name"));
 
 // when rendering the geojson, leaflet will attach event listener specified here to each feature.
 // here we use it to control mapLoading element and changing the URL of the app when they click on
