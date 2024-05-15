@@ -118,8 +118,10 @@ export const useLeaflet = (
                 // map while the bounds were locked, now we track each layer that will open a
                 // tooltip and close them if they are not the most recent layer to make sure
                 // no old tooltips remain open
-                layerWithOpenTooltip.value?.closeTooltip();
-                layerWithOpenTooltip.value = layer;
+                if (layer !== layerWithOpenTooltip.value) {
+                    layerWithOpenTooltip.value?.closeTooltip();
+                    layerWithOpenTooltip.value = layer;
+                }
             }
         });
     };
