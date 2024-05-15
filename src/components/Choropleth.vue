@@ -45,24 +45,30 @@ const { selectedFeatures, selectedIndicators } = useSelectedMapInfo();
 const { tooltipForFeature } = useTooltips(selectedIndicators);
 const { getFillAndOutlineColour } = useColourScale(selectedIndicators);
 
-const featureInSelectedCountry = (feature: Feature, selectedCountry: string) =>
-    feature.properties[featureProperties.country] === selectedCountry;
+const featureInSelectedCountry = (feature: Feature) =>
+    feature.properties[featureProperties.country] === mapSettings.value.country;
 
-const getFeatureProperty = (feature: Feature, key: "name" | "id") => {
-    const level =
-        featureInSelectedCountry(feature, mapSettings.value.country) && mapSettings.value.adminLevel === 2 ? 2 : 1;
-    return feature.properties[featureProperties[`${key}Adm${level}`]];
-};
+const featureAdminLevel = (feature: Feature) =>
+    featureInSelectedCountry(feature) && mapSettings.value.adminLevel === 2 ? 2 : 1;
+
+const getFeatureId = (feature: Feature) =>
+    featureAdminLevel(feature) === 2
+        ? feature.properties[featureProperties.idAdm2]
+        : feature.properties[featureProperties.idAdm1];
+
+const getFeatureName = (feature: Feature) =>
+    featureAdminLevel(feature) === 2
+        ? feature.properties[featureProperties.nameAdm2]
+        : feature.properties[featureProperties.nameAdm1];
 
 const style = (f: Feature) => {
     const { country, indicator } = mapSettings.value;
-    const isFaded = !!country && !featureInSelectedCountry(f, country);
-    const styleColors = getFillAndOutlineColour(indicator, getFeatureProperty(f, "id"), isFaded);
+    const isFaded = !!country && !featureInSelectedCountry(f);
+    const styleColors = getFillAndOutlineColour(indicator, getFeatureId(f), isFaded);
     return { className: "geojson", fillColor: styleColors.fillColor, color: styleColors.outlineColor };
 };
 
-const getTooltip = (feature: Feature) =>
-    tooltipForFeature(getFeatureProperty(feature, "id"), getFeatureProperty(feature, "name"));
+const getTooltip = (feature: Feature) => tooltipForFeature(getFeatureId(feature), getFeatureName(feature));
 
 // when rendering the geojson, leaflet will attach event listener specified here to each feature.
 // here we use it to control mapLoading element and changing the URL of the app when they click on
