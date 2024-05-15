@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/vue";
 import { describe, expect, test, vi, beforeEach, afterAll } from "vitest";
 import Index from "@/pages/index.vue";
 import { flushPromises } from "@vue/test-utils";
-import router from "../../../src/router";
+import router from "@/router";
 import { mockVuetify } from "../mocks/mockVuetify";
 import { mockMapSettings, mockPinia } from "../mocks/mockPinia";
 import { useAppStore } from "../../../src/stores/appStore";
