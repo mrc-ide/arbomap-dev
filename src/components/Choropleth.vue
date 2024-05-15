@@ -49,9 +49,8 @@ const featureInSelectedCountry = (feature: Feature, selectedCountry: string) =>
     feature.properties[featureProperties.country] === selectedCountry;
 
 const getFeatureProperty = (feature: Feature, key: "name" | "id") => {
-    const level = featureInSelectedCountry(feature, mapSettings.value.country) && mapSettings.value.adminLevel === 2
-        ? 2
-        : 1;
+    const level =
+        featureInSelectedCountry(feature, mapSettings.value.country) && mapSettings.value.adminLevel === 2 ? 2 : 1;
     return feature.properties[featureProperties[`${key}Adm${level}`]];
 };
 
