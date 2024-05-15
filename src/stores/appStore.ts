@@ -53,13 +53,12 @@ export const useAppStore = defineStore("app", {
                 state.admin2Indicators[country] = state.admin1Indicators[country];
             }
 
-            if (level === 2 && !admin2DataMissing && !(country in state.admin2Indicators)) {
-                state.admin2Indicators[country] = await getIndicators(country, level);
+            if (level === 2 && !admin2DataMissing) {
+                state.admin2Indicators[country] =
+                    state.admin2Indicators[country] || (await getIndicators(country, level));
             }
 
-            if (!(country in state.admin2Geojson)) {
-                state.admin2Geojson[country] = await getGeojsonFeatures(country, level);
-            }
+            state.admin2Geojson[country] = state.admin2Geojson[country] || (await getGeojsonFeatures(country, level));
 
             state.admin0GeojsonFeature = (await getGeojsonFeatures(country, 0))[0];
             // account for the fact that some countries do not have admin level 2 data
