@@ -33,3 +33,4 @@ data/processed
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+src/version.ts
