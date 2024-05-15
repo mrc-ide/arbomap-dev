@@ -4,8 +4,8 @@ import { useColourScale } from "../../../src/composables/useColourScale";
 import { mockPinia } from "../mocks/mockPinia";
 import { useAppStore } from "../../../src/stores/appStore";
 
-vi.mock("../../../src/composables/useSelectedMapInfo", async () => {
-    const indicatorValues = {
+const indicatorValues = {
+    value: {
         "123": {
             FOI: { mean: 0.1, sd: 0.01 },
             serop9: { mean: 0.2, sd: 0.02 }
@@ -18,13 +18,8 @@ vi.mock("../../../src/composables/useSelectedMapInfo", async () => {
             FOI: { mean: 0.3, sd: 0.03 },
             serop9: { mean: 0.4, sd: 0.04 }
         }
-    };
-    return {
-        useSelectedMapInfo: vi.fn().mockReturnValue({
-            selectedIndicators: { value: indicatorValues }
-        })
-    };
-});
+    }
+};
 
 describe("useColourScale", () => {
     beforeAll(() => {
@@ -32,7 +27,7 @@ describe("useColourScale", () => {
     });
 
     test("returns colour scales", () => {
-        const sut = useColourScale();
+        const sut = useColourScale(indicatorValues as any);
         expect(sut.colourScales.value).toStrictEqual({
             FOI: d3ScaleChromatic.interpolateReds,
             serop9: d3ScaleChromatic.interpolateBlues,
@@ -43,7 +38,7 @@ describe("useColourScale", () => {
     });
 
     test("can get colour for value", () => {
-        const sut = useColourScale();
+        const sut = useColourScale(indicatorValues as any);
 
         // min value for FOI
         expect(sut.getFillAndOutlineColour("FOI", "123", false)).toStrictEqual({
@@ -65,7 +60,7 @@ describe("useColourScale", () => {
     });
 
     test("can get faded colour for value", () => {
-        const sut = useColourScale();
+        const sut = useColourScale(indicatorValues as any);
 
         // min value for FOI
         expect(sut.getFillAndOutlineColour("FOI", "123", true)).toStrictEqual({
@@ -78,7 +73,7 @@ describe("useColourScale", () => {
         const { appConfig } = useAppStore();
         appConfig.indicators.FOI.colourScale.reverse = true;
 
-        const sut = useColourScale();
+        const sut = useColourScale(indicatorValues as any);
         // min value for FOI, should return max value for colour scale
         expect(sut.getFillAndOutlineColour("FOI", "123")).toStrictEqual({
             fillColor: "rgb(103, 0, 13)",

@@ -28,7 +28,7 @@ describe("appStore", () => {
             expect(store.initialisationComplete).toStrictEqual(true);
         });
 
-        test("selectCountry selects country and loads data", async () => {
+        test("updateMapSettings selects country, admin level and loads data", async () => {
             const store = useAppStore();
             await store.initialiseData();
             const newMapSettings = mockMapSettings({ country: "TZA", adminLevel: 2 });

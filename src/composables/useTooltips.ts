@@ -1,11 +1,9 @@
 import { storeToRefs } from "pinia";
 import { useAppStore } from "../stores/appStore";
-import { useSelectedMapInfo } from "./useSelectedMapInfo";
+import { FeatureIndicators } from "../types/resourceTypes";
 
-export const useTooltips = () => {
+export const useTooltips = (selectedIndicators: ComputedRef<FeatureIndicators>) => {
     const { mapSettings, appConfig } = storeToRefs(useAppStore());
-
-    const { selectedIndicators } = useSelectedMapInfo();
 
     const sortedIndicators = computed(() => {
         // We show currently selected indicator first, then each configured indicator group's

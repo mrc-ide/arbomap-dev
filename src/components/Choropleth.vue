@@ -40,22 +40,19 @@ const mapLoading = ref(true);
 const router = useRouter();
 const { mapSettings, appConfig } = storeToRefs(useAppStore());
 const featureProperties = appConfig.value.geoJsonFeatureProperties;
+const { selectedFeatures, selectedIndicators } = useSelectedMapInfo();
 
-const { tooltipForFeature } = useTooltips();
-const { getFillAndOutlineColour } = useColourScale();
+const { tooltipForFeature } = useTooltips(selectedIndicators);
+const { getFillAndOutlineColour } = useColourScale(selectedIndicators);
 
 const featureInSelectedCountry = (feature: Feature, selectedCountry: string) =>
     feature.properties[featureProperties.country] === selectedCountry;
 
 const getFeatureProperty = (feature: Feature, key: "name" | "id") => {
-    const isAdmin2 = featureInSelectedCountry(feature, mapSettings.value.country) && mapSettings.value.adminLevel === 2;
-    let propertyKey: string;
-    if (key === "id") {
-        propertyKey = isAdmin2 ? featureProperties.idAdm2 : featureProperties.idAdm1;
-    } else {
-        propertyKey = isAdmin2 ? featureProperties.nameAdm2 : featureProperties.nameAdm1;
-    }
-    return feature.properties[propertyKey];
+    const level = featureInSelectedCountry(feature, mapSettings.value.country) && mapSettings.value.adminLevel === 2
+        ? 2
+        : 1;
+    return feature.properties[featureProperties[`${key}Adm${level}`]];
 };
 
 const style = (f: Feature) => {
@@ -89,7 +86,6 @@ const { map, dataSummary, lockBounds, updateLeafletMap, handleMapBoundsUpdated, 
     layerOnEvents
 );
 useLoadingSpinner(map, mapLoading);
-const { selectedFeatures } = useSelectedMapInfo();
 
 const updateMap = () => {
     if (mapSettings.value.country) {

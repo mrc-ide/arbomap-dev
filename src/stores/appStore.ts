@@ -62,7 +62,7 @@ export const useAppStore = defineStore("app", {
             }
 
             state.admin0GeojsonFeature = (await getGeojsonFeatures(country, 0))[0];
-            // need to account for the fact that some countries do not have admin level 2 data
+            // account for the fact that some countries do not have admin level 2 data
             const finalMapSettings: MapSettings = { ...newMapSettings, adminLevel: level };
             state.mapSettings = finalMapSettings;
         }

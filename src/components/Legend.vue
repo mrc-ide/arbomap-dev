@@ -14,10 +14,11 @@
 import { storeToRefs } from "pinia";
 import { useAppStore } from "../stores/appStore";
 import { useColourScale } from "../composables/useColourScale";
+import { useSelectedMapInfo } from "../composables/useSelectedMapInfo";
 
 const { appConfig, mapSettings } = storeToRefs(useAppStore());
-
-const { colourScales, indicatorExtremes } = useColourScale();
+const { selectedIndicators } = useSelectedMapInfo();
+const { colourScales, indicatorExtremes } = useColourScale(selectedIndicators);
 
 const props = defineProps({
     numberOfSteps: {

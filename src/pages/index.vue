@@ -58,7 +58,7 @@ const notFoundDetail = computed(() => {
 });
 
 const checkRouteProp = (propName: PropName, candidates: string[]) => {
-    // Do case-insensitive check against route prop - add to unknown props if not found
+    // Do case-insensitive check against route prop
     if (props[propName] === "") return "";
     const pattern = new RegExp(`^${props[propName]}$`, "i");
     return candidates.find((i) => pattern.test(i));
@@ -74,10 +74,14 @@ const selectDataForRoute = async () => {
         indicator: Object.keys(appConfig.value.indicators),
         country: appConfig.value.countries
     };
+    const propsWithCorrectCase: Partial<Record<PropName, string>> = {};
     Object.keys(possibleValuesForProps).forEach((prop: PropName) => {
-        if (checkRouteProp(prop, possibleValuesForProps[prop]) === undefined) {
+        const correctCase = checkRouteProp(prop, possibleValuesForProps[prop]);
+        if (correctCase === undefined) {
             unknown.push(prop);
+            return;
         }
+        propsWithCorrectCase[prop] = correctCase;
     });
 
     unknownProps.value = unknown;
@@ -93,11 +97,11 @@ const selectDataForRoute = async () => {
     }
 
     const newMapSettings: MapSettings = {
-        pathogen: checkRouteProp("pathogen", possibleValuesForProps.pathogen),
-        version: checkRouteProp("version", possibleValuesForProps.version),
-        indicator: checkRouteProp("indicator", possibleValuesForProps.indicator),
-        country: checkRouteProp("country", possibleValuesForProps.country),
-        adminLevel: props.country ? 2 : 1
+        pathogen: propsWithCorrectCase.pathogen,
+        version: propsWithCorrectCase.version,
+        indicator: propsWithCorrectCase.indicator,
+        country: propsWithCorrectCase.country,
+        adminLevel: propsWithCorrectCase.country ? 2 : 1
     };
     if (!mapSettingsAreEqual(mapSettings.value, newMapSettings)) {
         await updateMapSettings(newMapSettings);
