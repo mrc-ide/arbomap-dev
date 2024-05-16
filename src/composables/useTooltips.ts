@@ -1,15 +1,18 @@
 import { storeToRefs } from "pinia";
 import { useAppStore } from "../stores/appStore";
+import { FeatureIndicators } from "../types/resourceTypes";
 
-export const useTooltips = () => {
-    const { selectedIndicators, selectedIndicator, appConfig } = storeToRefs(useAppStore());
+export const useTooltips = (selectedIndicators: ComputedRef<FeatureIndicators>) => {
+    const { mapSettings, appConfig } = storeToRefs(useAppStore());
 
     const sortedIndicators = computed(() => {
         // We show currently selected indicator first, then each configured indicator group's
         // main indicator, as long as that is not the selected indicator
         const sortedKeys = [
-            selectedIndicator.value,
-            ...appConfig.value.indicatorGroups.map((g) => g.mainIndicator).filter((i) => i !== selectedIndicator.value)
+            mapSettings.value.indicator,
+            ...appConfig.value.indicatorGroups
+                .map((g) => g.mainIndicator)
+                .filter((i) => i !== mapSettings.value.indicator)
         ];
 
         const sortedMap = new Map();
@@ -34,7 +37,7 @@ export const useTooltips = () => {
             const headlineNumber = mean.toPrecision(3);
             const line = `${metadata.humanReadableName}: ${headlineNumber}${metadata.unit}<br/>`;
             indicatorValues +=
-                indicatorKey.toLowerCase() === selectedIndicator.value.toLowerCase()
+                indicatorKey.toLowerCase() === mapSettings.value.indicator.toLowerCase()
                     ? `<span class="font-weight-bold">${line}</span>`
                     : line;
         });

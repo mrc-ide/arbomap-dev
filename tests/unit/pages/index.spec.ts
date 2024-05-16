@@ -1,14 +1,14 @@
 import { render, screen } from "@testing-library/vue";
 import { describe, expect, test, vi, beforeEach, afterAll } from "vitest";
 import Index from "@/pages/index.vue";
-import router from "@/router";
 import { flushPromises } from "@vue/test-utils";
+import router from "@/router";
 import { mockVuetify } from "../mocks/mockVuetify";
-import { mockPinia } from "../mocks/mockPinia";
+import { mockMapSettings, mockPinia } from "../mocks/mockPinia";
 import { useAppStore } from "../../../src/stores/appStore";
 import { PATHOGEN, VERSION } from "../../../src/router/utils";
 
-const renderPage = async (indicator, country, pathogen = "dengue", version = "may24") => {
+const renderPage = async (indicator?: string, country: string = "", pathogen = "dengue", version = "may24") => {
     await render(Index, {
         props: { pathogen, version, indicator, country },
         global: {
@@ -40,39 +40,37 @@ describe("Index page", () => {
 
     test("selects indicator from props", async () => {
         await renderPage("serop9");
-        expect(useAppStore().selectedIndicator).toBe("serop9");
+        const { updateMapSettings } = useAppStore();
+        vi.runAllTimers();
+        expect(updateMapSettings).toHaveBeenCalledWith(mockMapSettings({ indicator: "serop9" }));
     });
 
     test("selects country from props", async () => {
         await renderPage("serop9", "TZA");
-        const { selectedIndicator, selectCountry } = useAppStore();
+        const { updateMapSettings } = useAppStore();
         vi.runAllTimers();
-        expect(selectCountry).toHaveBeenCalledWith("TZA");
-        expect(selectedIndicator).toBe("serop9");
-    });
-
-    test("does not unselect country if no country prop, and none set in store", async () => {
-        await renderPage("serop9");
-        const { selectedIndicator, selectCountry } = useAppStore();
-        vi.runAllTimers();
-        expect(selectCountry).not.toHaveBeenCalled();
-        expect(selectedIndicator).toBe("serop9");
+        expect(updateMapSettings).toHaveBeenCalledWith(
+            mockMapSettings({
+                country: "TZA",
+                indicator: "serop9",
+                adminLevel: 2
+            })
+        );
     });
 
     test("unselects country if empty country prop, and country is set in store", async () => {
         await render(Index, {
             props: { pathogen: PATHOGEN, version: VERSION, indicator: "serop9", country: "" },
             global: {
-                plugins: [mockVuetify, mockPinia({ selectedCountryId: "MWI" }), router],
+                plugins: [mockVuetify, mockPinia({ mapSettings: mockMapSettings({ country: "MWI" }) }), router],
                 stubs: {
                     Choropleth: true
                 }
             }
         });
-        const { selectedIndicator, selectCountry } = useAppStore();
+        const { updateMapSettings } = useAppStore();
         vi.runAllTimers();
-        expect(selectCountry).toHaveBeenCalledWith("");
-        expect(selectedIndicator).toBe("serop9");
+        expect(updateMapSettings).toHaveBeenCalledWith(mockMapSettings({ indicator: "serop9" }));
     });
 
     test("routes to first indicator if none provided", async () => {
