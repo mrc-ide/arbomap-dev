@@ -1,6 +1,6 @@
 {
     "title": "DengueMap",
-    "countries": ["AGO","ARG","ATG","AUS","BDI","BEN","BFA","BGD","BHS","BLZ","BOL","BRA","BRB","BTN","BWA","CAF","CHN","CIV","CMR","COD","COG","COL","COM","CPV","CRI","CUB","DJI","DOM","ECU","ERI","ETH","FJI","GAB","GHA","GIN","GLP","GMB","GNB","GNQ","GRD","GTM","GUF","GUY","HND","HTI","IDN","IND","JAM","KEN","KHM","LAO","LBR","LCA","LKA","MDG","MEX","MLI","MMR","MOZ","MRT","MTQ","MUS","MWI","MYS","MYT","NAM","NCL","NER","NGA","NIC","NPL","OMN","PAN","PER","PHL","PNG","PRI","PRY","PYF","REU","RWA","SDN","SEN","SGP","SLB","SLE","SLV","SOM","SSD","SUR","SYC","TCD","TGO","THA","TLS","TON","TTO","TWN","TZA","UGA","URY","VCT","VEN","VIR","VNM","VUT","WSM","YEM","ZMB","ZWE"],
+    "countries": ["AGO","ATG","ARG","AUS","BHS","BGD","BRB","BLZ","BEN","BTN","BOL","BWA","BRA","BFA","BDI","KHM","CMR","CPV","CAF","TCD","CHN","COL","COM","CRI","CIV","CUB","COD","DJI","DOM","ECU","SLV","GNQ","ERI","ETH","FJI","GUF","PYF","GAB","GMB","GHA","GRD","GLP","GTM","GNB","GIN","GUY","HTI","HND","IND","Z01","IDN","JAM","KEN","LAO","LBR","MDG","MWI","MYS","MLI","MTQ","MRT","MUS","MYT","MEX","MOZ","MMR","NAM","NPL","NCL","NIC","NER","NGA","OMN","PAN","PNG","PRY","PER","PHL","PRI","COG","REU","RWA","LCA","VCT","WSM","SEN","SLE","SGP","SLB","SOM","SSD","LKA","SDN","SUR","TWN","TZA","THA","TLS","TGO","TON","TTO","UGA","URY","VUT","VEN","VNM","YEM","ZMB","ZWE"],
     "countriesWithoutAdmin2":["ATG","BHS","BLZ","BRB","COM","CPV","GRD","JAM","LCA","MUS","MYT","PRI","PYF","SGP","SYC","TTO","VCT"],
     "geoJsonFeatureProperties": {
         "idAdm1": "GID_1",
