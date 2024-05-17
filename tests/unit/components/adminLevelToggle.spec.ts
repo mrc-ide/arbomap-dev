@@ -35,7 +35,7 @@ describe("AdminLevelToggle", () => {
     });
 
     test("admin level 2 is disabled if country missing admin 2 data", async () => {
-        const { findAllByRole } = renderComponent(2, true);
+        const { findAllByRole } = renderComponent(1, true);
         const buttons = await findAllByRole("button");
         const [admin1Button, admin2Button] = buttons;
         expect(admin1Button).toHaveClass("selected-button");

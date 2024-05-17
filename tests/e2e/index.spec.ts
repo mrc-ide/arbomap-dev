@@ -164,6 +164,10 @@ test.describe("Index page", () => {
     });
 
     test("admin level toggle works", async ({ page }) => {
+        const adminToggle = await page.locator("#admin-toggle");
+
+        await expect(adminToggle).toHaveCount(0);
+
         const allRegions = await page.locator(GEOJSON_SELECTOR);
         const firstRegion = await getNthRegion(page, 1);
         await firstRegion.click();
@@ -171,11 +175,16 @@ test.describe("Index page", () => {
 
         await expect(await allRegions).toHaveCount(1978);
 
-        const adminToggle = await page.locator("#admin-toggle");
         await expect(adminToggle).toHaveCount(1);
         await adminToggle.getByRole("button", { name: "Admin 1" }).click();
         await page.waitForURL(/dengue\/may24\/FOI\/AGO\/admin1/i);
 
         await expect(await allRegions).toHaveCount(1833);
+    });
+
+    test("admin level defaults to 1 for countries with missing admin 2 data", async ({ page }) => {
+        // ATG has missing admin level 2 data
+        page.goto("dengue/may24/FOI/ATG");
+        await page.waitForURL(/dengue\/may24\/FOI\/ATG\/admin1/i);
     });
 });
