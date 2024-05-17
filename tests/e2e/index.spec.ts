@@ -163,7 +163,7 @@ test.describe("Index page", () => {
         await expect(await page.locator(".leaflet-control-zoom-out.leaflet-disabled")).toHaveCount(1);
     });
 
-    test("admin toggle works", async ({ page }) => {
+    test("admin level toggle works", async ({ page }) => {
         const allRegions = await page.locator(GEOJSON_SELECTOR);
         const firstRegion = await getNthRegion(page, 1);
         await firstRegion.click();
