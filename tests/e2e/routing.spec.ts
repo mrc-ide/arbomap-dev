@@ -65,7 +65,7 @@ test.describe("Router", () => {
 
     test("is case-insensitive", async ({ page }) => {
         await page.goto("/DENGUE/May24/SEROP9/tza");
-        await page.waitForURL(/\/DENGUE\/May24\/SEROP9\/tza/);
+        await page.waitForURL(/\/dengue\/may24\/serop9\/TZA/);
         await expect(await page.textContent(".indicator-menu-activator")).toBe("Seroprevalence at 9 years of age");
         const summary = await page.locator(".choropleth-data-summary");
         await expect(await summary).toHaveAttribute("colour-scale", "interpolateGreens");

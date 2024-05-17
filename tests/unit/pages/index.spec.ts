@@ -8,9 +8,9 @@ import { mockMapSettings, mockPinia } from "../mocks/mockPinia";
 import { useAppStore } from "../../../src/stores/appStore";
 import { PATHOGEN, VERSION } from "../../../src/router/utils";
 
-const renderPage = async (indicator?: string, country: string = "", pathogen = "dengue", version = "may24") => {
+const renderPage = async (indicator?: string, country: string = "", pathogen = "dengue", version = "may24", adminLevel = "") => {
     await render(Index, {
-        props: { pathogen, version, indicator, country },
+        props: { pathogen, version, indicator, country, adminLevel },
         global: {
             plugins: [mockVuetify, mockPinia(), router],
             stubs: {
@@ -46,7 +46,7 @@ describe("Index page", () => {
     });
 
     test("selects country from props", async () => {
-        await renderPage("serop9", "TZA");
+        await renderPage("serop9", "TZA", "dengue", "may24", "admin2");
         const { updateMapSettings } = useAppStore();
         vi.runAllTimers();
         expect(updateMapSettings).toHaveBeenCalledWith(

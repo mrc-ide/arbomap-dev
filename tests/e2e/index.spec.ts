@@ -162,4 +162,20 @@ test.describe("Index page", () => {
         await page.waitForURL(/dengue\/may24\/serop9/);
         await expect(await page.locator(".leaflet-control-zoom-out.leaflet-disabled")).toHaveCount(1);
     });
+
+    test("admin toggle works", async ({ page }) => {
+        const allRegions = await page.locator(GEOJSON_SELECTOR);
+        const firstRegion = await getNthRegion(page, 1);
+        await firstRegion.click();
+        await page.waitForURL(/dengue\/may24\/FOI\/AGO\/admin2/i);
+
+        await expect(await allRegions).toHaveCount(1978);
+
+        const adminToggle = await page.locator("#admin-toggle");
+        await expect(adminToggle).toHaveCount(1);
+        await adminToggle.getByRole("button", { name: "Admin 1" }).click();
+        await page.waitForURL(/dengue\/may24\/FOI\/AGO\/admin1/i);
+
+        await expect(await allRegions).toHaveCount(1833);
+    });
 });

@@ -7,6 +7,7 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    AdminLevelToggle: typeof import('./components/AdminLevelToggle.vue')['default']
     Choropleth: typeof import('./components/Choropleth.vue')['default']
     ColourScaleIcon: typeof import('./components/indicatorMenu/ColourScaleIcon.vue')['default']
     IndicatorMenu: typeof import('./components/indicatorMenu/IndicatorMenu.vue')['default']
