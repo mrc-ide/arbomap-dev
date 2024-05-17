@@ -101,9 +101,12 @@ const selectDataForRoute = async () => {
     if (country) {
         const admin2DataMissing = appConfig.value.countriesWithoutAdmin2.includes(country);
         if (!adminLevel) {
-            router.replace(`/${pathogen}/${version}/${indicator}/${country}/${admin2DataMissing ? AdminLevel.ONE : AdminLevel.TWO}`);
+            router.replace(
+                `/${pathogen}/${version}/${indicator}/${country}/${admin2DataMissing ? AdminLevel.ONE : AdminLevel.TWO}`
+            );
             return;
-        } else if (adminLevel === AdminLevel.TWO && admin2DataMissing) {
+        }
+        if (adminLevel === AdminLevel.TWO && admin2DataMissing) {
             router.replace(`/${pathogen}/${version}/${indicator}/${country}/${AdminLevel.ONE}`);
             return;
         }

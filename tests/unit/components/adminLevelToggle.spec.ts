@@ -23,28 +23,28 @@ describe("AdminLevelToggle", () => {
         const { findAllByRole } = renderComponent(1);
         const buttons = await findAllByRole("button");
         expect(buttons.length).toBe(2);
-        const [ admin1Button, ] = buttons;
+        const [admin1Button] = buttons;
         expect(admin1Button).toHaveClass("selected-button");
     });
 
     test("renders as expected with admin level 2", async () => {
         const { findAllByRole } = renderComponent(2);
         const buttons = await findAllByRole("button");
-        const [, admin2Button ] = buttons;
+        const [, admin2Button] = buttons;
         expect(admin2Button).toHaveClass("selected-button");
     });
 
     test("admin level 2 is disabled if country missing admin 2 data", async () => {
         const { findAllByRole } = renderComponent(2, true);
         const buttons = await findAllByRole("button");
-        const [, admin2Button ] = buttons;
+        const [, admin2Button] = buttons;
         expect(admin2Button).toBeDisabled();
     });
 
     test("emits when button is changed", async () => {
         const { findAllByRole, emitted } = renderComponent(2, true);
         const buttons = await findAllByRole("button");
-        const [ admin1Button ] = buttons;
+        const [admin1Button] = buttons;
         admin1Button.click();
         expect(emitted()).toHaveProperty("change-admin-level", [[1]]);
     });

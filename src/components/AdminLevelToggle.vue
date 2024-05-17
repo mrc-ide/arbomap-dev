@@ -1,5 +1,13 @@
 <template>
-    <v-btn-toggle id="admin-toggle" :model-value="mapSettings.adminLevel" @update:model-value="emit('change-admin-level', $event)" mandatory :max="1" :density="'compact'" theme="dark">
+    <v-btn-toggle
+        id="admin-toggle"
+        :model-value="mapSettings.adminLevel"
+        @update:model-value="emit('change-admin-level', $event)"
+        mandatory
+        :max="1"
+        :density="'compact'"
+        theme="dark"
+    >
         <v-btn :value="1" :ripple="false" selected-class="selected-button">Admin 1</v-btn>
         <v-btn :value="2" :ripple="false" :disabled="admin2DataMissing" selected-class="selected-button">Admin 2</v-btn>
     </v-btn-toggle>

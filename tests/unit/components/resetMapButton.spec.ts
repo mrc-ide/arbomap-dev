@@ -3,7 +3,6 @@ import ResetMapButton from "@/components/ResetMapButton.vue";
 import { APP_BASE_ROUTE } from "../../../src/router/utils";
 import { mockRouter } from "../mocks/mockRouter";
 import { mockMapSettings, mockPinia } from "../mocks/mockPinia";
-import { flushPromises } from "@vue/test-utils";
 
 const router = mockRouter();
 

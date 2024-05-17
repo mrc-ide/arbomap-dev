@@ -8,7 +8,13 @@ import { mockMapSettings, mockPinia } from "../mocks/mockPinia";
 import { useAppStore } from "../../../src/stores/appStore";
 import { PATHOGEN, VERSION } from "../../../src/router/utils";
 
-const renderPage = async (indicator?: string, country: string = "", pathogen = "dengue", version = "may24", adminLevel = "") => {
+const renderPage = async (
+    indicator?: string,
+    country: string = "",
+    pathogen = "dengue",
+    version = "may24",
+    adminLevel = ""
+) => {
     await render(Index, {
         props: { pathogen, version, indicator, country, adminLevel },
         global: {
