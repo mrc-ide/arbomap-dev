@@ -44,7 +44,7 @@ test.describe("Index page", () => {
         const firstRegion = await getNthRegion(page, 1);
         const allRegions = await page.locator(GEOJSON_SELECTOR);
         await expect(firstRegion).toBeVisible();
-        await expect(await allRegions).toHaveCount(1833);
+        await expect(await allRegions).toHaveCount(1915);
         const summary = await page.locator(".choropleth-data-summary");
         const globalBounds = await summary.getAttribute("bounds");
         await firstRegion.click();
@@ -83,7 +83,7 @@ test.describe("Index page", () => {
         const firstRegion = await getNthRegion(page, 1);
         const colour = await firstRegion.getAttribute("fill");
         const stroke = await firstRegion.getAttribute("stroke");
-        const lastRegion = await getNthRegion(page, 1833);
+        const lastRegion = await getNthRegion(page, 1915);
         await lastRegion.click();
         await page.waitForURL(/dengue\/may24\/FOI\/ZWE/i);
         await expect(await page.locator("div.spinner")).toHaveCount(0);
@@ -109,11 +109,11 @@ test.describe("Index page", () => {
     test("resetMapButton click navigates to home page from country URL", async ({ page }) => {
         await page.waitForURL(/dengue\/may24\/FOI/i);
         const allRegions = await page.locator(GEOJSON_SELECTOR);
-        await expect(await allRegions).toHaveCount(1833);
+        await expect(await allRegions).toHaveCount(1915);
         await page.goto("/dengue/may24/serop9/MWI");
         await expect(await allRegions).toHaveCount(2060);
         await page.locator('a[title="Reset map"]').click();
-        await expect(await allRegions).toHaveCount(1833);
+        await expect(await allRegions).toHaveCount(1915);
         await expect(page).toHaveURL("/dengue/may24/serop9");
     });
 
