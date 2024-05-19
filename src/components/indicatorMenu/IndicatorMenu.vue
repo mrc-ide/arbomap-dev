@@ -28,7 +28,7 @@
                             v-slot="{ navigate }"
                         >
                             <button class="text-left w-100" type="button" @click="navigate">
-                                <ColourScaleIcon class="float-left mr-1" :size="24" :indicator="id"></ColourScaleIcon>
+                                <ColorScaleIcon class="float-left mr-1" :size="24" :indicator="id"></ColorScaleIcon>
                                 <v-list-item-title>
                                     {{ appConfig.indicators[id].humanReadableName }}
                                 </v-list-item-title>

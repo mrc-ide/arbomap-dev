@@ -26,7 +26,7 @@ import { LMap, LTileLayer, LControl } from "@vue-leaflet/vue-leaflet";
 import { Feature } from "geojson";
 import { useRouter } from "vue-router";
 import { useAppStore } from "../stores/appStore";
-import { useColourScale } from "../composables/useColourScale";
+import { useColorScale } from "../composables/useColorScale";
 import { useLeaflet } from "../composables/useLeaflet";
 import "leaflet/dist/leaflet.css";
 import { useTooltips } from "../composables/useTooltips";
@@ -43,7 +43,7 @@ const featureProperties = appConfig.value.geoJsonFeatureProperties;
 const { selectedFeatures, selectedIndicators } = useSelectedMapInfo();
 
 const { tooltipForFeature } = useTooltips(selectedIndicators);
-const { getFillAndOutlineColour } = useColourScale(selectedIndicators);
+const { getFillAndOutlineColor } = useColorScale(selectedIndicators);
 
 const featureInSelectedCountry = (feature: Feature) =>
     feature.properties[featureProperties.country] === mapSettings.value.country;
@@ -64,7 +64,7 @@ const getFeatureName = (feature: Feature) =>
 const style = (f: Feature) => {
     const { country, indicator } = mapSettings.value;
     const isFaded = !!country && !featureInSelectedCountry(f);
-    const styleColors = getFillAndOutlineColour(indicator, getFeatureId(f), isFaded);
+    const styleColors = getFillAndOutlineColor(indicator, getFeatureId(f), isFaded);
     return { className: "geojson", fillColor: styleColors.fillColor, color: styleColors.outlineColor };
 };
 
