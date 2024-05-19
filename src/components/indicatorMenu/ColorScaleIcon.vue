@@ -3,10 +3,7 @@
         <rect :width="size" :height="size" :fill="getColor(0.7)" />
         <rect :width="size / 2" :height="size" :fill="getColor(0.9)" />
         <polygon :points="`0,0 0,${0.7 * size} ${halfway},${halfway} ${halfway},0`" :fill="getColor(0.4)" />
-        <polygon
-            :points="`${halfway},0 ${halfway},${halfway} ${size},${0.3 * size} ${size},0`"
-            :fill="getColor(0.1)"
-        />
+        <polygon :points="`${halfway},0 ${halfway},${halfway} ${size},${0.3 * size} ${size},0`" :fill="getColor(0.1)" />
     </svg>
 </template>
 
