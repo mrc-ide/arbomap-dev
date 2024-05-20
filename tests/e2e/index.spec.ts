@@ -80,9 +80,9 @@ test.describe("Index page", () => {
     });
 
     test("if no data, no data tooltip is shown", async ({ page }) => {
-        const firstRegion = await getNthRegion(page, 30);
+        const firstRegion = await getNthRegion(page, 22);
         await firstRegion.hover();
-        await expect(await page.innerText(".leaflet-tooltip-pane")).toContain("Mendoza");
+        await expect(await page.innerText(".leaflet-tooltip-pane")).toContain("Chubut");
         await expect(await page.innerText(".leaflet-tooltip-pane")).toContain("No data");
     });
 
