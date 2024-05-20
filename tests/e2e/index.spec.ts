@@ -111,7 +111,7 @@ test.describe("Index page", () => {
         const allRegions = await page.locator(GEOJSON_SELECTOR);
         await expect(await allRegions).toHaveCount(1915);
         await page.goto("/dengue/may24/serop9/MWI");
-        await expect(await allRegions).toHaveCount(2060);
+        await expect(await allRegions).toHaveCount(2143);
         await page.locator('a[title="Reset map"]').click();
         await expect(await allRegions).toHaveCount(1915);
         await expect(page).toHaveURL("/dengue/may24/serop9");
