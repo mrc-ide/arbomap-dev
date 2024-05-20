@@ -13,12 +13,13 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
 import { useAppStore } from "../stores/appStore";
-import { useColorScale } from "../composables/useColorScale";
+import { useIndicatorColors } from "../composables/useIndicatorColors";
 import { useSelectedMapInfo } from "../composables/useSelectedMapInfo";
+import {tsMappedType} from "@babel/types";
 
 const { appConfig, mapSettings } = storeToRefs(useAppStore());
 const { selectedIndicators } = useSelectedMapInfo();
-const { colorScales, indicatorExtremes } = useColorScale(selectedIndicators);
+const { getIndicatorValueColor, indicatorExtremes, getColorCategories } = useIndicatorColors(selectedIndicators);
 
 const props = defineProps({
     numberOfSteps: {
@@ -26,10 +27,6 @@ const props = defineProps({
         default: 6,
         validator: (value: number) => value >= 2
     }
-});
-
-const colorFunction = computed(() => {
-    return colorScales.value[mapSettings.value.indicator];
 });
 
 const indicatorUnit = computed(() => {
@@ -56,26 +53,39 @@ const roundToSensiblePrecision = (value: number, stepSize: number) => {
     return Math.round(value * roundingNum) / roundingNum;
 };
 
-const stepStyle = (val: number) => {
+const scaleStepStyle = (val: number) => {
     let valAsProportion = indicatorHasSomeVariance.value
         ? (val - indicatorMin.value) / (indicatorMax.value - indicatorMin.value)
         : 0;
-    if (appConfig.value.indicators[mapSettings.value.indicator].colorScale?.reverse) {
-        valAsProportion = 1 - valAsProportion;
-    }
-    return { background: colorFunction.value(valAsProportion) };
+    const color = getIndicatorValueColor(mapSettings.value.indicator, valAsProportion, false);
+    return stepStyle(color);
+};
+
+const stepStyle = (color: string) => {
+    return { background: color };
 };
 
 const scaleLevels = computed(() => {
-    if (!(mapSettings.value.indicator in indicatorExtremes.value)) return [];
+    const indicator = mapSettings.value.indicator;
+    if (!(indicator in indicatorExtremes.value)) return [];
     const stepSize = (indicatorMax.value - indicatorMin.value) / (props.numberOfSteps - 1);
-    return Array.from({ length: indicatorHasSomeVariance.value ? props.numberOfSteps : 1 }, (_, index) => {
-        const stepValue = indicatorMin.value + index * stepSize;
-        return {
-            label: roundToSensiblePrecision(stepValue, stepSize) + indicatorUnit.value,
-            style: stepStyle(stepValue)
-        };
-    }).reverse();
+    let steps;
+    const { type } = appConfig.value.indicators[indicator].colors;
+    if (type === "scale") {
+        steps = Array.from({length: indicatorHasSomeVariance.value ? props.numberOfSteps : 1}, (_, index) => {
+            const stepValue = indicatorMin.value + index * stepSize;
+            return {
+                label: roundToSensiblePrecision(stepValue, stepSize) + indicatorUnit.value,
+                style: scaleStepStyle(stepValue)
+            };
+        });
+    } else {
+        steps = getColorCategories(indicator).map((category) => ({
+            label: category.name,
+            style: stepStyle(category.color)
+        }));
+    }
+    return steps.reverse();
 });
 </script>
 

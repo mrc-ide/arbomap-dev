@@ -26,7 +26,7 @@ import { LMap, LTileLayer, LControl } from "@vue-leaflet/vue-leaflet";
 import { Feature } from "geojson";
 import { useRouter } from "vue-router";
 import { useAppStore } from "../stores/appStore";
-import { useColorScale } from "../composables/useColorScale";
+import { useIndicatorColors } from "../composables/useIndicatorColors";
 import { useLeaflet } from "../composables/useLeaflet";
 import "leaflet/dist/leaflet.css";
 import { useTooltips } from "../composables/useTooltips";
@@ -43,7 +43,7 @@ const featureProperties = appConfig.value.geoJsonFeatureProperties;
 const { selectedFeatures, selectedIndicators } = useSelectedMapInfo();
 
 const { tooltipForFeature } = useTooltips(selectedIndicators);
-const { getFillAndOutlineColor } = useColorScale(selectedIndicators);
+const { getFillAndOutlineColor } = useIndicatorColors(selectedIndicators);
 
 const featureInSelectedCountry = (feature: Feature) =>
     feature.properties[featureProperties.country] === mapSettings.value.country;

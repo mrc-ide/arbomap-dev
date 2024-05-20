@@ -1,6 +1,6 @@
 import { describe, test, expect, beforeAll } from "vitest";
 import * as d3ScaleChromatic from "d3-scale-chromatic";
-import { useColorScale } from "../../../src/composables/useColorScale";
+import { useIndicatorColors } from "../../../src/composables/useIndicatorColors";
 import { mockPinia } from "../mocks/mockPinia";
 import { useAppStore } from "../../../src/stores/appStore";
 
@@ -27,7 +27,7 @@ describe("useColorScale", () => {
     });
 
     test("returns colour scales", () => {
-        const sut = useColorScale(indicatorValues as any);
+        const sut = useIndicatorColors(indicatorValues as any);
         expect(sut.colorScales.value).toStrictEqual({
             FOI: d3ScaleChromatic.interpolateReds,
             serop9: d3ScaleChromatic.interpolateBlues,
@@ -38,7 +38,7 @@ describe("useColorScale", () => {
     });
 
     test("can get colour for value", () => {
-        const sut = useColorScale(indicatorValues as any);
+        const sut = useIndicatorColors(indicatorValues as any);
 
         // min value for FOI
         expect(sut.getFillAndOutlineColor("FOI", "123", false)).toStrictEqual({
@@ -60,7 +60,7 @@ describe("useColorScale", () => {
     });
 
     test("can get faded colour for value", () => {
-        const sut = useColorScale(indicatorValues as any);
+        const sut = useIndicatorColors(indicatorValues as any);
 
         // min value for FOI
         expect(sut.getFillAndOutlineColor("FOI", "123", true)).toStrictEqual({
@@ -73,7 +73,7 @@ describe("useColorScale", () => {
         const { appConfig } = useAppStore();
         appConfig.indicators.FOI.colorScale.reverse = true;
 
-        const sut = useColorScale(indicatorValues as any);
+        const sut = useIndicatorColors(indicatorValues as any);
         // min value for FOI, should return max value for colour scale
         expect(sut.getFillAndOutlineColor("FOI", "123")).toStrictEqual({
             fillColor: "rgb(103, 0, 13)",

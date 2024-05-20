@@ -11,51 +11,59 @@
     },
     "indicators": {
         "FOI": {
-            "colorType": "scale",
-            "colorScale": {
-                "name": "interpolateRdYlBu",
-                "reverse": true
+            "colors": {
+                "type": "scale",
+                "colorScale": {
+                    "name": "interpolateRdYlBu",
+                    "reverse": true
+                }
             },
             "humanReadableName": "Force of infection",
             "description": "Annual per capita risk of dengue infection for a susceptible person",
             "unit": ""
         },
         "serop9": {
-            "colorType": "scale",
-            "colorScale": {
-                "name": "interpolateGreens"
+            "colors": {
+                "type": "scale",
+                "colorScale": {
+                    "name": "interpolateGreens"
+                }
             },
             "humanReadableName": "Seroprevalence at 9 years of age",
             "description": "Proportion of 9 year olds exposed to dengue infection",
             "unit": "%"
         },
         "serop9_class": {
-            "colorType": "category",
-            "categories": [
-                {
-                    "name": "Low",
-                    "upperLimit": "40",
-                    "color": "red"
-                },
-                {
-                    "name": "Medium",
-                    "upperLimit": "60",
-                    "color": "orange"
-                },
-                {
-                    "name": "High",
-                    "upperLimit": null,
-                    "color": "yellow"
-                }
-            ],
+            "colors": {
+                "type": "category",
+                "categories": [
+                    {
+                        "name": "Low",
+                        "upperLimit": 40,
+                        "color": "red"
+                    },
+                    {
+                        "name": "Medium",
+                        "upperLimit": 60,
+                        "color": "orange"
+                    },
+                    {
+                        "name": "High",
+                        "upperLimit": null,
+                        "color": "yellow"
+                    }
+                ]
+            },
             "humanReadableName": "Seroprevalence class at 9 years of age",
             "description": "Proportion of 9 year olds exposed to dengue infection, as High/Medium/Low",
             "unit": ""
         },
         "hosp_total": {
-            "colorType": "scale",
-            "colorScale": {
-                "name": "interpolatePurples"
+            "colors": {
+                "type": "scale",
+                "colorScale": {
+                    "name": "interpolatePurples"
+                }
             },
             "humanReadableName": "Hospital admissions",
             "shortName": "all ages",
@@ -63,9 +71,11 @@
             "unit": ""
         },
         "hosp_0_4": {
-            "colorType": "scale",
-            "colorScale": {
-                "name": "interpolatePurples"
+            "colors": {
+                "type": "scale",
+                "colorScale": {
+                    "name": "interpolatePurples"
+                }
             },
             "humanReadableName": "Hospital admissions in 0-4 year olds",
             "shortName": "0-4",
@@ -73,9 +83,11 @@
             "unit": ""
         },
         "hosp_5_9": {
-            "colorType": "scale",
-            "colorScale": {
-                "name": "interpolatePurples"
+            "colors": {
+                "type": "scale",
+                "colorScale": {
+                    "name": "interpolatePurples"
+                }
             },
             "humanReadableName": "Hospital admissions in 5-9 year olds",
             "shortName": "5-9",
@@ -83,8 +95,11 @@
             "unit": ""
         },
         "hosp_10_14": {
-            "colorScale": {
-                "name": "interpolatePurples"
+            "colors": {
+                "type": "scale",
+                "colorScale": {
+                    "name": "interpolatePurples"
+                }
             },
             "humanReadableName": "Hospital admissions in 10-14 year olds",
             "shortName": "10-14",
@@ -92,9 +107,11 @@
             "unit": ""
         },
         "hosp_15_19": {
-            "colorType": "scale",
-            "colorScale": {
-                "name": "interpolatePurples"
+            "colors": {
+                "type": "scale",
+                "colorScale": {
+                    "name": "interpolatePurples"
+                }
             },
             "humanReadableName": "Hospital admissions in 15-19 year olds",
             "shortName": "15-19",
@@ -102,9 +119,11 @@
             "unit": ""
         },
         "hosp_20_24": {
-            "colorType": "scale",
-            "colorScale": {
-                "name": "interpolatePurples"
+            "colors": {
+                "type": "scale",
+                "colorScale": {
+                    "name": "interpolatePurples"
+                }
             },
             "humanReadableName": "Hospital admissions in 20-24 year olds",
             "shortName": "20-24",
@@ -112,9 +131,11 @@
             "unit": ""
         },
         "hosp_25_29": {
-            "colorType": "scale",
-            "colorScale": {
-                "name": "interpolatePurples"
+            "colors": {
+                "type": "scale",
+                "colorScale": {
+                    "name": "interpolatePurples"
+                }
             },
             "humanReadableName": "Hospital admissions in 25-29 year olds",
             "shortName": "25-29",
@@ -122,9 +143,11 @@
             "unit": ""
         },
         "hosp_30_34": {
-            "colorType": "scale",
-            "colorScale": {
-                "name": "interpolatePurples"
+            "colors": {
+                "type": "scale",
+                "colorScale": {
+                    "name": "interpolatePurples"
+                }
             },
             "humanReadableName": "Hospital admissions in 30-34 year olds",
             "shortName": "30-34",
@@ -132,9 +155,11 @@
             "unit": ""
         },
         "hosp_35_39": {
-            "colorType": "scale",
-            "colorScale": {
-                "name": "interpolatePurples"
+            "colors": {
+                "type": "scale",
+                "colorScale": {
+                    "name": "interpolatePurples"
+                }
             },
             "humanReadableName": "Hospital admissions in 35-39 year olds",
             "shortName": "35-39",
@@ -142,9 +167,11 @@
             "unit": ""
         },
         "hosp_40_44": {
-            "colorType": "scale",
-            "colorScale": {
-                "name": "interpolatePurples"
+            "colors": {
+                "type": "scale",
+                "colorScale": {
+                    "name": "interpolatePurples"
+                }
             },
             "humanReadableName": "Hospital admissions in 40-44 year olds",
             "shortName": "40-44",
@@ -152,9 +179,11 @@
             "unit": ""
         },
         "hosp_45_49": {
-            "colorType": "scale",
-            "colorScale": {
-                "name": "interpolatePurples"
+            "colors": {
+                "type": "scale",
+                "colorScale": {
+                    "name": "interpolatePurples"
+                }
             },
             "humanReadableName": "Hospital admissions in 45-49 year olds",
             "shortName": "45-49",
@@ -162,9 +191,11 @@
             "unit": ""
         },
         "hosp_50_54": {
-            "colorType": "scale",
-            "colorScale": {
-                "name": "interpolatePurples"
+            "colors": {
+                "type": "scale",
+                "colorScale": {
+                    "name": "interpolatePurples"
+                }
             },
             "humanReadableName": "Hospital admissions in 50-54 year olds",
             "shortName": "50-54",
@@ -172,9 +203,11 @@
             "unit": ""
         },
         "hosp_55_59": {
-            "colorType": "scale",
-            "colorScale": {
-                "name": "interpolatePurples"
+            "colors": {
+                "type": "scale",
+                "colorScale": {
+                    "name": "interpolatePurples"
+                }
             },
             "humanReadableName": "Hospital admissions in 55-59 year olds",
             "shortName": "55-59",
@@ -182,9 +215,11 @@
             "unit": ""
         },
         "hosp_60_64": {
-            "colorType": "scale",
-            "colorScale": {
-                "name": "interpolatePurples"
+            "colors": {
+                "type": "scale",
+                "colorScale": {
+                    "name": "interpolatePurples"
+                }
             },
             "humanReadableName": "Hospital admissions in 60-64 year olds",
             "shortName": "60-64",
@@ -192,9 +227,11 @@
             "unit": ""
         },
         "hosp_65_69": {
-            "colorType": "scale",
-            "colorScale": {
-                "name": "interpolatePurples"
+            "colors": {
+                "type": "scale",
+                "colorScale": {
+                    "name": "interpolatePurples"
+                }
             },
             "humanReadableName": "Hospital admissions in 65-69 year olds",
             "shortName": "65-69",
@@ -202,9 +239,11 @@
             "unit": ""
         },
         "hosp_70_74": {
-            "colorType": "scale",
-            "colorScale": {
-                "name": "interpolatePurples"
+            "colors": {
+                "type": "scale",
+                "colorScale": {
+                    "name": "interpolatePurples"
+                }
             },
             "humanReadableName": "Hospital admissions in 70-74 year olds",
             "shortName": "70-74",
@@ -212,9 +251,11 @@
             "unit": ""
         },
         "hosp_75_79": {
-            "colorType": "scale",
-            "colorScale": {
-                "name": "interpolatePurples"
+            "colors": {
+                "type": "scale",
+                "colorScale": {
+                    "name": "interpolatePurples"
+                }
             },
             "humanReadableName": "Hospital admissions in 75-79 year olds",
             "shortName": "75-79",
@@ -222,9 +263,11 @@
             "unit": ""
         },
         "hosp_80_84": {
-            "colorType": "scale",
-            "colorScale": {
-                "name": "interpolatePurples"
+            "colors": {
+                "type": "scale",
+                "colorScale": {
+                    "name": "interpolatePurples"
+                }
             },
             "humanReadableName": "Hospital admissions in 80-84 year olds",
             "shortName": "80-84",
@@ -232,9 +275,11 @@
             "unit": ""
         },
         "hosp_85_89": {
-            "colorType": "scale",
-            "colorScale": {
-                "name": "interpolatePurples"
+            "colors": {
+                "type": "scale",
+                "colorScale": {
+                    "name": "interpolatePurples"
+                }
             },
             "humanReadableName": "Hospital admissions in 85-89 year olds",
             "shortName": "85-89",
@@ -242,9 +287,11 @@
             "unit": ""
         },
         "hosp_90_94": {
-            "colorType": "scale",
-            "colorScale": {
-                "name": "interpolatePurples"
+            "colors": {
+                "type": "scale",
+                "colorScale": {
+                    "name": "interpolatePurples"
+                }
             },
             "humanReadableName": "Hospital admissions in 90-94 year olds",
             "shortName": "90-94",
@@ -252,9 +299,11 @@
             "unit": ""
         },
         "hosp_95_99": {
-            "colorType": "scale",
-            "colorScale": {
-                "name": "interpolatePurples"
+            "colors": {
+                "type": "scale",
+                "colorScale": {
+                    "name": "interpolatePurples"
+                }
             },
             "humanReadableName": "Hospital admissions in 95-99 year olds",
             "shortName": "95-99",
@@ -268,6 +317,9 @@
         },
         {
             "mainIndicator": "serop9"
+        },
+        {
+            "mainIndicator": "serop9_class"
         },
         {
             "mainIndicator": "hosp_total",

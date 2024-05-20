@@ -9,7 +9,8 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { useColorScale } from "../../composables/useColorScale";
+import { useIndicatorColors } from "../../composables/useIndicatorColors";
+import {useAppStore} from "../../stores/appStore";
 
 const props = defineProps({
     size: {
@@ -23,8 +24,14 @@ const props = defineProps({
 });
 
 const halfway = computed(() => props.size / 2);
-const { colorScales } = useColorScale();
+const { appConfig } = useAppStore();
+const { getIndicatorValueColor } = useIndicatorColors();
 
-const colorScale = computed(() => colorScales.value[props.indicator]);
-const getColor = (value) => colorScale.value(value);
+const getColor = (value) => {
+    // We get away with using the hardcoded values in the svg, because our only
+    // colour categories are in the 0-1 range - a more generic solution would
+    // pick values from the categories using the upperLimits - but let's implement
+    // that when we need to
+    return getIndicatorValueColor(props.indicator, value, false);
+};
 </script>

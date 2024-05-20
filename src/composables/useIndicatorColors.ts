@@ -17,22 +17,37 @@ type FillAndOutlineColor = {
     outlineColor: string;
 };
 
-export const useColorScale = (selectedIndicators: ComputedRef<FeatureIndicators>) => {
+export const useIndicatorColors = (selectedIndicators: ComputedRef<FeatureIndicators>) => {
     // TODO: we currently just scale colours to min and max in data, but
     // we can also provide option to scale to config
     const { appConfig } = storeToRefs(useAppStore());
 
-    const colorScales = computed(() => {
-        const result = {};
+
+    const getColorScale = (indicator: string) => {
         if (appConfig.value) {
-            const { indicators } = appConfig.value;
-            Object.keys(indicators).forEach((key) => {
-                const scaleName = indicators[key].colorScale?.name || "interpolateGreens";
-                result[key] = d3ScaleChromatic[scaleName];
-            });
+            const { colors } = appConfig.value.indicators[indicator];
+
+            if (colors.type !== "scale") {
+                throw Error("indicator colors are not scale type");
+            }
+            const scaleName = colors.colorScale?.name || "interpolateGreens";
+            return d3ScaleChromatic[scaleName];
         }
-        return result;
-    });
+        return null;
+    };
+
+    const getColorCategories = (indicator: string) => {
+        if (appConfig.value) {
+            const { colors } = appConfig.value.indicators[indicator];
+
+            if (colors.type != "category") {
+                throw Error("indicator colors are not category type");
+            }
+
+            return colors.categories;
+        }
+        return null;
+    };
 
     const indicatorExtremes = computed((): Dict<IndicatorRange> => {
         const result = {};
@@ -58,6 +73,42 @@ export const useColorScale = (selectedIndicators: ComputedRef<FeatureIndicators>
         });
         return result;
     });
+
+    const getScaleColor = (indicator: string, value: number, scaleToExtremes = true) => {
+        let colorValue;
+        if (scaleToExtremes) {
+            const range = indicatorExtremes.value[indicator];
+            colorValue = (value - range.min) / range.range;
+            colorValue = Math.min(1, colorValue);
+            colorValue = Math.max(0, colorValue);
+        } else {
+            colorValue = value;
+        }
+
+        const scale = getColorScale(indicator);
+
+        const reverse = appConfig.value.indicators[indicator].colors.colorScale?.reverse;
+        if (reverse) {
+            colorValue = 1 - colorValue;
+        }
+
+        return scale(colorValue);
+    };
+
+    const getCategoryColor = (indicator: string, value: number) => {
+        // We currently assume that indicators in config are in the correct order!
+        const categories = getColorCategories(indicator);
+        for (const category of categories) {
+            if (value < category.upperLimit || category.upperLimit === null) {
+                return category.color;
+            }
+        }
+    };
+
+    const getIndicatorValueColor = (indicator: string, value: number, scaleToExtremes = true) => {
+        const {type} = appConfig.value.indicators[indicator].colors;
+        return type === "scale" ? getScaleColor(indicator, value, scaleToExtremes) : getCategoryColor(indicator, value);
+    }
 
     const fadeColor = (fillColor: string, desaturate = 0.5, fade = 0.6) => {
         // for drawing borders more subtly and fading our features, desaturate
@@ -85,7 +136,7 @@ export const useColorScale = (selectedIndicators: ComputedRef<FeatureIndicators>
             };
         }
 
-        if (!indicatorExtremes.value || !colorScales.value) {
+        if (!indicatorExtremes.value || !appConfig.value) {
             const baseColor = isFaded ? noScalesColorFaded : noScalesColor;
             return {
                 fillColor: baseColor,
@@ -94,20 +145,8 @@ export const useColorScale = (selectedIndicators: ComputedRef<FeatureIndicators>
         }
 
         const value = featureIndicators[indicator].mean;
-        const range = indicatorExtremes.value[indicator];
+        const color = getIndicatorValueColor(indicator, value);
 
-        let colorValue = (value - range.min) / range.range;
-        colorValue = Math.min(1, colorValue);
-        colorValue = Math.max(0, colorValue);
-
-        const scale = colorScales.value[indicator];
-
-        const reverse = appConfig.value.indicators[indicator].colorScale?.reverse;
-        if (reverse) {
-            colorValue = 1 - colorValue;
-        }
-
-        const color = scale(colorValue);
         const baseColor = isFaded ? fadeColor(color) : color;
         return {
             fillColor: baseColor,
@@ -116,7 +155,8 @@ export const useColorScale = (selectedIndicators: ComputedRef<FeatureIndicators>
     };
 
     return {
-        colorScales,
+        getColorCategories,
+        getIndicatorValueColor,
         indicatorExtremes,
         fadeColor,
         getFillAndOutlineColor
