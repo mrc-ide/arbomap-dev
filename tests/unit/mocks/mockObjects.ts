@@ -11,29 +11,29 @@ export const MOCK_APP_CONFIG = {
     },
     indicators: {
         FOI: {
-            colourScale: { name: "interpolateReds" },
+            colorScale: { name: "interpolateReds" },
             humanReadableName: "Force of infection",
             unit: ""
         },
         serop9: {
-            colourScale: { name: "interpolateBlues" },
+            colorScale: { name: "interpolateBlues" },
             humanReadableName: "Seroprevalence at 9 years of age",
             unit: "%"
         },
         hosp_total: {
-            colourScale: { name: "interpolatePurples" },
+            colorScale: { name: "interpolatePurples" },
             humanReadableName: "Hospital admissions",
             shortName: "All ages",
             unit: ""
         },
         hosp_0_4: {
-            colourScale: { name: "interpolatePurples" },
+            colorScale: { name: "interpolatePurples" },
             humanReadableName: "Hospital admissions in 0-4 year olds",
             shortName: "0-4",
             unit: ""
         },
         hosp_5_9: {
-            colourScale: { name: "interpolatePurples" },
+            colorScale: { name: "interpolatePurples" },
             humanReadableName: "Hospital admissions in 5-9 year olds",
             shortName: "5-9",
             unit: ""

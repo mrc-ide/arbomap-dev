@@ -13,12 +13,12 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
 import { useAppStore } from "../stores/appStore";
-import { useColourScale } from "../composables/useColourScale";
+import { useColorScale } from "../composables/useColorScale";
 import { useSelectedMapInfo } from "../composables/useSelectedMapInfo";
 
 const { appConfig, mapSettings } = storeToRefs(useAppStore());
 const { selectedIndicators } = useSelectedMapInfo();
-const { colourScales, indicatorExtremes } = useColourScale(selectedIndicators);
+const { colorScales, indicatorExtremes } = useColorScale(selectedIndicators);
 
 const props = defineProps({
     numberOfSteps: {
@@ -28,8 +28,8 @@ const props = defineProps({
     }
 });
 
-const colourFunction = computed(() => {
-    return colourScales.value[mapSettings.value.indicator];
+const colorFunction = computed(() => {
+    return colorScales.value[mapSettings.value.indicator];
 });
 
 const indicatorUnit = computed(() => {
@@ -60,10 +60,10 @@ const stepStyle = (val: number) => {
     let valAsProportion = indicatorHasSomeVariance.value
         ? (val - indicatorMin.value) / (indicatorMax.value - indicatorMin.value)
         : 0;
-    if (appConfig.value.indicators[mapSettings.value.indicator].colourScale?.reverse) {
+    if (appConfig.value.indicators[mapSettings.value.indicator].colorScale?.reverse) {
         valAsProportion = 1 - valAsProportion;
     }
-    return { background: colourFunction.value(valAsProportion) };
+    return { background: colorFunction.value(valAsProportion) };
 };
 
 const scaleLevels = computed(() => {

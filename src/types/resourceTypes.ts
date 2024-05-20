@@ -2,7 +2,7 @@ import { Feature, MultiPolygon, Polygon } from "geojson";
 import { Dict } from "./utilTypes";
 
 export interface IndicatorConfig {
-    colourScale: {
+    colorScale: {
         name: string;
         reverse: boolean | undefined;
     };

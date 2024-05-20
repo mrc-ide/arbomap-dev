@@ -9,12 +9,12 @@ const appConfig = {
     ...MOCK_APP_CONFIG,
     indicators: {
         indicatorThatHasSmallNumbers: {
-            colourScale: { name: "interpolateReds" },
+            colorScale: { name: "interpolateReds" },
             humanReadableName: "Widgets per 100,000 capita",
             unit: "widgets"
         },
         indicatorMeasuredInPercent: {
-            colourScale: { name: "interpolateBlues", reverse: true },
+            colorScale: { name: "interpolateBlues", reverse: true },
             humanReadableName: "Comorbidity with diabetes",
             unit: "%"
         }
@@ -64,7 +64,7 @@ const renderComponent = () => {
     });
 };
 
-const expectLegendIconColour = (index: number, expectedColor: string) => {
+const expectLegendIconColor = (index: number, expectedColor: string) => {
     const legendItems = screen.getAllByTestId("legendItem");
     expect(((legendItems[index] as HTMLElement).children.item(0) as HTMLElement).style.background).toBe(expectedColor);
 };
@@ -115,12 +115,12 @@ describe("Legend", () => {
 
             test("renders expected colours", () => {
                 renderComponent();
-                expectLegendIconColour(0, d3ScaleChromatic.interpolateReds(1));
-                expectLegendIconColour(1, d3ScaleChromatic.interpolateReds(0.8));
-                expectLegendIconColour(2, d3ScaleChromatic.interpolateReds(0.6));
-                expectLegendIconColour(3, d3ScaleChromatic.interpolateReds(0.4));
-                expectLegendIconColour(4, d3ScaleChromatic.interpolateReds(0.2));
-                expectLegendIconColour(5, d3ScaleChromatic.interpolateReds(0));
+                expectLegendIconColor(0, d3ScaleChromatic.interpolateReds(1));
+                expectLegendIconColor(1, d3ScaleChromatic.interpolateReds(0.8));
+                expectLegendIconColor(2, d3ScaleChromatic.interpolateReds(0.6));
+                expectLegendIconColor(3, d3ScaleChromatic.interpolateReds(0.4));
+                expectLegendIconColor(4, d3ScaleChromatic.interpolateReds(0.2));
+                expectLegendIconColor(5, d3ScaleChromatic.interpolateReds(0));
             });
         });
 
@@ -158,12 +158,12 @@ describe("Legend", () => {
             test("renders expected colours", () => {
                 renderComponent();
                 // Colours are in reversed scale
-                expectLegendIconColour(0, d3ScaleChromatic.interpolateBlues(0));
-                expectLegendIconColour(1, d3ScaleChromatic.interpolateBlues(0.2));
-                expectLegendIconColour(2, d3ScaleChromatic.interpolateBlues(0.4));
-                expectLegendIconColour(3, d3ScaleChromatic.interpolateBlues(0.6));
-                expectLegendIconColour(4, d3ScaleChromatic.interpolateBlues(0.8));
-                expectLegendIconColour(5, d3ScaleChromatic.interpolateBlues(1));
+                expectLegendIconColor(0, d3ScaleChromatic.interpolateBlues(0));
+                expectLegendIconColor(1, d3ScaleChromatic.interpolateBlues(0.2));
+                expectLegendIconColor(2, d3ScaleChromatic.interpolateBlues(0.4));
+                expectLegendIconColor(3, d3ScaleChromatic.interpolateBlues(0.6));
+                expectLegendIconColor(4, d3ScaleChromatic.interpolateBlues(0.8));
+                expectLegendIconColor(5, d3ScaleChromatic.interpolateBlues(1));
             });
         });
     });

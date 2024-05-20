@@ -8,7 +8,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     Choropleth: typeof import('./components/Choropleth.vue')['default']
-    ColourScaleIcon: typeof import('./components/indicatorMenu/ColourScaleIcon.vue')['default']
+    ColorScaleIcon: typeof import('./components/indicatorMenu/ColorScaleIcon.vue')['default']
     IndicatorMenu: typeof import('./components/indicatorMenu/IndicatorMenu.vue')['default']
     IndicatorSlideGroupItem: typeof import('./components/indicatorMenu/IndicatorSlideGroupItem.vue')['default']
     Legend: typeof import('./components/Legend.vue')['default']
