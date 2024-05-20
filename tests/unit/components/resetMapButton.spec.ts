@@ -1,8 +1,8 @@
 import { render, fireEvent } from "@testing-library/vue";
 import ResetMapButton from "@/components/ResetMapButton.vue";
-import { APP_BASE_ROUTE } from "@/router/utils";
+import { APP_BASE_ROUTE } from "../../../src/router/utils";
 import { mockRouter } from "../mocks/mockRouter";
-import { mockPinia } from "../mocks/mockPinia";
+import { mockMapSettings, mockPinia } from "../mocks/mockPinia";
 
 const router = mockRouter();
 
@@ -18,7 +18,9 @@ const renderComponent = () => {
 describe("ResetMapButton", () => {
     describe("when a country has been selected", () => {
         beforeAll(() => {
-            mockPinia({ selectedCountryId: "MWI" });
+            mockPinia({
+                mapSettings: mockMapSettings({ country: "MWI" })
+            });
         });
 
         it("should navigate to the home path when the reset button is clicked", async () => {

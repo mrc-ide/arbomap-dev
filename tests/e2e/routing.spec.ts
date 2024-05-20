@@ -16,7 +16,7 @@ const expectIndexPage = async (
     const summary = await page.locator(".choropleth-data-summary");
     await expect(await summary).toHaveAttribute("selected-indicator", selectedIndicatorId);
     await expect(await summary).toHaveAttribute("selected-country-id", selectedCountry);
-    await expect(await summary).toHaveAttribute("colour-scale", scale);
+    await expect(await summary).toHaveAttribute("color-scale", scale);
     await expect(await summary).toHaveAttribute("feature-count", featureCount.toString());
     await expect(await summary).toHaveAttribute(
         "selected-country-feature-count",
@@ -68,7 +68,7 @@ test.describe("Router", () => {
         await page.waitForURL(/\/DENGUE\/May24\/SEROP9\/tza/);
         await expect(await page.textContent(".indicator-menu-activator")).toBe("Seroprevalence at 9 years of age");
         const summary = await page.locator(".choropleth-data-summary");
-        await expect(await summary).toHaveAttribute("colour-scale", "interpolateGreens");
+        await expect(await summary).toHaveAttribute("color-scale", "interpolateGreens");
         await expect(await summary).toHaveAttribute("feature-count", "2070");
         await expect(await summary).toHaveAttribute("selected-country-feature-count", "186");
     });

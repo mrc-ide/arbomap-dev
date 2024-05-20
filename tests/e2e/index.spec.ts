@@ -57,14 +57,14 @@ test.describe("Index page", () => {
 
     test("changing selected indicator changes route and colours on map", async ({ page }) => {
         const firstRegion = await getNthRegion(page, 1);
-        const colour = await firstRegion.getAttribute("fill");
+        const color = await firstRegion.getAttribute("fill");
         const stroke = await firstRegion.getAttribute("stroke");
         // open menu
         await page.click(".indicator-menu-activator");
         // click menu item
         await page.getByText("Seroprevalence at 9 years of age").click();
         await page.waitForURL(/dengue\/may24\/serop9/);
-        await expect(await firstRegion.getAttribute("fill")).not.toEqual(colour);
+        await expect(await firstRegion.getAttribute("fill")).not.toEqual(color);
         await expect(await firstRegion.getAttribute("stroke")).not.toEqual(stroke);
     });
 
@@ -79,15 +79,22 @@ test.describe("Index page", () => {
         await expect(await page.innerText(".leaflet-tooltip-pane")).toContain("Hospital admissions: 126");
     });
 
+    test("if no data, no data tooltip is shown", async ({ page }) => {
+        const firstRegion = await getNthRegion(page, 30);
+        await firstRegion.hover();
+        await expect(await page.innerText(".leaflet-tooltip-pane")).toContain("Mendoza");
+        await expect(await page.innerText(".leaflet-tooltip-pane")).toContain("No data");
+    });
+
     test("selecting country fades colours of other countries", async ({ page }) => {
         const firstRegion = await getNthRegion(page, 1);
-        const colour = await firstRegion.getAttribute("fill");
+        const color = await firstRegion.getAttribute("fill");
         const stroke = await firstRegion.getAttribute("stroke");
         const lastRegion = await getNthRegion(page, 1915);
         await lastRegion.click();
         await page.waitForURL(/dengue\/may24\/FOI\/ZWE/i);
         await expect(await page.locator("div.spinner")).toHaveCount(0);
-        await expect(await firstRegion.getAttribute("fill")).not.toEqual(colour);
+        await expect(await firstRegion.getAttribute("fill")).not.toEqual(color);
         await expect(await firstRegion.getAttribute("stroke")).not.toEqual(stroke);
     });
 

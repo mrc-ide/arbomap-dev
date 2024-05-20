@@ -20,7 +20,7 @@ describe("resources utils", async () => {
     });
     test("loads country geojson", async () => {
         const geojson = await getGeojsonFeatures("MWI", 1);
-        expect(geojson).toStrictEqual(MOCK_ADMIN1_GEOJSON.MWI.features, 1);
+        expect(geojson).toStrictEqual(MOCK_ADMIN1_GEOJSON.MWI.features);
     });
 
     test("loads global indicators", async () => {

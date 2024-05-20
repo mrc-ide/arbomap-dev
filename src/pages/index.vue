@@ -1,9 +1,11 @@
-<template>
+<template v-if="initialisationComplete">
     <template v-if="!unknownProps.length">
-        <Choropleth v-if="selectedIndicator" data-testid="choropleth" />
-        <div class="sticky-footer">
-            <IndicatorMenu></IndicatorMenu>
-        </div>
+        <template v-if="mapSettings">
+            <Choropleth v-if="mapSettings.indicator" data-testid="choropleth" />
+            <div class="sticky-footer">
+                <IndicatorMenu></IndicatorMenu>
+            </div>
+        </template>
     </template>
     <not-found v-else :detail="notFoundDetail"></not-found>
 </template>
@@ -15,10 +17,12 @@ import { useRouter } from "vue-router";
 import { useAppStore } from "../stores/appStore";
 import NotFound from "./notFound.vue";
 import { APP_BASE_ROUTE, PATHOGEN, VERSION } from "../router/utils";
+import { mapSettingsAreEqual } from "../utils";
+import { MapSettings } from "../types/resourceTypes";
 
 const router = useRouter();
-const { appConfig, selectedIndicator, selectedCountryId, admin1Indicators } = storeToRefs(useAppStore());
-const { selectCountry } = useAppStore();
+const { appConfig, mapSettings, initialisationComplete } = storeToRefs(useAppStore());
+const { updateMapSettings } = useAppStore();
 
 const props = defineProps({
     pathogen: {
@@ -42,72 +46,67 @@ const props = defineProps({
         default: ""
     }
 });
+type PropName = keyof typeof props;
 
-const indicatorNames = computed(() => (appConfig.value ? Object.keys(appConfig.value.indicators) : {}));
 const unknownProps: Ref<string[]> = ref([]);
 
-const notFoundMsg = (valueType, value) => `Unknown ${valueType}: ${value}.`;
+const notFoundMsg = (valueType: string, value: string) => `Unknown ${valueType}: ${value}.`;
 
 const notFoundDetail = computed(() => {
     return unknownProps.value.map((propName) => notFoundMsg(propName, props[propName])).join(" ");
 });
 
-const countryToSelect: Ref<null | string> = ref(null);
+const checkRouteProp = (propName: PropName, candidates: string[]) => {
+    // Do case-insensitive check against route prop
+    if (props[propName] === "") return "";
+    const pattern = new RegExp(`^${props[propName]}$`, "i");
+    return candidates.find((i) => pattern.test(i));
+};
 
 const selectDataForRoute = async () => {
-    if (!appConfig.value) {
+    if (!appConfig.value) return;
+
+    const unknown = [];
+    const possibleValuesForProps: Record<PropName, string[]> = {
+        pathogen: [PATHOGEN],
+        version: [VERSION],
+        indicator: Object.keys(appConfig.value.indicators),
+        country: appConfig.value.countries
+    };
+    const propsWithCorrectCase: Partial<Record<PropName, string>> = {};
+    Object.keys(possibleValuesForProps).forEach((prop: PropName) => {
+        const correctCase = checkRouteProp(prop, possibleValuesForProps[prop]);
+        if (correctCase === undefined) {
+            unknown.push(prop);
+            return;
+        }
+        propsWithCorrectCase[prop] = correctCase;
+    });
+
+    unknownProps.value = unknown;
+    if (unknownProps.value.length) return;
+
+    // we pick dengue, may24 and FOI as defaults for pathogen, version and indicator respectively
+    if (!props.indicator) {
+        router.replace(`/${APP_BASE_ROUTE}/${possibleValuesForProps.indicator[0]}`);
         return;
     }
 
-    const unknown = [];
-    const checkRouteProp = (propName: "pathogen" | "version" | "indicator" | "country", candidates: string[]) => {
-        if (!props[propName]) {
-            return "";
-        }
-
-        // Do case-insensitive check against route prop - add to unknown props if not found
-        const pattern = new RegExp(`^${props[propName]}$`, "i");
-        const result = candidates.find((i) => pattern.test(i));
-        if (!result) {
-            unknown.push(propName);
-        }
-        return result;
+    const newMapSettings: MapSettings = {
+        pathogen: propsWithCorrectCase.pathogen,
+        version: propsWithCorrectCase.version,
+        indicator: propsWithCorrectCase.indicator,
+        country: propsWithCorrectCase.country,
+        adminLevel: propsWithCorrectCase.country ? 2 : 1
     };
-
-    checkRouteProp("pathogen", [PATHOGEN]);
-    checkRouteProp("version", [VERSION]);
-    const indicator = checkRouteProp("indicator", Object.keys(appConfig.value.indicators));
-    const country = checkRouteProp("country", appConfig.value.countries);
-
-    unknownProps.value = unknown;
-
-    if (!unknownProps.value.length) {
-        if (indicator) {
-            selectedIndicator.value = indicator;
-            if (country !== selectedCountryId.value) {
-                countryToSelect.value = country;
-            }
-        } else {
-            // No indicator selected on route - default to first indicator and navigate
-            router.replace(`/${APP_BASE_ROUTE}/${indicatorNames.value[0]}`);
-        }
+    if (!mapSettingsAreEqual(mapSettings.value, newMapSettings)) {
+        await updateMapSettings(newMapSettings);
     }
 };
 
-watch(
-    [appConfig, () => props.pathogen, () => props.version, () => props.indicator, () => props.country],
-    selectDataForRoute
-);
+watch([() => props, initialisationComplete], selectDataForRoute, { deep: true });
 
-watch([countryToSelect, admin1Indicators], async () => {
-    // wait until admin1 loaded before selecting country
-    if (countryToSelect.value !== null && Object.keys(admin1Indicators.value).length) {
-        await selectCountry(countryToSelect.value);
-        countryToSelect.value = null;
-    }
-});
-
-selectDataForRoute();
+onBeforeMount(selectDataForRoute);
 </script>
 <style lang="scss">
 .sticky-footer {
