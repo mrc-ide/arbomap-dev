@@ -50,7 +50,7 @@ test.describe("Index page", () => {
         await firstRegion.click();
         await page.waitForURL(/dengue\/may24\/FOI\/AGO/i);
         await expectLoadingSpinnerIsShownThenRemoved(page);
-        await expect(await allRegions).toHaveCount(1978, { timeout: 5000 }); // timeout required for Safari
+        await expect(await allRegions).toHaveCount(2060, { timeout: 5000 }); // timeout required for Safari
         const newBounds = await summary.getAttribute("bounds");
         expect(newBounds).not.toEqual(globalBounds);
     });
