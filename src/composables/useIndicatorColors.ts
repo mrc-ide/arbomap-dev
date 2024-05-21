@@ -95,19 +95,19 @@ export const useIndicatorColors = (selectedIndicators: ComputedRef<FeatureIndica
         return scale(colorValue);
     };
 
-    const getCategoryColor = (indicator: string, value: number) => {
+    const getColorCategory = (indicator: string, value: number) => {
         // We currently assume that indicators in config are in the correct order!
         const categories = getColorCategories(indicator);
         for (const category of categories) {
             if (value < category.upperLimit || category.upperLimit === null) {
-                return category.color;
+                return category;
             }
         }
     };
 
     const getIndicatorValueColor = (indicator: string, value: number, scaleToExtremes = true) => {
         const {type} = appConfig.value.indicators[indicator].colors;
-        return type === "scale" ? getScaleColor(indicator, value, scaleToExtremes) : getCategoryColor(indicator, value);
+        return type === "scale" ? getScaleColor(indicator, value, scaleToExtremes) : getColorCategory(indicator, value).color;
     }
 
     const fadeColor = (fillColor: string, desaturate = 0.5, fade = 0.6) => {
@@ -157,6 +157,7 @@ export const useIndicatorColors = (selectedIndicators: ComputedRef<FeatureIndica
     return {
         getColorCategories,
         getIndicatorValueColor,
+        getColorCategory,
         indicatorExtremes,
         fadeColor,
         getFillAndOutlineColor

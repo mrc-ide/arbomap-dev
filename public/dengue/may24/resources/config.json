@@ -40,17 +40,17 @@
                     {
                         "name": "Under 40%",
                         "upperLimit": 40,
-                        "color": "red"
+                        "color": "#dc143c"
                     },
                     {
                         "name": "40-60%",
                         "upperLimit": 60,
-                        "color": "orange"
+                        "color": "#ff5800"
                     },
                     {
                         "name": "Above 60%",
                         "upperLimit": null,
-                        "color": "yellow"
+                        "color": "#fcf75e"
                     }
                 ]
             },
