@@ -1,8 +1,13 @@
 import { Feature, MultiPolygon, Polygon } from "geojson";
 import { Dict } from "./utilTypes";
 
+export enum ColorType {
+    Scale = "scale",
+    Category = "category"
+}
+
 export interface IndicatorColorScale {
-    type: "scale";
+    type: ColorType.Scale;
     colorScale: {
         name: string;
         reverse: boolean | undefined;
@@ -10,7 +15,7 @@ export interface IndicatorColorScale {
 }
 
 export interface IndicatorColorCategories {
-    type: "category";
+    type: ColorType.Category;
     categories: {
         name: string,
         upperLimit: number | null,

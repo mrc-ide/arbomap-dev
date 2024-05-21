@@ -1,11 +1,12 @@
 import { storeToRefs } from "pinia";
 import { useAppStore } from "../stores/appStore";
-import { FeatureIndicators } from "../types/resourceTypes";
+import {ColorType, FeatureIndicators} from "../types/resourceTypes";
 import {useIndicatorColors} from "./useIndicatorColors";
+import {ComputedRef} from "vue";
 
 export const useTooltips = (selectedIndicators: ComputedRef<FeatureIndicators>) => {
     const { mapSettings, appConfig } = storeToRefs(useAppStore());
-    const { getColorCategory } = useIndicatorColors();
+    const { getIndicatorColorType, getIndicatorValueColorCategory } = useIndicatorColors();
 
     const sortedIndicators = computed(() => {
         // We show currently selected indicator first, then each configured indicator group's
@@ -45,12 +46,11 @@ export const useTooltips = (selectedIndicators: ComputedRef<FeatureIndicators>) 
             // show data values for scale type indicators, and category for category types
             let displayValue;
             const {mean} = featureValues[indicatorKey];
-            // TODO: make a helper for making this distinction, in the composable
-            if (appConfig.value.indicators[indicatorKey].colors.type === "scale") {
+            if (getIndicatorColorType(indicatorKey) === ColorType.Scale) {
                 const headlineNumber = mean.toPrecision(3);
                 displayValue = `${headlineNumber}${metadata.unit}`;
             } else {
-                displayValue = getColorCategory(indicatorKey, mean).name;
+                displayValue = getIndicatorValueColorCategory(indicatorKey, mean).name;
             }
 
             const line = `${metadata.humanReadableName}: ${displayValue}<br/>`;

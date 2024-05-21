@@ -1,8 +1,8 @@
-import { computed } from "vue";
+import {computed, ComputedRef} from "vue";
 import { storeToRefs } from "pinia";
 import * as d3ScaleChromatic from "d3-scale-chromatic";
 import Color from "color";
-import { FeatureIndicatorValues, FeatureIndicators, IndicatorValue } from "../types/resourceTypes";
+import {FeatureIndicatorValues, FeatureIndicators, IndicatorValue, ColorType} from "../types/resourceTypes";
 import { Dict } from "../types/utilTypes";
 import { useAppStore } from "../stores/appStore";
 
@@ -22,12 +22,13 @@ export const useIndicatorColors = (selectedIndicators: ComputedRef<FeatureIndica
     // we can also provide option to scale to config
     const { appConfig } = storeToRefs(useAppStore());
 
+    const getIndicatorColorType = (indicator: string) => appConfig.value.indicators[indicator].colors.type;
 
-    const getColorScale = (indicator: string) => {
+    const getIndicatorColorScale = (indicator: string) => {
         if (appConfig.value) {
             const { colors } = appConfig.value.indicators[indicator];
 
-            if (colors.type !== "scale") {
+            if (colors.type !== ColorType.Scale) {
                 throw Error("indicator colors are not scale type");
             }
             const scaleName = colors.colorScale?.name || "interpolateGreens";
@@ -36,11 +37,11 @@ export const useIndicatorColors = (selectedIndicators: ComputedRef<FeatureIndica
         return null;
     };
 
-    const getColorCategories = (indicator: string) => {
+    const getIndicatorColorCategories = (indicator: string) => {
         if (appConfig.value) {
             const { colors } = appConfig.value.indicators[indicator];
 
-            if (colors.type != "category") {
+            if (colors.type != ColorType.Category) {
                 throw Error("indicator colors are not category type");
             }
 
@@ -85,7 +86,7 @@ export const useIndicatorColors = (selectedIndicators: ComputedRef<FeatureIndica
             colorValue = value;
         }
 
-        const scale = getColorScale(indicator);
+        const scale = getIndicatorColorScale(indicator);
 
         const reverse = appConfig.value.indicators[indicator].colors.colorScale?.reverse;
         if (reverse) {
@@ -95,9 +96,9 @@ export const useIndicatorColors = (selectedIndicators: ComputedRef<FeatureIndica
         return scale(colorValue);
     };
 
-    const getColorCategory = (indicator: string, value: number) => {
+    const getIndicatorValueColorCategory = (indicator: string, value: number) => {
         // We currently assume that indicators in config are in the correct order!
-        const categories = getColorCategories(indicator);
+        const categories = getIndicatorColorCategories(indicator);
         for (const category of categories) {
             if (value < category.upperLimit || category.upperLimit === null) {
                 return category;
@@ -106,8 +107,8 @@ export const useIndicatorColors = (selectedIndicators: ComputedRef<FeatureIndica
     };
 
     const getIndicatorValueColor = (indicator: string, value: number, scaleToExtremes = true) => {
-        const {type} = appConfig.value.indicators[indicator].colors;
-        return type === "scale" ? getScaleColor(indicator, value, scaleToExtremes) : getColorCategory(indicator, value).color;
+        const type = getIndicatorColorType(indicator);
+        return type === ColorType.Scale ? getScaleColor(indicator, value, scaleToExtremes) : getIndicatorValueColorCategory(indicator, value).color;
     }
 
     const fadeColor = (fillColor: string, desaturate = 0.5, fade = 0.6) => {
@@ -155,11 +156,11 @@ export const useIndicatorColors = (selectedIndicators: ComputedRef<FeatureIndica
     };
 
     return {
-        getColorCategories,
+        getIndicatorColorType,
+        getIndicatorColorCategories,
         getIndicatorValueColor,
-        getColorCategory,
-        indicatorExtremes,
-        fadeColor,
-        getFillAndOutlineColor
+        getIndicatorValueColorCategory,
+        getFillAndOutlineColor,
+        indicatorExtremes
     };
 };

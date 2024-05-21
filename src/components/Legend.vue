@@ -14,10 +14,11 @@ import { storeToRefs } from "pinia";
 import { useAppStore } from "../stores/appStore";
 import { useIndicatorColors } from "../composables/useIndicatorColors";
 import { useSelectedMapInfo } from "../composables/useSelectedMapInfo";
+import {ColorType} from "../types/resourceTypes";
 
 const { appConfig, mapSettings } = storeToRefs(useAppStore());
 const { selectedIndicators } = useSelectedMapInfo();
-const { getIndicatorValueColor, indicatorExtremes, getColorCategories } = useIndicatorColors(selectedIndicators);
+const { getIndicatorValueColor, indicatorExtremes, getIndicatorColorCategories, getIndicatorColorType } = useIndicatorColors(selectedIndicators);
 
 const props = defineProps({
     numberOfSteps: {
@@ -68,8 +69,7 @@ const scaleLevels = computed(() => {
     if (!(indicator in indicatorExtremes.value)) return [];
     const stepSize = (indicatorMax.value - indicatorMin.value) / (props.numberOfSteps - 1);
     let steps;
-    const { type } = appConfig.value.indicators[indicator].colors;
-    if (type === "scale") {
+    if (getIndicatorColorType(indicator) === ColorType.Scale) {
         steps = Array.from({length: indicatorHasSomeVariance.value ? props.numberOfSteps : 1}, (_, index) => {
             const stepValue = indicatorMin.value + index * stepSize;
             return {
@@ -78,7 +78,7 @@ const scaleLevels = computed(() => {
             };
         });
     } else {
-        steps = getColorCategories(indicator).map((category) => ({
+        steps = getIndicatorColorCategories(indicator).map((category) => ({
             label: category.name,
             style: stepStyle(category.color)
         }));

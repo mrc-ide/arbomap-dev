@@ -11,6 +11,7 @@
 import { computed } from "vue";
 import { useIndicatorColors } from "../../composables/useIndicatorColors";
 import {useAppStore} from "../../stores/appStore";
+import {ColorType} from "../../types/resourceTypes";
 
 const props = defineProps({
     size: {
@@ -25,13 +26,12 @@ const props = defineProps({
 
 const halfway = computed(() => props.size / 2);
 const { appConfig } = useAppStore();
-const { getIndicatorValueColor, getColorCategories } = useIndicatorColors();
+const { getIndicatorValueColor, getIndicatorColorType, getIndicatorColorCategories } = useIndicatorColors();
 
 const sampleValues = computed(() => {
-    const { colors } = appConfig.indicators[props.indicator];
-    if (colors.type === "category") {
+    if (getIndicatorColorType(props.indicator) === ColorType.Category) {
         // Use the limits of the categories to build the icon
-        const categories = getColorCategories(props.indicator);
+        const categories = getIndicatorColorCategories(props.indicator);
         // Assume our scale starts at 0
         const result = [0];
         let categoryIdx= 0;
