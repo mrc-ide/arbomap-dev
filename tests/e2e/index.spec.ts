@@ -180,13 +180,13 @@ test.describe("Index page", () => {
         await firstRegion.click();
         await page.waitForURL(/dengue\/may24\/FOI\/AGO\/admin2/i);
 
-        await expect(await allRegions).toHaveCount(1978);
+        await expect(await allRegions).toHaveCount(2060);
 
         await expect(adminToggle).toHaveCount(1);
         await adminToggle.getByRole("button", { name: "Admin 1" }).click();
         await page.waitForURL(/dengue\/may24\/FOI\/AGO\/admin1/i);
 
-        await expect(await allRegions).toHaveCount(1833);
+        await expect(await allRegions).toHaveCount(1915);
     });
 
     test("admin level defaults to 1 for countries with missing admin 2 data", async ({ page }) => {
