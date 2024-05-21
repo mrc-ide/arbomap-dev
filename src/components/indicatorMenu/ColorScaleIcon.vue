@@ -1,9 +1,9 @@
 <template>
     <svg role="presentation" :width="size" :height="size">
-        <rect :width="size" :height="size" :fill="getColor(0.7)" />
-        <rect :width="size / 2" :height="size" :fill="getColor(0.9)" />
-        <polygon :points="`0,0 0,${0.7 * size} ${halfway},${halfway} ${halfway},0`" :fill="getColor(0.4)" />
-        <polygon :points="`${halfway},0 ${halfway},${halfway} ${size},${0.3 * size} ${size},0`" :fill="getColor(0.1)" />
+        <rect :width="size" :height="size" :fill="getColor(sampleValues[0])" />
+        <rect :width="size / 2" :height="size" :fill="getColor(sampleValues[1])" />
+        <polygon :points="`0,0 0,${0.7 * size} ${halfway},${halfway} ${halfway},0`" :fill="getColor(sampleValues[2])" />
+        <polygon :points="`${halfway},0 ${halfway},${halfway} ${size},${0.3 * size} ${size},0`" :fill="getColor(sampleValues[3])" />
     </svg>
 </template>
 
@@ -25,7 +25,32 @@ const props = defineProps({
 
 const halfway = computed(() => props.size / 2);
 const { appConfig } = useAppStore();
-const { getIndicatorValueColor } = useIndicatorColors();
+const { getIndicatorValueColor, getColorCategories } = useIndicatorColors();
+
+const sampleValues = computed(() => {
+    const { colors } = appConfig.indicators[props.indicator];
+    if (colors.type === "category") {
+        // Use the limits of the categories to build the icon
+        const categories = getColorCategories(props.indicator);
+        // Assume our scale starts at 0
+        const result = [0];
+        let categoryIdx= 0;
+        while (result.length < 4) {
+            if (categoryIdx >= categories.length) {
+                categoryIdx = 0;
+            }
+            const { upperLimit } = categories[categoryIdx];
+            // upper limit is null for final category - just set to any higher value than previous
+            const value = upperLimit || result[result.length-1] + 1;
+            result.push(value);
+            categoryIdx++;
+        }
+        return result;
+    } else {
+        // Return some sample values from the scale to build the icon
+        return [0.7, 0.9, 0.4, 0.1];
+    }
+});
 
 const getColor = (value) => {
     // We get away with using the hardcoded values in the svg, because our only

@@ -29,7 +29,7 @@
                     "name": "interpolateGreens"
                 }
             },
-            "humanReadableName": "Seroprevalence at 9 years of age",
+            "humanReadableName": "Seroprevalence at age 9 years",
             "description": "Proportion of 9 year olds exposed to dengue infection",
             "unit": "%"
         },
@@ -38,24 +38,24 @@
                 "type": "category",
                 "categories": [
                     {
-                        "name": "Low",
+                        "name": "Under 40%",
                         "upperLimit": 40,
                         "color": "red"
                     },
                     {
-                        "name": "Medium",
+                        "name": "40-60%",
                         "upperLimit": 60,
                         "color": "orange"
                     },
                     {
-                        "name": "High",
+                        "name": "Above 60%",
                         "upperLimit": null,
                         "color": "yellow"
                     }
                 ]
             },
-            "humanReadableName": "Seroprevalence class at 9 years of age",
-            "description": "Proportion of 9 year olds exposed to dengue infection, as High/Medium/Low",
+            "humanReadableName": "Seroprevalence class at age 9 years",
+            "description": "Proportion of 9 year olds exposed to dengue infection, displayed by category",
             "unit": "%"
         },
         "hosp_total": {

@@ -14,7 +14,6 @@ import { storeToRefs } from "pinia";
 import { useAppStore } from "../stores/appStore";
 import { useIndicatorColors } from "../composables/useIndicatorColors";
 import { useSelectedMapInfo } from "../composables/useSelectedMapInfo";
-import {tsMappedType} from "@babel/types";
 
 const { appConfig, mapSettings } = storeToRefs(useAppStore());
 const { selectedIndicators } = useSelectedMapInfo();
@@ -113,6 +112,7 @@ const scaleLevels = computed(() => {
         display: table-cell;
         padding-left: 0.2rem;
         vertical-align: bottom;
+        white-space: pre;
     }
 }
 </style>
