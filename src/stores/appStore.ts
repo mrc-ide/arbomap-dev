@@ -48,14 +48,14 @@ export const useAppStore = defineStore("app", {
             // Some countries do not have admin2 regions or data - if one of these is selected, we load
             // a more detailed geojson, and re-use its admin1 indicators as "admin2"
             const admin2DataMissing = state.appConfig.countriesWithoutAdmin2.includes(country);
-            if (level === 2 && admin2DataMissing) {
-                level = 1;
-                state.admin2Indicators[country] = state.admin1Indicators[country];
-            }
-
-            if (level === 2 && !admin2DataMissing) {
-                state.admin2Indicators[country] =
-                    state.admin2Indicators[country] || (await getIndicators(country, level));
+            if (level === 2) {
+                if (admin2DataMissing) {
+                    level = 1;
+                    state.admin2Indicators[country] = state.admin1Indicators[country];
+                } else {
+                    state.admin2Indicators[country] =
+                        state.admin2Indicators[country] || (await getIndicators(country, level));
+                }
             }
 
             state.admin2Geojson[country] = state.admin2Geojson[country] || (await getGeojsonFeatures(country, level));
