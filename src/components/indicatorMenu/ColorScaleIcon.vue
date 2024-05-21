@@ -53,10 +53,6 @@ const sampleValues = computed(() => {
 });
 
 const getColor = (value) => {
-    // We get away with using the hardcoded values in the svg, because our only
-    // colour categories are in the 0-1 range - a more generic solution would
-    // pick values from the categories using the upperLimits - but let's implement
-    // that when we need to
     return getIndicatorValueColor(props.indicator, value, false);
 };
 </script>

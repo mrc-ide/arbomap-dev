@@ -11,29 +11,65 @@ export const MOCK_APP_CONFIG = {
     },
     indicators: {
         FOI: {
-            colorScale: { name: "interpolateReds" },
+            colors: {
+                type: "scale",
+                colorScale: {name: "interpolateReds"}
+            },
             humanReadableName: "Force of infection",
             unit: ""
         },
         serop9: {
-            colorScale: { name: "interpolateBlues" },
+            colors: {
+                type: "scale",
+                colorScale: {name: "interpolateBlues"}
+            },
             humanReadableName: "Seroprevalence at 9 years of age",
             unit: "%"
         },
+        "serop9_class": {
+            "colors": {
+                "type": "category",
+                "categories": [
+                    {
+                        "name": "Under 40%",
+                        "upperLimit": 40,
+                        "color": "#dc143c"
+                    },
+                    {
+                        "name": "40-60%",
+                        "upperLimit": 60,
+                        "color": "#ff5800"
+                    },
+                    {
+                        "name": "Above 60%",
+                        "upperLimit": null,
+                        "color": "#fcf75e"
+                    }
+                ]
+            },
         hosp_total: {
-            colorScale: { name: "interpolatePurples" },
+            colors: {
+                type: "scale",
+                colorScale: {name: "interpolatePurples"}
+            },
             humanReadableName: "Hospital admissions",
             shortName: "All ages",
             unit: ""
         },
         hosp_0_4: {
-            colorScale: { name: "interpolatePurples" },
+            colors: {
+                type: "scale",
+                colorScale: {name: "interpolatePurples"}
+            },
             humanReadableName: "Hospital admissions in 0-4 year olds",
             shortName: "0-4",
             unit: ""
         },
         hosp_5_9: {
-            colorScale: { name: "interpolatePurples" },
+            colors: {
+                type: "scale",
+                colorScale: {name: "interpolatePurples"}
+            },
             humanReadableName: "Hospital admissions in 5-9 year olds",
             shortName: "5-9",
             unit: ""

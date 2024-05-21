@@ -5,7 +5,7 @@ import { mockPinia } from "../../mocks/mockPinia";
 import ColorScaleIcon from "../../../../src/components/indicatorMenu/ColorScaleIcon.vue";
 
 describe("ColorScaleIcon", () => {
-    test("renders as expected", async () => {
+    test("renders as expected for color scale", async () => {
         await render(ColorScaleIcon, {
             props: {
                 size: 24,
@@ -25,5 +25,25 @@ describe("ColorScaleIcon", () => {
         expect(colorBlocks[1].getAttribute("fill")).toBe(interpolatePurples(0.9));
         expect(colorBlocks[2].getAttribute("fill")).toBe(interpolatePurples(0.4));
         expect(colorBlocks[3].getAttribute("fill")).toBe(interpolatePurples(0.1));
+    });
+
+    test("renders as expected for color categories", () => {
+        await render(ColorScaleIcon, {
+            props: {
+                size: 24,
+                indicator: "serop9_class"
+            },
+            global: {
+                plugins: [mockPinia()]
+            }
+        });
+
+        const svg = (await screen.findByRole("presentation")) as HTMLElement;
+        const colorBlocks = svg.children;
+        expect(colorBlocks.length).toBe(4);
+        expect(colorBlocks[0].getAttribute("fill")).toBe("#dc143c");
+        expect(colorBlocks[1].getAttribute("fill")).toBe("#ff5800");
+        expect(colorBlocks[2].getAttribute("fill")).toBe("#fcf75e");
+        expect(colorBlocks[3].getAttribute("fill")).toBe("#dc143c");
     });
 });
