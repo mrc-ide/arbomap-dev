@@ -1,8 +1,4 @@
 <template>
-    <v-btn id="helpButton" aria-label="Help" icon density="compact" v-show="!isActive" @click="isActive = true">
-        <v-icon>mdi-help-circle-outline</v-icon>
-        <v-tooltip location="bottom" activator="parent">Help</v-tooltip>
-    </v-btn>
     <v-alert
         v-model="isActive"
         class="elevation-1"
@@ -10,8 +6,11 @@
         closable
         title="How to use this map"
         :text="helpText"
-    >
-    </v-alert>
+    />
+    <v-btn id="helpButton" aria-label="Help" icon density="compact" v-show="!isActive" @click="isActive = !isActive">
+        <v-icon>mdi-help-circle-outline</v-icon>
+        <v-tooltip location="bottom" activator="parent">Help</v-tooltip>
+    </v-btn>
 </template>
 
 <script setup lang="ts">
@@ -60,14 +59,8 @@ $large-screen-breakpoint: calc(
     /* Undo vuetify styling which is space-inefficient in that it gives close-button a whole grid-column */
     display: unset !important;
 
-    @media screen and (max-width: 768px) {
-        order: 2;
-    }
-
     /*
-    Centering the alert (once its max-width is setting an upper limit on its width) means that
-    when the admin level toggle alternates between being present/absent, the alert does not
-    jump around.
+    Centering the alert (once the admin level toggle allows enough room)
     */
     @media screen and (min-width: $large-screen-breakpoint) {
         position: fixed !important;
@@ -84,11 +77,6 @@ $large-screen-breakpoint: calc(
     margin-bottom: 0.5rem;
 }
 #helpButton {
-    align-self: center;
-
-    @media screen and (max-width: 768px) {
-        order: 2;
-        align-self: flex-end;
-    }
+    align-self: flex-end;
 }
 </style>

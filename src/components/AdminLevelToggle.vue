@@ -28,6 +28,6 @@ const emit = defineEmits(["change-admin-level"]);
     font-weight: bolder;
 }
 #admin-toggle {
-    text-align: right; /* For compatibility with HelpAlert on small screens */
+    align-self: flex-end; /* For compatibility with HelpAlert */
 }
 </style>

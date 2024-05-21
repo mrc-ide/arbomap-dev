@@ -119,13 +119,9 @@ watch(mapSettings, updateMap);
 <style>
 .leaflet-top.leaflet-right .leaflet-control {
     display: flex;
-    column-gap: 8px;
+    flex-direction: column;
+    row-gap: 8px;
     /* margin-left must belong here rather than HelpAlert, or HelpAlert's margin prevents clicks on zoom controls */
     margin-left: 55px;
-
-    @media screen and (max-width: 768px) {
-        flex-direction: column;
-        row-gap: 8px;
-    }
 }
 </style>
