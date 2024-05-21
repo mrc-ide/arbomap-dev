@@ -4,7 +4,6 @@
             <div class="legend-item" v-for="(level, index) in scaleLevels" v-bind:key="index" data-testid="legendItem">
                 <i v-bind:style="level.style"></i>
                 <span class="level">{{ level.label }}</span>
-                <br />
             </div>
         </div>
     </div>
@@ -91,23 +90,29 @@ const scaleLevels = computed(() => {
 
 <style>
 .legend-container {
-    display: table-cell;
     position: absolute;
-    left: -4rem;
+    right: 0.5rem;
     bottom: 0.5rem;
+    background-color: rgba(255, 255, 255, 0.6);
+    padding: 0.2rem;
 }
+
 .legend-element {
     vertical-align: bottom;
-    display: inline-block;
 }
+
 .legend-item {
     height: 1.125rem;
-
+    display: table-row;
     i {
         width: 1.125rem;
         height: 1.125rem;
         float: left;
-        margin-right: 0.5rem;
+    }
+    span {
+        display: table-cell;
+        padding-left: 0.2rem;
+        vertical-align: bottom;
     }
 }
 </style>
