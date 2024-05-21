@@ -27,7 +27,7 @@ describe("ColorScaleIcon", () => {
         expect(colorBlocks[3].getAttribute("fill")).toBe(interpolatePurples(0.1));
     });
 
-    test("renders as expected for color categories", () => {
+    test("renders as expected for color categories", async () => {
         await render(ColorScaleIcon, {
             props: {
                 size: 24,

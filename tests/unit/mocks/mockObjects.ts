@@ -26,10 +26,10 @@ export const MOCK_APP_CONFIG = {
             humanReadableName: "Seroprevalence at 9 years of age",
             unit: "%"
         },
-        "serop9_class": {
-            "colors": {
-                "type": "category",
-                "categories": [
+        serop9_class: {
+            colors: {
+                type: "category",
+                categories: [
                     {
                         "name": "Under 40%",
                         "upperLimit": 40,
@@ -47,6 +47,10 @@ export const MOCK_APP_CONFIG = {
                     }
                 ]
             },
+            humanReadableName: "Seroprevalence classification at age 9 years",
+            description: "Proportion of 9 year olds exposed to dengue infection, displayed by classification",
+            unit: ""
+        },
         hosp_total: {
             colors: {
                 type: "scale",

@@ -1,9 +1,9 @@
 <template>
     <svg role="presentation" :width="size" :height="size">
-        <rect :width="size" :height="size" :fill="getColor(sampleValues[0])" />
-        <rect :width="size / 2" :height="size" :fill="getColor(sampleValues[1])" />
-        <polygon :points="`0,0 0,${0.7 * size} ${halfway},${halfway} ${halfway},0`" :fill="getColor(sampleValues[2])" />
-        <polygon :points="`${halfway},0 ${halfway},${halfway} ${size},${0.3 * size} ${size},0`" :fill="getColor(sampleValues[3])" />
+        <rect :width="size" :height="size" :fill="iconColors[0]" />
+        <rect :width="size / 2" :height="size" :fill="iconColors[1]" />
+        <polygon :points="`0,0 0,${0.7 * size} ${halfway},${halfway} ${halfway},0`" :fill="iconColors[2]" />
+        <polygon :points="`${halfway},0 ${halfway},${halfway} ${size},${0.3 * size} ${size},0`" :fill="iconColors[3]" />
     </svg>
 </template>
 
@@ -28,31 +28,19 @@ const halfway = computed(() => props.size / 2);
 const { appConfig } = useAppStore();
 const { getIndicatorValueColor, getIndicatorColorType, getIndicatorColorCategories } = useIndicatorColors();
 
-const sampleValues = computed(() => {
-    if (getIndicatorColorType(props.indicator) === ColorType.Category) {
-        // Use the limits of the categories to build the icon
-        const categories = getIndicatorColorCategories(props.indicator);
-        // Assume our scale starts at 0
-        const result = [0];
-        let categoryIdx= 0;
+
+
+const iconColors = computed(() => {
+    if (getIndicatorColorType(props.indicator) === ColorType.Scale) {
+        const colorScaleSampleValues =  [0.7, 0.9, 0.4, 0.1];
+        return colorScaleSampleValues.map((value) => getIndicatorValueColor(props.indicator, value, false));
+    } else {
+        const result = [];
+        const categoryColors = getIndicatorColorCategories(props.indicator).map((cat) => cat.color);
         while (result.length < 4) {
-            if (categoryIdx >= categories.length) {
-                categoryIdx = 0;
-            }
-            const { upperLimit } = categories[categoryIdx];
-            // upper limit is null for final category - just set to any higher value than previous
-            const value = upperLimit || result[result.length-1] + 1;
-            result.push(value);
-            categoryIdx++;
+            result.push(...categoryColors);
         }
         return result;
-    } else {
-        // Return some sample values from the scale to build the icon
-        return [0.7, 0.9, 0.4, 0.1];
     }
 });
-
-const getColor = (value) => {
-    return getIndicatorValueColor(props.indicator, value, false);
-};
 </script>
