@@ -7,7 +7,6 @@ process_country <- function(x, country_codes, level) {
     id <- trimws(x$ID_2)
   }
   
-  # TODO: output sd as 0 for now, sd should be reinstated in future datasets, for Excel output only
   g <- function(i) {
     el <- x[i, ]
     list(
@@ -41,21 +40,24 @@ process_country <- function(x, country_codes, level) {
 process <- function(path, dest, level) {
   dat <- readxl::read_excel(path)
   dir.create(dest, FALSE, TRUE)
+  countries <- unique(dat$ID_0)
+  # we deliberately exclude these countries which have values derived from
+  # neighbouring countries
+  countries <- countries[!(countries %in% c("ASM", "CYM", "DMA", "KNA", "MNP", "MSR", "NRU", "PLW", "TCA", "TUV", "VGB", "WLF"))]
+
   if (level == 2) {
-    for (iso in unique(dat$ID_0)) {
+    for (iso in countries) {
       json <- jsonlite::toJSON(
         process_country(dat[dat$ID_0 == iso, ], country_codes, level), auto_unbox = TRUE)
       writeLines(json, file.path(dest, paste0(iso, ".json")))
     }
   }
-  
+
   if (level == 1) {
     # output a single file, and also output array of countries
-    countries <- c()
     data_by_country <- list()
-    for (iso in unique(dat$ID_0)) {
+    for (iso in countries) {
       data_by_country[[iso]] = process_country(dat[dat$ID_0 == iso, ], country_codes, level)
-      countries <- append(countries, iso)
     }
     json <- jsonlite::toJSON(data_by_country, auto_unbox = TRUE)
     writeLines(json, file.path(dest, paste0("global_adm1.json")))
@@ -64,11 +66,11 @@ process <- function(path, dest, level) {
 }
 
 root <- here::here()
-process(file.path(root, "data/raw/Adm1_Estimates_v3_gadm41.xlsx"),
+process(file.path(root, "data/raw/Adm1_Estimates_v3_gadm41_filled_gaps.xlsx"),
         file.path(root, "data/processed/admin1"),
         1)
 process(file.path(root, "data/raw/Adm2_Estimates_v3_gadm41_filled_gaps.xlsx"),
         file.path(root, "data/processed/admin2"),
-        2)
+       2)
 
 
