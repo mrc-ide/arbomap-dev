@@ -43,7 +43,7 @@ countries is selected we load and display from these files.
 - `geojson/admin2`: admin2-level geojson, one file per country. When a country is selected, we load and display from these files. 
 - `indicators/admin1`: a single file containing all admin1 level indicator values. We load this when the app first loads, to display
 the global view. Generated from the xlsx file in `data/raw` by the script `process-data.R`
-- `indicators/admin2`: admin2 level indicator values, one file per country, loaded when the country is selected. Generated 
+- `indicators/admin2`: admin2-level indicator values, one file per country, loaded when the country is selected. Generated 
 from the xlsx file in `data/raw` by the script `process-data.R`
 
 All public data is committed to github, and is not currently automatically updated using the scripts. So you need to 
