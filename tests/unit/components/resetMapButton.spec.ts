@@ -24,12 +24,15 @@ describe("ResetMapButton", () => {
         });
 
         it("should navigate to the home path when the reset button is clicked", async () => {
+            vi.useFakeTimers();
             const spyRouterPush = vi.spyOn(router, "push");
             const { getByTitle, emitted } = renderComponent();
             const resetButton = getByTitle("Reset map");
             await fireEvent.click(resetButton);
+            vi.runAllTimers();
             expect(spyRouterPush).toHaveBeenCalledWith(`/${APP_BASE_ROUTE}/indicator`);
             expect(emitted()).not.toHaveProperty("resetView");
+            vi.useRealTimers();
         });
     });
 

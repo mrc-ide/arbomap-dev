@@ -17,7 +17,7 @@ import { useRouter } from "vue-router";
 import { useAppStore } from "../stores/appStore";
 import NotFound from "./notFound.vue";
 import { APP_BASE_ROUTE, PATHOGEN, VERSION } from "../router/utils";
-import { mapSettingsAreEqual } from "../utils";
+import { mapSettingsAreEqual, stringAdminLevelToNumeric, AdminLevel } from "../utils";
 import { MapSettings } from "../types/resourceTypes";
 
 const router = useRouter();
@@ -41,6 +41,11 @@ const props = defineProps({
         default: ""
     },
     country: {
+        type: String,
+        required: false,
+        default: ""
+    },
+    adminLevel: {
         type: String,
         required: false,
         default: ""
@@ -71,7 +76,8 @@ const selectDataForRoute = async () => {
         pathogen: [PATHOGEN],
         version: [VERSION],
         indicator: Object.keys(appConfig.value.indicators),
-        country: appConfig.value.countries
+        country: appConfig.value.countries,
+        adminLevel: Object.keys(stringAdminLevelToNumeric)
     };
     const propsWithCorrectCase: Partial<Record<PropName, string>> = {};
     Object.keys(possibleValuesForProps).forEach((prop: PropName) => {
@@ -86,18 +92,32 @@ const selectDataForRoute = async () => {
     unknownProps.value = unknown;
     if (unknownProps.value.length) return;
 
+    const { pathogen, version, indicator, country, adminLevel } = propsWithCorrectCase;
     // we pick dengue, may24 and FOI as defaults for pathogen, version and indicator respectively
-    if (!props.indicator) {
+    if (!indicator) {
         router.replace(`/${APP_BASE_ROUTE}/${possibleValuesForProps.indicator[0]}`);
         return;
     }
+    if (country) {
+        const admin2DataMissing = appConfig.value.countriesWithoutAdmin2.includes(country);
+        if (!adminLevel) {
+            router.replace(
+                `/${pathogen}/${version}/${indicator}/${country}/${admin2DataMissing ? AdminLevel.ONE : AdminLevel.TWO}`
+            );
+            return;
+        }
+        if (adminLevel === AdminLevel.TWO && admin2DataMissing) {
+            router.replace(`/${pathogen}/${version}/${indicator}/${country}/${AdminLevel.ONE}`);
+            return;
+        }
+    }
 
     const newMapSettings: MapSettings = {
-        pathogen: propsWithCorrectCase.pathogen,
-        version: propsWithCorrectCase.version,
-        indicator: propsWithCorrectCase.indicator,
-        country: propsWithCorrectCase.country,
-        adminLevel: propsWithCorrectCase.country ? 2 : 1
+        pathogen,
+        version,
+        indicator,
+        country,
+        adminLevel: country ? stringAdminLevelToNumeric[adminLevel] : 1
     };
     if (!mapSettingsAreEqual(mapSettings.value, newMapSettings)) {
         await updateMapSettings(newMapSettings);
