@@ -2,7 +2,7 @@
 
 // We need country names for Excel download and Country selector, but these are not reliably present in the processed
 // indicator files or simplified admin1 or admin2 geojson. They are present in the admin0 geojson, but we don't want to
-// have to read in all these files in-app order to find all country names. So we generate pre-canned names from ammin0
+// have to read in all these files in order to find all country names. So we generate pre-canned names from admin0
 // with this script
 
 const path = require("path");
