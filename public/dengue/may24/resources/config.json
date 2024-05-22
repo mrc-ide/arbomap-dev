@@ -1,7 +1,7 @@
 {
     "title": "DengueMap",
-    "countries": ["AGO","ATG","ARG","AUS","BHS","BGD","BRB","BLZ","BEN","BTN","BOL","BWA","BRA","BFA","BDI","KHM","CMR","CPV","CAF","TCD","CHN","COL","COM","CRI","CIV","CUB","COD","DJI","DOM","ECU","SLV","GNQ","ERI","ETH","FJI","GUF","PYF","GAB","GMB","GHA","GRD","GLP","GTM","GNB","GIN","GUY","HTI","HND","IND","Z01","IDN","JAM","KEN","LAO","LBR","MDG","MWI","MYS","MLI","MTQ","MRT","MUS","MYT","MEX","MOZ","MMR","NAM","NPL","NCL","NIC","NER","NGA","OMN","PAN","PNG","PRY","PER","PHL","PRI","COG","REU","RWA","LCA","VCT","WSM","SEN","SLE","SGP","SLB","SOM","SSD","LKA","SDN","SUR","TWN","TZA","THA","TLS","TGO","TON","TTO","UGA","URY","VUT","VEN","VNM","YEM","ZMB","ZWE"],
-    "countriesWithoutAdmin2":["ATG","BHS","BLZ","BRB","COM","CPV","GRD","JAM","LCA","MUS","MYT","PRI","PYF","SGP","SYC","TTO","VCT"],
+    "countries": ["AGO","ARG","ATG","AUS","BDI","BEN","BFA","BGD","BHS","BLZ","BOL","BRA","BRB","BTN","BWA","CAF","CHN","CIV","CMR","COD","COG","COL","COM","CPV","CRI","CUB","DJI","DOM","ECU","ERI","ETH","FJI","GAB","GHA","GIN","GLP","GMB","GNB","GNQ","GRD","GTM","GUF","GUY","HND","HTI","IDN","IND","JAM","KEN","KHM","LAO","LBR","LCA","LKA","MDG","MEX","MLI","MMR","MOZ","MRT","MTQ","MUS","MWI","MYS","MYT","NAM","NCL","NER","NGA","NIC","NPL","OMN","PAN","PER","PHL","PNG","PRI","PRY","PYF","REU","RWA","SDN","SEN","SGP","SLB","SLE","SLV","SOM","SSD","SUR","SYC","TCD","TGO","THA","TLS","TON","TTO","TWN","TZA","UGA","URY","VCT","VEN","VIR","VNM","VUT","WSM","YEM","ZMB","ZWE"],
+    "countriesWithoutAdmin2": ["ATG","BHS","BLZ","BRB","COM","CPV","GRD","JAM","LCA","MUS","MYT","PRI","PYF","SGP","SYC","TTO","VCT"],
     "geoJsonFeatureProperties": {
         "idAdm0": "GID_0",
         "idAdm1": "GID_1",
@@ -13,19 +13,225 @@
     },
     "indicators": {
         "FOI": {
-            "colourScale": {
+            "colorScale": {
                 "name": "interpolateRdYlBu",
                 "reverse": true
             },
             "humanReadableName": "Force of infection",
+            "description": "Annual per capita risk of dengue infection for a susceptible person",
             "unit": ""
         },
         "serop9": {
-            "colourScale": {
+            "colorScale": {
                 "name": "interpolateGreens"
             },
             "humanReadableName": "Seroprevalence at 9 years of age",
+            "description": "Proportion of 9 year olds exposed to dengue infection",
             "unit": "%"
+        },
+        "hosp_total": {
+            "colorScale": {
+                "name": "interpolatePurples"
+            },
+            "humanReadableName": "Hospital admissions",
+            "shortName": "all ages",
+            "description": "Annual number of hospital admissions per 100,000 population by age group",
+            "unit": ""
+        },
+        "hosp_0_4": {
+            "colorScale": {
+                "name": "interpolatePurples"
+            },
+            "humanReadableName": "Hospital admissions in 0-4 year olds",
+            "shortName": "0-4",
+            "description":"Annual number of hospital admissions per 100,000 population in 0-4 year olds",
+            "unit": ""
+        },
+        "hosp_5_9": {
+            "colorScale": {
+                "name": "interpolatePurples"
+            },
+            "humanReadableName": "Hospital admissions in 5-9 year olds",
+            "shortName": "5-9",
+            "description": "Annual number of hospital admissions per 100,000 population in 5-9 yar olds",
+            "unit": ""
+        },
+        "hosp_10_14": {
+            "colorScale": {
+                "name": "interpolatePurples"
+            },
+            "humanReadableName": "Hospital admissions in 10-14 year olds",
+            "shortName": "10-14",
+            "description":"Annual number of hospital admissions per 100,000 population in 10-14 year olds",
+            "unit": ""
+        },
+        "hosp_15_19": {
+            "colorScale": {
+                "name": "interpolatePurples"
+            },
+            "humanReadableName": "Hospital admissions in 15-19 year olds",
+            "shortName": "15-19",
+            "description": "Annual number of hospital admissions per 100,000 population in 15-19 year olds",
+            "unit": ""
+        },
+        "hosp_20_24": {
+            "colorScale": {
+                "name": "interpolatePurples"
+            },
+            "humanReadableName": "Hospital admissions in 20-24 year olds",
+            "shortName": "20-24",
+            "description":"Annual number of hospital admissions per 100,000 population in 20-24 year olds",
+            "unit": ""
+        },
+        "hosp_25_29": {
+            "colorScale": {
+                "name": "interpolatePurples"
+            },
+            "humanReadableName": "Hospital admissions in 25-29 year olds",
+            "shortName": "25-29",
+            "description": "Annual number of hospital admissions per 100,000 population in 25-29 year olds",
+            "unit": ""
+        },
+        "hosp_30_34": {
+            "colorScale": {
+                "name": "interpolatePurples"
+            },
+            "humanReadableName": "Hospital admissions in 30-34 year olds",
+            "shortName": "30-34",
+            "description":"Annual number of hospital admissions per 100,000 population in 30-34 year olds",
+            "unit": ""
+        },
+        "hosp_35_39": {
+            "colorScale": {
+                "name": "interpolatePurples"
+            },
+            "humanReadableName": "Hospital admissions in 35-39 year olds",
+            "shortName": "35-39",
+            "description": "Annual number of hospital admissions per 100,000 population in 35-39 year olds",
+            "unit": ""
+        },
+        "hosp_40_44": {
+            "colorScale": {
+                "name": "interpolatePurples"
+            },
+            "humanReadableName": "Hospital admissions in 40-44 year olds",
+            "shortName": "40-44",
+            "description":"Annual number of hospital admissions per 100,000 population in 40-44 year olds",
+            "unit": ""
+        },
+        "hosp_45_49": {
+            "colorScale": {
+                "name": "interpolatePurples"
+            },
+            "humanReadableName": "Hospital admissions in 45-49 year olds",
+            "shortName": "45-49",
+            "description": "Annual number of hospital admissions per 100,000 population in 45-49 year olds",
+            "unit": ""
+        },
+        "hosp_50_54": {
+            "colorScale": {
+                "name": "interpolatePurples"
+            },
+            "humanReadableName": "Hospital admissions in 50-54 year olds",
+            "shortName": "50-54",
+            "description":"Annual number of hospital admissions per 100,000 population in 50-54 year olds",
+            "unit": ""
+        },
+        "hosp_55_59": {
+            "colorScale": {
+                "name": "interpolatePurples"
+            },
+            "humanReadableName": "Hospital admissions in 55-59 year olds",
+            "shortName": "55-59",
+            "description": "Annual number of hospital admissions per 100,000 population in 55-59 year olds",
+            "unit": ""
+        },
+        "hosp_60_64": {
+            "colorScale": {
+                "name": "interpolatePurples"
+            },
+            "humanReadableName": "Hospital admissions in 60-64 year olds",
+            "shortName": "60-64",
+            "description":"Annual number of hospital admissions per 100,000 population in 60-64 year olds",
+            "unit": ""
+        },
+        "hosp_65_69": {
+            "colorScale": {
+                "name": "interpolatePurples"
+            },
+            "humanReadableName": "Hospital admissions in 65-69 year olds",
+            "shortName": "65-69",
+            "description": "Annual number of hospital admissions per 100,000 population in 65-69 year olds",
+            "unit": ""
+        },
+        "hosp_70_74": {
+            "colorScale": {
+                "name": "interpolatePurples"
+            },
+            "humanReadableName": "Hospital admissions in 70-74 year olds",
+            "shortName": "70-74",
+            "description":"Annual number of hospital admissions per 100,000 population in 70-74 year olds",
+            "unit": ""
+        },
+        "hosp_75_79": {
+            "colorScale": {
+                "name": "interpolatePurples"
+            },
+            "humanReadableName": "Hospital admissions in 75-79 year olds",
+            "shortName": "75-79",
+            "description": "Annual number of hospital admissions per 100,000 population in 75-79 year olds",
+            "unit": ""
+        },
+        "hosp_80_84": {
+            "colorScale": {
+                "name": "interpolatePurples"
+            },
+            "humanReadableName": "Hospital admissions in 80-84 year olds",
+            "shortName": "80-84",
+            "description":"Annual number of hospital admissions per 100,000 population in 80-84 year olds",
+            "unit": ""
+        },
+        "hosp_85_89": {
+            "colorScale": {
+                "name": "interpolatePurples"
+            },
+            "humanReadableName": "Hospital admissions in 85-89 year olds",
+            "shortName": "85-89",
+            "description": "Annual number of hospital admissions per 100,000 population in 85-89 year olds",
+            "unit": ""
+        },
+        "hosp_90_94": {
+            "colorScale": {
+                "name": "interpolatePurples"
+            },
+            "humanReadableName": "Hospital admissions in 90-94 year olds",
+            "shortName": "90-94",
+            "description":"Annual number of hospital admissions per 100,000 population in 90-94 year olds",
+            "unit": ""
+        },
+        "hosp_95_99": {
+            "colorScale": {
+                "name": "interpolatePurples"
+            },
+            "humanReadableName": "Hospital admissions in 95-99 year olds",
+            "shortName": "95-99",
+            "description": "Annual number of hospital admissions per 100,000 population in 95-99 year olds",
+            "unit": ""
         }
-    }
+    },
+    "indicatorGroups": [
+        {
+            "mainIndicator": "FOI"
+        },
+        {
+            "mainIndicator": "serop9"
+        },
+        {
+            "mainIndicator": "hosp_total",
+            "subIndicators": ["hosp_0_4", "hosp_5_9", "hosp_10_14", "hosp_15_19", "hosp_20_24", "hosp_25_29",
+                              "hosp_30_34", "hosp_35_39", "hosp_40_44", "hosp_45_49", "hosp_50_54", "hosp_55_59",
+                              "hosp_60_64", "hosp_65_69", "hosp_70_74", "hosp_75_79", "hosp_80_84", "hosp_85_89",
+                              "hosp_90_94", "hosp_95_99"]
+        }
+    ]
 }

@@ -9,6 +9,7 @@ import {
     MOCK_ADMIN2_INDICATORS,
     MOCK_BOUNDS
 } from "../mocks/mockObjects";
+import { mockMapSettings } from "../mocks/mockPinia";
 
 describe("appStore", () => {
     beforeEach(() => {
@@ -24,75 +25,18 @@ describe("appStore", () => {
             expect(store.countryBoundingBoxes).toStrictEqual(MOCK_BOUNDS);
             expect(store.admin2Indicators).toStrictEqual({});
             expect(store.admin2Geojson).toStrictEqual({});
-            expect(store.selectedIndicator).toBe("");
-            expect(store.selectedCountryId).toBe("");
+            expect(store.initialisationComplete).toStrictEqual(true);
         });
 
-        test("selectCountry selects country and loads data", async () => {
+        test("updateMapSettings selects country, admin level and loads data", async () => {
             const store = useAppStore();
             await store.initialiseData();
-            await store.selectCountry("TZA");
-            expect(store.selectedCountryId).toBe("TZA");
+            const newMapSettings = mockMapSettings({ country: "TZA", adminLevel: 2 });
+            await store.updateMapSettings(newMapSettings);
+            expect(store.mapSettings).toStrictEqual(newMapSettings);
             expect(store.admin2Indicators).toStrictEqual({ TZA: MOCK_ADMIN2_INDICATORS.TZA });
             expect(store.admin2Geojson).toStrictEqual({ TZA: MOCK_ADMIN2_GEOJSON.TZA.features });
             expect(store.admin0GeojsonFeature).toStrictEqual(MOCK_ADMIN0_GEOJSON.features[0]);
-        });
-    });
-
-    describe("getters", () => {
-        test("selectedFeatures includes all admin 1 features when there is no selected country", async () => {
-            const store = useAppStore();
-            await store.initialiseData();
-            expect(store.selectedFeatures).toStrictEqual([
-                { properties: { shapeID: "123", shapeName: "Test123", shapeGroup: "MWI" } },
-                { properties: { shapeID: "789", shapeName: "Test789", shapeGroup: "TZA" } }
-            ]);
-        });
-
-        test("selectedFeatures includes selected country's admin2 features, and admin1 for all others", async () => {
-            const store = useAppStore();
-            await store.initialiseData();
-            await store.selectCountry("TZA");
-            expect(store.selectedFeatures).toStrictEqual([
-                { properties: { shapeID: "789-a", shapeName: "Test789-a", shapeGroup: "TZA" } },
-                { properties: { shapeID: "789-b", shapeName: "Test789-b", shapeGroup: "TZA" } },
-                { properties: { shapeID: "123", shapeName: "Test123", shapeGroup: "MWI" } }
-            ]);
-        });
-
-        test("selectedIndicators includes all admin 1 features when there is no selected country", async () => {
-            const store = useAppStore();
-            await store.initialiseData();
-            expect(store.selectedIndicators).toStrictEqual({
-                "123": {
-                    FOI: { mean: 0.1, sd: 0.01 },
-                    serop9: { mean: 0.2, sd: 0.02 }
-                },
-                "789": {
-                    FOI: { mean: 0.3, sd: 0.03 },
-                    serop9: { mean: 0.4, sd: 0.04 }
-                }
-            });
-        });
-
-        test("selectedFeatures includes selected country's admin2 features, and admin1 for all others", async () => {
-            const store = useAppStore();
-            await store.initialiseData();
-            await store.selectCountry("TZA");
-            expect(store.selectedIndicators).toStrictEqual({
-                "123": {
-                    FOI: { mean: 0.1, sd: 0.01 },
-                    serop9: { mean: 0.2, sd: 0.02 }
-                },
-                "789-a": {
-                    FOI: { mean: 0.31, sd: 0.031 },
-                    serop9: { mean: 0.41, sd: 0.041 }
-                },
-                "789-b": {
-                    FOI: { mean: 0.32, sd: 0.032 },
-                    serop9: { mean: 0.42, sd: 0.042 }
-                }
-            });
         });
     });
 });

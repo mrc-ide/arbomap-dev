@@ -9,7 +9,7 @@ import { PATHOGEN } from "./utils";
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes: [
-        { path: "/:pathogen?/:version?/:indicator?/:country?", component: index, props: true },
+        { path: "/:pathogen?/:version?/:indicator?/:country?/:adminLevel?", component: index, props: true },
         { path: `/${PATHOGEN}/about`, component: about },
         { path: `/${PATHOGEN}/accessibility`, component: accessibility },
         { path: `/${PATHOGEN}/privacy`, component: privacy },

@@ -1,13 +1,14 @@
 {
   "name": "dengue-map",
-  "version": "0.0.0",
+  "version": "0.5.0",
   "type": "module",
   "engines": {
     "node": "^20.0.0"
   },
   "scripts": {
-    "dev": "vite",
-    "build": "vue-tsc --noEmit && vite build",
+    "dev": "npm run prebuild && vite",
+    "prebuild": "node scripts/npm/prebuild.cjs $(git rev-parse --short HEAD) $(git symbolic-ref --short HEAD)",
+    "build": "npm run prebuild && vue-tsc --noEmit && vite build",
     "preview": "vite preview",
     "lint-fix": "eslint . --fix --ignore-path .gitignore",
     "lint": "eslint . --ignore-path .gitignore",
@@ -29,7 +30,7 @@
     "spin.js": "^4.1.1",
     "vue": "^3.4.21",
     "vue-leaflet": "^0.1.0",
-    "vuetify": "^3.5.8",
+    "vuetify": "^3.6.0",
     "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.2/xlsx-0.20.2.tgz"
   },
   "devDependencies": {

@@ -15,7 +15,7 @@ import {
 } from "leaflet";
 import { storeToRefs } from "pinia";
 import { useAppStore } from "../stores/appStore";
-import { minZoom } from "../components/utils";
+import { countryAdmin1OutlineStyle, countryOutlineStyle, minZoom } from "../components/utils";
 import { useDataSummary } from "./useDataSummary";
 
 type FeatureProperties = { GID_0: string; GID_1: string; NAME_1: string };
@@ -47,8 +47,10 @@ export const useLeaflet = (
 
     // internal refs
 
-    const geoJsonLayer = shallowRef<GeoJSON<FeatureProperties, Geometry>>(geoJSON(undefined));
+    const emptyLayer = shallowRef<Polyline>(polyline([]));
+    const geoJsonLayer = shallowRef<GeoJSON<FeatureProperties, Geometry> | null>(null);
     const countryOutlineLayer = shallowRef<Polyline | null>(null);
+    const countryAdmin1OutlineLayer = shallowRef<(Polyline | null)[] | null>(null);
     const layerWithOpenTooltip = shallowRef<Layer | null>(null);
     const bounds = ref<LatLngBounds | null>(null);
 
@@ -56,7 +58,7 @@ export const useLeaflet = (
 
     const { dataSummary } = useDataSummary(bounds);
 
-    const { countryBoundingBoxes, admin0GeojsonFeature } = storeToRefs(useAppStore());
+    const { countryBoundingBoxes, admin0GeojsonFeature, admin1Geojson, mapSettings } = storeToRefs(useAppStore());
 
     const getRegionBounds = (countryId?: string) => {
         if (Object.keys(countryBoundingBoxes.value).length === 0) return null;
@@ -118,8 +120,10 @@ export const useLeaflet = (
                 // map while the bounds were locked, now we track each layer that will open a
                 // tooltip and close them if they are not the most recent layer to make sure
                 // no old tooltips remain open
-                layerWithOpenTooltip.value?.closeTooltip();
-                layerWithOpenTooltip.value = layer;
+                if (layer !== layerWithOpenTooltip.value) {
+                    layerWithOpenTooltip.value?.closeTooltip();
+                    layerWithOpenTooltip.value = layer;
+                }
             }
         });
     };
@@ -132,9 +136,16 @@ export const useLeaflet = (
 
         resetMaxBoundsAndZoom();
 
+        // please keep addition of empty layer first
+        // more info: https://github.com/mrc-ide/arbomap/pull/31#discussion_r1601660916
+        if (!leafletMap.hasLayer(emptyLayer.value)) {
+            emptyLayer.value.addTo(leafletMap);
+        }
+
         // remove layers from map
-        geoJsonLayer.value.remove();
+        geoJsonLayer.value?.remove();
         countryOutlineLayer.value?.remove();
+        countryAdmin1OutlineLayer.value?.forEach((layer) => layer?.remove());
 
         // create new geojson and add to map
         geoJsonLayer.value = geoJSON<FeatureProperties, Geometry>(newFeatures, {
@@ -144,15 +155,26 @@ export const useLeaflet = (
         } as GeojsonOptions).addTo(leafletMap);
 
         // adding country outline if we have a admin0GeojsonFeature
-        // note: the className is just for testing
         if (admin0GeojsonFeature.value) {
             const latLngs = GeoJSON.coordsToLatLngs(admin0GeojsonFeature.value.geometry.coordinates, 2);
-            countryOutlineLayer.value = polyline(latLngs, {
-                color: "black",
-                weight: 1,
-                opacity: 0.5,
-                className: "country-outline"
-            }).addTo(leafletMap);
+            countryOutlineLayer.value = polyline(latLngs, countryOutlineStyle).addTo(leafletMap);
+        } else {
+            countryOutlineLayer.value = null;
+        }
+
+        // add admin 1 outlines if the selected admin level is 2
+        if (mapSettings.value.adminLevel === 2) {
+            const selectedAdmin1Features = admin1Geojson.value[regionId];
+            countryAdmin1OutlineLayer.value = selectedAdmin1Features?.map((f) => {
+                if (!f?.geometry?.type || !f?.geometry?.coordinates) return null;
+                const latLngs = GeoJSON.coordsToLatLngs(
+                    f.geometry.coordinates,
+                    f.geometry.type === "MultiPolygon" ? 2 : 1 // nesting level
+                );
+                return polyline(latLngs, countryAdmin1OutlineStyle).addTo(leafletMap);
+            });
+        } else {
+            countryAdmin1OutlineLayer.value = null;
         }
 
         updateRegionBounds(regionId);

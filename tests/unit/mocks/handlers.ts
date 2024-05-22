@@ -20,6 +20,7 @@ export const handlers: HttpHandler[] = [
     http.get(`${resourcesBase}/geojson/all_adm1_0_5pc_by_iso.json`, () => HttpResponse.json(MOCK_ADMIN1_GEOJSON)),
     http.get(`${resourcesBase}/geojson/admin0/gadm41_TZA_0.json`, () => HttpResponse.json(MOCK_ADMIN0_GEOJSON)),
     http.get(`${resourcesBase}/geojson/admin1/gadm41_MWI_1.json`, () => HttpResponse.json(MOCK_ADMIN1_GEOJSON.MWI)),
+    http.get(`${resourcesBase}/geojson/admin1/gadm41_TZA_1.json`, () => HttpResponse.json(MOCK_ADMIN1_GEOJSON.TZA)),
     http.get(`${resourcesBase}/geojson/admin2/gadm41_TZA_2_2_5pc.json`, () =>
         HttpResponse.json(MOCK_ADMIN2_GEOJSON.TZA)
     ),

@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/vue";
 import * as d3ScaleChromatic from "d3-scale-chromatic";
 import { describe, expect, test } from "vitest";
-import { mockPinia } from "../mocks/mockPinia";
+import { mockMapSettings, mockPinia } from "../mocks/mockPinia";
 import Legend from "../../../src/components/Legend.vue";
 import { MOCK_APP_CONFIG } from "../mocks/mockObjects";
 
@@ -9,17 +9,17 @@ const appConfig = {
     ...MOCK_APP_CONFIG,
     indicators: {
         indicatorThatHasSmallNumbers: {
-            colourScale: { name: "interpolateReds" },
+            colorScale: { name: "interpolateReds" },
             humanReadableName: "Widgets per 100,000 capita",
             unit: "widgets"
         },
         indicatorMeasuredInPercent: {
-            colourScale: { name: "interpolateBlues", reverse: true },
+            colorScale: { name: "interpolateBlues", reverse: true },
             humanReadableName: "Comorbidity with diabetes",
             unit: "%"
         }
     }
-};
+} as any;
 const admin1Indicators = {
     TZA: {
         Region1: {
@@ -64,9 +64,9 @@ const renderComponent = () => {
     });
 };
 
-const expectLegendIconColour = (index: number, expectedColor: string) => {
+const expectLegendIconColor = (index: number, expectedColor: string) => {
     const legendItems = screen.getAllByTestId("legendItem");
-    expect((legendItems[index] as HTMLElement).children.item(0).style.background).toBe(expectedColor);
+    expect(((legendItems[index] as HTMLElement).children.item(0) as HTMLElement).style.background).toBe(expectedColor);
 };
 
 describe("Legend", () => {
@@ -88,8 +88,11 @@ describe("Legend", () => {
                     admin1Indicators,
                     admin2Indicators,
                     appConfig,
-                    selectedCountryId,
-                    selectedIndicator: "indicatorThatHasSmallNumbers"
+                    mapSettings: mockMapSettings({
+                        country: selectedCountryId,
+                        indicator: "indicatorThatHasSmallNumbers",
+                        adminLevel: 2
+                    })
                 });
             });
 
@@ -112,12 +115,12 @@ describe("Legend", () => {
 
             test("renders expected colours", () => {
                 renderComponent();
-                expectLegendIconColour(0, d3ScaleChromatic.interpolateReds(1));
-                expectLegendIconColour(1, d3ScaleChromatic.interpolateReds(0.8));
-                expectLegendIconColour(2, d3ScaleChromatic.interpolateReds(0.6));
-                expectLegendIconColour(3, d3ScaleChromatic.interpolateReds(0.4));
-                expectLegendIconColour(4, d3ScaleChromatic.interpolateReds(0.2));
-                expectLegendIconColour(5, d3ScaleChromatic.interpolateReds(0));
+                expectLegendIconColor(0, d3ScaleChromatic.interpolateReds(1));
+                expectLegendIconColor(1, d3ScaleChromatic.interpolateReds(0.8));
+                expectLegendIconColor(2, d3ScaleChromatic.interpolateReds(0.6));
+                expectLegendIconColor(3, d3ScaleChromatic.interpolateReds(0.4));
+                expectLegendIconColor(4, d3ScaleChromatic.interpolateReds(0.2));
+                expectLegendIconColor(5, d3ScaleChromatic.interpolateReds(0));
             });
         });
 
@@ -127,8 +130,11 @@ describe("Legend", () => {
                     admin1Indicators,
                     admin2Indicators,
                     appConfig,
-                    selectedCountryId,
-                    selectedIndicator: "indicatorMeasuredInPercent"
+                    mapSettings: mockMapSettings({
+                        country: selectedCountryId,
+                        indicator: "indicatorMeasuredInPercent",
+                        adminLevel: 2
+                    })
                 });
             });
 
@@ -152,12 +158,12 @@ describe("Legend", () => {
             test("renders expected colours", () => {
                 renderComponent();
                 // Colours are in reversed scale
-                expectLegendIconColour(0, d3ScaleChromatic.interpolateBlues(0));
-                expectLegendIconColour(1, d3ScaleChromatic.interpolateBlues(0.2));
-                expectLegendIconColour(2, d3ScaleChromatic.interpolateBlues(0.4));
-                expectLegendIconColour(3, d3ScaleChromatic.interpolateBlues(0.6));
-                expectLegendIconColour(4, d3ScaleChromatic.interpolateBlues(0.8));
-                expectLegendIconColour(5, d3ScaleChromatic.interpolateBlues(1));
+                expectLegendIconColor(0, d3ScaleChromatic.interpolateBlues(0));
+                expectLegendIconColor(1, d3ScaleChromatic.interpolateBlues(0.2));
+                expectLegendIconColor(2, d3ScaleChromatic.interpolateBlues(0.4));
+                expectLegendIconColor(3, d3ScaleChromatic.interpolateBlues(0.6));
+                expectLegendIconColor(4, d3ScaleChromatic.interpolateBlues(0.8));
+                expectLegendIconColor(5, d3ScaleChromatic.interpolateBlues(1));
             });
         });
     });
@@ -171,8 +177,11 @@ describe("Legend", () => {
                     admin1Indicators,
                     admin2Indicators,
                     appConfig,
-                    selectedCountryId,
-                    selectedIndicator: "indicatorThatHasSmallNumbers"
+                    mapSettings: mockMapSettings({
+                        country: selectedCountryId,
+                        indicator: "indicatorThatHasSmallNumbers",
+                        adminLevel: 2
+                    })
                 });
             });
 
@@ -200,8 +209,11 @@ describe("Legend", () => {
                     admin1Indicators,
                     admin2Indicators,
                     appConfig,
-                    selectedCountryId,
-                    selectedIndicator: "indicatorMeasuredInPercent"
+                    mapSettings: mockMapSettings({
+                        country: selectedCountryId,
+                        indicator: "indicatorMeasuredInPercent",
+                        adminLevel: 2
+                    })
                 });
             });
 
