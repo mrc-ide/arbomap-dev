@@ -27,4 +27,7 @@ const emit = defineEmits(["change-admin-level"]);
 .selected-button {
     font-weight: bolder;
 }
+#admin-toggle {
+    align-self: flex-end; /* For compatibility with HelpAlert */
+}
 </style>

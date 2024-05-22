@@ -15,8 +15,9 @@
             <LControl position="topleft">
                 <ResetMapButton :selected-indicator="mapSettings.indicator" @reset-view="updateRegionBounds" />
             </LControl>
-            <LControl position="topright" v-if="mapSettings.country">
-                <AdminLevelToggle @change-admin-level="handleChangeAdminLevel" />
+            <LControl position="topright">
+                <AdminLevelToggle @change-admin-level="handleChangeAdminLevel" v-if="mapSettings.country" />
+                <HelpAlert />
             </LControl>
         </LMap>
         <div style="visibility: hidden" class="choropleth-data-summary" v-bind="dataSummary"></div>
@@ -115,3 +116,12 @@ const finishUpdatingMap = () => {
 
 watch(mapSettings, updateMap);
 </script>
+<style>
+.leaflet-top.leaflet-right .leaflet-control {
+    display: flex;
+    flex-direction: column;
+    row-gap: 8px;
+    /* margin-left must belong here rather than HelpAlert, or HelpAlert's margin prevents clicks on zoom controls */
+    margin-left: 55px;
+}
+</style>

@@ -17,7 +17,7 @@ test.describe("Index page", () => {
     });
 
     test("can see app title", async ({ page }) => {
-        await expect(await page.getByText("DengueMap")).toBeVisible();
+        await expect(await page.locator(".v-app-bar-title:has-text('DengueMap')")).toBeVisible();
     });
 
     test("loading spinner is shown on page load", async ({ page }) => {
@@ -204,5 +204,13 @@ test.describe("Index page", () => {
         await page.waitForURL(/dengue\/may24\/FOI\/AGO/i);
 
         await expect(await admin1Outlines).toHaveCount(18);
+    });
+
+    test("help alert is shown, can be dismissed, and stays dismissed after reloading map", async ({ page }) => {
+        await expect(await page.getByText("How to use this map")).toBeVisible();
+        await page.getByRole("button", { name: "Close" }).click();
+        await expect(await page.getByText("How to use this map")).not.toBeVisible();
+        await page.goto("/dengue/may24/FOI/AGO/admin1");
+        await expect(await page.getByText("How to use this map")).not.toBeVisible();
     });
 });
