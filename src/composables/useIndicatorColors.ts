@@ -97,7 +97,7 @@ export const useIndicatorColors = (selectedIndicators: ComputedRef<FeatureIndica
     };
 
     const getIndicatorValueColorCategory = (indicator: string, value: number) => {
-        // We currently assume that indicators in config are in the correct order!
+        // We currently assume that categories in config are in the correct order!
         const categories = getIndicatorColorCategories(indicator);
         return categories.find((category) => value < category.upperLimit || category.upperLimit === null);
     };

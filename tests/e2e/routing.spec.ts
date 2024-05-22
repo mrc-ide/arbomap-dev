@@ -50,7 +50,7 @@ test.describe("Router", () => {
             page,
             "/serop9",
             "serop9",
-            "Seroprevalence at 9 years of age",
+            "Seroprevalence at age 9 years",
             "",
             "interpolateGreens",
             1915,

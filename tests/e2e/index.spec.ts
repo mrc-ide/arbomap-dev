@@ -176,7 +176,7 @@ test.describe("Index page", () => {
         const summary = await page.locator(".choropleth-data-summary");
         await expect(await summary).toHaveAttribute("color-type", "category");
         await expect(await summary).toHaveAttribute("color-categories", "Under 40%,40-60%,Above 60%");
-        await expect(await summary).toHaveAttribute("feature-count", "1833");
+        await expect(await summary).toHaveAttribute("feature-count", "1915");
     });
 
     test("admin level toggle works", async ({ page }) => {
