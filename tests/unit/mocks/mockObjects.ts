@@ -87,6 +87,9 @@ export const MOCK_APP_CONFIG = {
             mainIndicator: "serop9"
         },
         {
+            mainIndicator: "serop9_class"
+        },
+        {
             mainIndicator: "hosp_total",
             subIndicators: ["hosp_0_4", "hosp_5_9"]
         }

@@ -29,7 +29,7 @@ export const useIndicatorColors = (selectedIndicators: ComputedRef<FeatureIndica
             const { colors } = appConfig.value.indicators[indicator];
 
             if (colors.type !== ColorType.Scale) {
-                throw Error("indicator colors are not scale type");
+                throw Error("Indicator colors are not scale type");
             }
             const scaleName = colors.colorScale?.name || "interpolateGreens";
             return d3ScaleChromatic[scaleName];
@@ -42,7 +42,7 @@ export const useIndicatorColors = (selectedIndicators: ComputedRef<FeatureIndica
             const { colors } = appConfig.value.indicators[indicator];
 
             if (colors.type != ColorType.Category) {
-                throw Error("indicator colors are not category type");
+                throw Error("Indicator colors are not category type");
             }
 
             return colors.categories;
