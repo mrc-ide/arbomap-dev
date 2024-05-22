@@ -95,7 +95,7 @@ const slideGroupClicked = (event: PointerEvent) => {
 
 .indicator-menu {
     .v-overlay__content {
-        max-width: min(34rem, 80%) !important;
+        max-width: min(35rem, 80%) !important;
     }
 }
 </style>

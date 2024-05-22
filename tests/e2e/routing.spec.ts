@@ -63,8 +63,18 @@ test.describe("Router", () => {
         await expectIndexPage(page, "/FOI/TZA", "FOI", "Force of infection", "TZA", "interpolateRdYlBu", 2070, 186);
     });
 
+    test("browse to indicator and country at admin1 loads expected data", async ({ page }) => {
+        await page.goto(`${BASE_URL}/FOI/VEN/admin1`);
+        await expect(await page.textContent(".indicator-menu-activator")).toBe("Force of infection");
+        const summary = await page.locator(".choropleth-data-summary");
+        await expect(await summary).toHaveAttribute("color-scale", "interpolateRdYlBu");
+        await expect(await summary).toHaveAttribute("selected-country-id", "VEN");
+        await expect(await summary).toHaveAttribute("feature-count", "1915");
+        await expect(await summary).toHaveAttribute("selected-country-feature-count", "25");
+    });
+
     test("is case-insensitive", async ({ page }) => {
-        await page.goto("/DENGUE/May24/SEROP9/tza");
+        await page.goto("/DENGUE/May24/SEROP9/tza");D
         await page.waitForURL(/\/DENGUE\/May24\/SEROP9\/tza/);
         await expect(await page.textContent(".indicator-menu-activator")).toBe("Seroprevalence at age 9 years");
         const summary = await page.locator(".choropleth-data-summary");

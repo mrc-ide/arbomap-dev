@@ -16,9 +16,9 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
 import { useRouter } from "vue-router";
-import { defineProps, defineEmits } from "vue";
 import { APP_BASE_ROUTE } from "../router/utils";
 import { useAppStore } from "../stores/appStore";
+import { routerPush } from "../utils";
 
 const { mapSettings } = storeToRefs(useAppStore());
 const router = useRouter();
@@ -35,7 +35,7 @@ const emit = defineEmits(["resetView"]);
 const resetView = () => {
     const homePath = `/${APP_BASE_ROUTE}/${props.selectedIndicator}`;
     if (mapSettings.value.country) {
-        router.push(homePath);
+        routerPush(router, homePath);
     } else {
         emit("resetView");
     }

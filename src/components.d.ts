@@ -7,8 +7,10 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    AdminLevelToggle: typeof import('./components/AdminLevelToggle.vue')['default']
     Choropleth: typeof import('./components/Choropleth.vue')['default']
     ColorScaleIcon: typeof import('./components/indicatorMenu/ColorScaleIcon.vue')['default']
+    HelpAlert: typeof import('./components/HelpAlert.vue')['default']
     IndicatorMenu: typeof import('./components/indicatorMenu/IndicatorMenu.vue')['default']
     IndicatorSlideGroupItem: typeof import('./components/indicatorMenu/IndicatorSlideGroupItem.vue')['default']
     Legend: typeof import('./components/Legend.vue')['default']

@@ -15,6 +15,10 @@
             <LControl position="topleft">
                 <ResetMapButton :selected-indicator="mapSettings.indicator" @reset-view="updateRegionBounds" />
             </LControl>
+            <LControl position="topright">
+                <AdminLevelToggle @change-admin-level="handleChangeAdminLevel" v-if="mapSettings.country" />
+                <HelpAlert />
+            </LControl>
         </LMap>
         <div style="visibility: hidden" class="choropleth-data-summary" v-bind="dataSummary"></div>
     </div>
@@ -31,10 +35,11 @@ import { useLeaflet } from "../composables/useLeaflet";
 import "leaflet/dist/leaflet.css";
 import { useTooltips } from "../composables/useTooltips";
 import { APP_BASE_ROUTE } from "../router/utils";
-import { debounce } from "../utils";
+import { routerPush, AdminLevel } from "../utils";
 import { backgroundLayer } from "./utils";
 import { useLoadingSpinner } from "../composables/useLoadingSpinner";
 import { useSelectedMapInfo } from "../composables/useSelectedMapInfo";
+import AdminLevelToggle from "./AdminLevelToggle.vue";
 
 const mapLoading = ref(true);
 const router = useRouter();
@@ -61,6 +66,13 @@ const getFeatureName = (feature: Feature) =>
         ? feature.properties[featureProperties.nameAdm2]
         : feature.properties[featureProperties.nameAdm1];
 
+const handleChangeAdminLevel = (level: number) => {
+    mapLoading.value = true;
+    const { indicator, country } = mapSettings.value;
+    const adminLevel = level === 1 ? AdminLevel.ONE : AdminLevel.TWO;
+    routerPush(router, `/${APP_BASE_ROUTE}/${indicator}/${country}/${adminLevel}`);
+};
+
 const style = (f: Feature) => {
     const { country, indicator } = mapSettings.value;
     const isFaded = !!country && !featureInSelectedCountry(f);
@@ -80,7 +92,7 @@ const layerOnEvents = (feature: Feature) => {
             const country = feature.properties[featureProperties.country];
             // select feature's country, or unselect if click on it when already selected
             const countryToSelect = country === mapSettings.value.country ? "" : country;
-            debounce(() => router.push(`/${APP_BASE_ROUTE}/${mapSettings.value.indicator}/${countryToSelect}`))();
+            routerPush(router, `/${APP_BASE_ROUTE}/${mapSettings.value.indicator}/${countryToSelect}`);
         }
     };
 };
@@ -93,9 +105,7 @@ const { map, dataSummary, lockBounds, updateLeafletMap, handleMapBoundsUpdated, 
 useLoadingSpinner(map, mapLoading);
 
 const updateMap = () => {
-    if (mapSettings.value.country) {
-        lockBounds.value = true;
-    }
+    lockBounds.value = !!mapSettings.value.country;
     updateLeafletMap(selectedFeatures.value, mapSettings.value.country);
 };
 
@@ -106,3 +116,12 @@ const finishUpdatingMap = () => {
 
 watch(mapSettings, updateMap);
 </script>
+<style>
+.leaflet-top.leaflet-right .leaflet-control {
+    display: flex;
+    flex-direction: column;
+    row-gap: 8px;
+    /* margin-left must belong here rather than HelpAlert, or HelpAlert's margin prevents clicks on zoom controls */
+    margin-left: 55px;
+}
+</style>
