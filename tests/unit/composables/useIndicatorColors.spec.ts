@@ -3,8 +3,8 @@ import * as d3ScaleChromatic from "d3-scale-chromatic";
 import { useIndicatorColors } from "../../../src/composables/useIndicatorColors";
 import { mockPinia } from "../mocks/mockPinia";
 import { useAppStore } from "../../../src/stores/appStore";
-import {ColorType} from "../../../src/types/resourceTypes";
-import {MOCK_APP_CONFIG} from "../mocks/mockObjects";
+import { ColorType } from "../../../src/types/resourceTypes";
+import { MOCK_APP_CONFIG } from "../mocks/mockObjects";
 
 const indicatorValues = {
     value: {
@@ -121,25 +121,27 @@ describe("useIndicatorColors", () => {
 
     test("can get indicator color categories", () => {
         const sut = useIndicatorColors(indicatorValues as any);
-        expect(sut.getIndicatorColorCategories("serop9_class")).toStrictEqual(MOCK_APP_CONFIG.indicators["serop9_class"].colors.categories);
+        expect(sut.getIndicatorColorCategories("serop9_class")).toStrictEqual(
+            MOCK_APP_CONFIG.indicators.serop9_class.colors.categories
+        );
     });
 
     test("can get indicator value colour category", () => {
         const sut = useIndicatorColors(indicatorValues as any);
         expect(sut.getIndicatorValueColorCategory("serop9_class", 50)).toStrictEqual({
-            "name": "40-60%",
-            "upperLimit": 60,
-            "color": "#ff5800"
+            name: "40-60%",
+            upperLimit: 60,
+            color: "#ff5800"
         });
     });
 
     test("throws error if request colour categories for colour scale indicator", () => {
         const sut = useIndicatorColors(indicatorValues as any);
-        expect(() =>  sut.getIndicatorColorCategories("FOI")).toThrow("Indicator colors are not category type");
+        expect(() => sut.getIndicatorColorCategories("FOI")).toThrow("Indicator colors are not category type");
     });
 
     test("throws error if request indicator value colour category for colour scale indicator", () => {
         const sut = useIndicatorColors(indicatorValues as any);
-        expect(() =>  sut.getIndicatorValueColorCategory("FOI", 0.2)).toThrow("Indicator colors are not category type");
+        expect(() => sut.getIndicatorValueColorCategory("FOI", 0.2)).toThrow("Indicator colors are not category type");
     });
 });

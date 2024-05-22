@@ -13,7 +13,7 @@ export const MOCK_APP_CONFIG = {
         FOI: {
             colors: {
                 type: "scale",
-                colorScale: {name: "interpolateReds"}
+                colorScale: { name: "interpolateReds" }
             },
             humanReadableName: "Force of infection",
             unit: ""
@@ -21,7 +21,7 @@ export const MOCK_APP_CONFIG = {
         serop9: {
             colors: {
                 type: "scale",
-                colorScale: {name: "interpolateBlues"}
+                colorScale: { name: "interpolateBlues" }
             },
             humanReadableName: "Seroprevalence at 9 years of age",
             unit: "%"
@@ -31,19 +31,19 @@ export const MOCK_APP_CONFIG = {
                 type: "category",
                 categories: [
                     {
-                        "name": "Under 40%",
-                        "upperLimit": 40,
-                        "color": "#dc143c"
+                        name: "Under 40%",
+                        upperLimit: 40,
+                        color: "#dc143c"
                     },
                     {
-                        "name": "40-60%",
-                        "upperLimit": 60,
-                        "color": "#ff5800"
+                        name: "40-60%",
+                        upperLimit: 60,
+                        color: "#ff5800"
                     },
                     {
-                        "name": "Above 60%",
-                        "upperLimit": null,
-                        "color": "#fcf75e"
+                        name: "Above 60%",
+                        upperLimit: null,
+                        color: "#fcf75e"
                     }
                 ]
             },
@@ -54,7 +54,7 @@ export const MOCK_APP_CONFIG = {
         hosp_total: {
             colors: {
                 type: "scale",
-                colorScale: {name: "interpolatePurples"}
+                colorScale: { name: "interpolatePurples" }
             },
             humanReadableName: "Hospital admissions",
             shortName: "All ages",
@@ -63,7 +63,7 @@ export const MOCK_APP_CONFIG = {
         hosp_0_4: {
             colors: {
                 type: "scale",
-                colorScale: {name: "interpolatePurples"}
+                colorScale: { name: "interpolatePurples" }
             },
             humanReadableName: "Hospital admissions in 0-4 year olds",
             shortName: "0-4",
@@ -72,7 +72,7 @@ export const MOCK_APP_CONFIG = {
         hosp_5_9: {
             colors: {
                 type: "scale",
-                colorScale: {name: "interpolatePurples"}
+                colorScale: { name: "interpolatePurples" }
             },
             humanReadableName: "Hospital admissions in 5-9 year olds",
             shortName: "5-9",

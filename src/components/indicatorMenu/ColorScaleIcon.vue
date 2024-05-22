@@ -10,8 +10,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { useIndicatorColors } from "../../composables/useIndicatorColors";
-import {useAppStore} from "../../stores/appStore";
-import {ColorType} from "../../types/resourceTypes";
+import { ColorType } from "../../types/resourceTypes";
 
 const props = defineProps({
     size: {
@@ -25,22 +24,18 @@ const props = defineProps({
 });
 
 const halfway = computed(() => props.size / 2);
-const { appConfig } = useAppStore();
 const { getIndicatorValueColor, getIndicatorColorType, getIndicatorColorCategories } = useIndicatorColors();
-
-
 
 const iconColors = computed(() => {
     if (getIndicatorColorType(props.indicator) === ColorType.Scale) {
-        const colorScaleSampleValues =  [0.7, 0.9, 0.4, 0.1];
+        const colorScaleSampleValues = [0.7, 0.9, 0.4, 0.1];
         return colorScaleSampleValues.map((value) => getIndicatorValueColor(props.indicator, value, false));
-    } else {
-        const result = [];
-        const categoryColors = getIndicatorColorCategories(props.indicator).map((cat) => cat.color);
-        while (result.length < 4) {
-            result.push(...categoryColors);
-        }
-        return result;
     }
+    const result = [];
+    const categoryColors = getIndicatorColorCategories(props.indicator).map((cat) => cat.color);
+    while (result.length < 4) {
+        result.push(...categoryColors);
+    }
+    return result;
 });
 </script>

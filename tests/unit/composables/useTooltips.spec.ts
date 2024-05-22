@@ -44,7 +44,7 @@ describe("useTooltips", () => {
                     "Seroprevalence at 9 years of age: 0.200%<br/>" +
                     "Seroprevalence classification at age 9 years: Under 40%<br/>" +
                     "Hospital admissions: 0.300<br/>" +
-               "</div>"
+                    "</div>"
             );
         });
     });
@@ -88,7 +88,7 @@ describe("useTooltips", () => {
                     "Force of infection: 0.300<br/>" +
                     "Seroprevalence at 9 years of age: 0.400%<br/>" +
                     "Seroprevalence classification at age 9 years: Above 60%<br/>" +
-                "</div>"
+                    "</div>"
             );
         });
     });

@@ -14,11 +14,12 @@ import { storeToRefs } from "pinia";
 import { useAppStore } from "../stores/appStore";
 import { useIndicatorColors } from "../composables/useIndicatorColors";
 import { useSelectedMapInfo } from "../composables/useSelectedMapInfo";
-import {ColorType} from "../types/resourceTypes";
+import { ColorType } from "../types/resourceTypes";
 
 const { appConfig, mapSettings } = storeToRefs(useAppStore());
 const { selectedIndicators } = useSelectedMapInfo();
-const { getIndicatorValueColor, indicatorExtremes, getIndicatorColorCategories, getIndicatorColorType } = useIndicatorColors(selectedIndicators);
+const { getIndicatorValueColor, indicatorExtremes, getIndicatorColorCategories, getIndicatorColorType } =
+    useIndicatorColors(selectedIndicators);
 
 const props = defineProps({
     numberOfSteps: {
@@ -52,25 +53,25 @@ const roundToSensiblePrecision = (value: number, stepSize: number) => {
     return Math.round(value * roundingNum) / roundingNum;
 };
 
+const stepStyle = (color: string) => {
+    return { background: color };
+};
+
 const scaleStepStyle = (val: number) => {
-    let valAsProportion = indicatorHasSomeVariance.value
+    const valAsProportion = indicatorHasSomeVariance.value
         ? (val - indicatorMin.value) / (indicatorMax.value - indicatorMin.value)
         : 0;
     const color = getIndicatorValueColor(mapSettings.value.indicator, valAsProportion, false);
     return stepStyle(color);
 };
 
-const stepStyle = (color: string) => {
-    return { background: color };
-};
-
 const scaleLevels = computed(() => {
-    const indicator = mapSettings.value.indicator;
+    const { indicator } = mapSettings.value;
     if (!(indicator in indicatorExtremes.value)) return [];
     const stepSize = (indicatorMax.value - indicatorMin.value) / (props.numberOfSteps - 1);
     let steps;
     if (getIndicatorColorType(indicator) === ColorType.Scale) {
-        steps = Array.from({length: indicatorHasSomeVariance.value ? props.numberOfSteps : 1}, (_, index) => {
+        steps = Array.from({ length: indicatorHasSomeVariance.value ? props.numberOfSteps : 1 }, (_, index) => {
             const stepValue = indicatorMin.value + index * stepSize;
             return {
                 label: roundToSensiblePrecision(stepValue, stepSize) + indicatorUnit.value,

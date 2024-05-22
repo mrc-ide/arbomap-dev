@@ -1,8 +1,8 @@
 import { storeToRefs } from "pinia";
+import { ComputedRef } from "vue";
 import { useAppStore } from "../stores/appStore";
-import {ColorType, FeatureIndicators} from "../types/resourceTypes";
-import {useIndicatorColors} from "./useIndicatorColors";
-import {ComputedRef} from "vue";
+import { ColorType, FeatureIndicators } from "../types/resourceTypes";
+import { useIndicatorColors } from "./useIndicatorColors";
 
 export const useTooltips = (selectedIndicators: ComputedRef<FeatureIndicators>) => {
     const { mapSettings, appConfig } = storeToRefs(useAppStore());
@@ -45,7 +45,7 @@ export const useTooltips = (selectedIndicators: ComputedRef<FeatureIndicators>) 
 
             // show data values for scale type indicators, and category for category types
             let displayValue;
-            const {mean} = featureValues[indicatorKey];
+            const { mean } = featureValues[indicatorKey];
             if (getIndicatorColorType(indicatorKey) === ColorType.Scale) {
                 const headlineNumber = mean.toPrecision(3);
                 displayValue = `${headlineNumber}${metadata.unit}`;

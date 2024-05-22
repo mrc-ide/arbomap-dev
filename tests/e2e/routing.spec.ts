@@ -74,7 +74,7 @@ test.describe("Router", () => {
     });
 
     test("is case-insensitive", async ({ page }) => {
-        await page.goto("/DENGUE/May24/SEROP9/tza");D
+        await page.goto("/DENGUE/May24/SEROP9/tza");
         await page.waitForURL(/\/DENGUE\/May24\/SEROP9\/tza/);
         await expect(await page.textContent(".indicator-menu-activator")).toBe("Seroprevalence at age 9 years");
         const summary = await page.locator(".choropleth-data-summary");

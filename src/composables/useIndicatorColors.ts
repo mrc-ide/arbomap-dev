@@ -1,8 +1,8 @@
-import {computed, ComputedRef} from "vue";
+import { computed, ComputedRef } from "vue";
 import { storeToRefs } from "pinia";
 import * as d3ScaleChromatic from "d3-scale-chromatic";
 import Color from "color";
-import {FeatureIndicatorValues, FeatureIndicators, IndicatorValue, ColorType} from "../types/resourceTypes";
+import { FeatureIndicatorValues, FeatureIndicators, IndicatorValue, ColorType } from "../types/resourceTypes";
 import { Dict } from "../types/utilTypes";
 import { useAppStore } from "../stores/appStore";
 
@@ -41,7 +41,7 @@ export const useIndicatorColors = (selectedIndicators: ComputedRef<FeatureIndica
         if (appConfig.value) {
             const { colors } = appConfig.value.indicators[indicator];
 
-            if (colors.type != ColorType.Category) {
+            if (colors.type !== ColorType.Category) {
                 throw Error("Indicator colors are not category type");
             }
 
@@ -99,17 +99,15 @@ export const useIndicatorColors = (selectedIndicators: ComputedRef<FeatureIndica
     const getIndicatorValueColorCategory = (indicator: string, value: number) => {
         // We currently assume that indicators in config are in the correct order!
         const categories = getIndicatorColorCategories(indicator);
-        for (const category of categories) {
-            if (value < category.upperLimit || category.upperLimit === null) {
-                return category;
-            }
-        }
+        return categories.find((category) => value < category.upperLimit || category.upperLimit === null);
     };
 
     const getIndicatorValueColor = (indicator: string, value: number, scaleToExtremes = true) => {
         const type = getIndicatorColorType(indicator);
-        return type === ColorType.Scale ? getScaleColor(indicator, value, scaleToExtremes) : getIndicatorValueColorCategory(indicator, value).color;
-    }
+        return type === ColorType.Scale
+            ? getScaleColor(indicator, value, scaleToExtremes)
+            : getIndicatorValueColorCategory(indicator, value).color;
+    };
 
     const fadeColor = (fillColor: string, desaturate = 0.5, fade = 0.6) => {
         // for drawing borders more subtly and fading our features, desaturate

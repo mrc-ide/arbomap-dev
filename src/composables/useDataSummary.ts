@@ -11,7 +11,7 @@ export const useDataSummary = (bounds: Ref<LatLngBounds>) => {
     const { selectedFeatures } = useSelectedMapInfo();
 
     const dataSummary = computed(() => {
-        const {colors} = appConfig.value?.indicators[mapSettings.value.indicator];
+        const { colors } = appConfig.value.indicators[mapSettings.value.indicator];
         return {
             "selected-indicator": mapSettings.value.indicator,
             "selected-country-id": mapSettings.value.country,
@@ -25,7 +25,7 @@ export const useDataSummary = (bounds: Ref<LatLngBounds>) => {
             bounds:
                 `S: ${bounds.value?.getSouth()} W: ${bounds.value?.getWest()} N: ${bounds.value?.getNorth()}` +
                 `E: ${bounds.value?.getEast()}`
-        }
+        };
     });
 
     return { dataSummary };

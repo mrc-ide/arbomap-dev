@@ -17,16 +17,16 @@ export interface IndicatorColorScale {
 export interface IndicatorColorCategories {
     type: ColorType.Category;
     categories: {
-        name: string,
-        upperLimit: number | null,
-        color: string
-    }[]
+        name: string;
+        upperLimit: number | null;
+        color: string;
+    }[];
 }
 
 export type IndicatorColors = IndicatorColorScale | IndicatorColorCategories;
 
 export interface IndicatorConfig {
-    colors: IndicatorColors,
+    colors: IndicatorColors;
     unit: string;
     humanReadableName: string;
     description: string;

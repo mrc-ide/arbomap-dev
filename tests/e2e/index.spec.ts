@@ -73,9 +73,7 @@ test.describe("Index page", () => {
         await firstRegion.hover();
         await expect(await page.innerText(".leaflet-tooltip-pane")).toContain("Bengo");
         await expect(await page.innerText(".leaflet-tooltip-pane")).toContain("Force of infection: 0.0455");
-        await expect(await page.innerText(".leaflet-tooltip-pane")).toContain(
-            "Seroprevalence at age 9 years: 33.5%"
-        );
+        await expect(await page.innerText(".leaflet-tooltip-pane")).toContain("Seroprevalence at age 9 years: 33.5%");
         await expect(await page.innerText(".leaflet-tooltip-pane")).toContain(
             "Seroprevalence classification at age 9 years: Under 40%"
         );
@@ -176,7 +174,7 @@ test.describe("Index page", () => {
     test("can view map for colour category indicator", async ({ page }) => {
         await page.goto("/dengue/may24/serop9_class");
         const summary = await page.locator(".choropleth-data-summary");
-        await expect(await summary).toHaveAttribute("color-type", "category")
+        await expect(await summary).toHaveAttribute("color-type", "category");
         await expect(await summary).toHaveAttribute("color-categories", "Under 40%,40-60%,Above 60%");
         await expect(await summary).toHaveAttribute("feature-count", "1833");
     });
@@ -223,6 +221,5 @@ test.describe("Index page", () => {
         await expect(await page.getByText("How to use this map")).not.toBeVisible();
         await page.goto("/dengue/may24/FOI/AGO/admin1");
         await expect(await page.getByText("How to use this map")).not.toBeVisible();
->>>>>>> main
     });
 });

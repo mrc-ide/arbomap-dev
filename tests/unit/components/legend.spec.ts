@@ -11,7 +11,7 @@ const appConfig = {
         indicatorThatHasSmallNumbers: {
             colors: {
                 type: "scale",
-                colorScale: {name: "interpolateReds"}
+                colorScale: { name: "interpolateReds" }
             },
             humanReadableName: "Widgets per 100,000 capita",
             unit: "widgets"
@@ -19,7 +19,7 @@ const appConfig = {
         indicatorMeasuredInPercent: {
             colors: {
                 type: "scale",
-                colorScale: {name: "interpolateBlues", reverse: true}
+                colorScale: { name: "interpolateBlues", reverse: true }
             },
             humanReadableName: "Comorbidity with diabetes",
             unit: "%"
@@ -257,7 +257,7 @@ describe("Legend", () => {
             });
         });
 
-        describe("when the selected indicator uses colour categories",  () => {
+        describe("when the selected indicator uses colour categories", () => {
             beforeAll(() => {
                 store = mockPinia({
                     admin1Indicators,
