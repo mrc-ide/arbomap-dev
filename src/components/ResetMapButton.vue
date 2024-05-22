@@ -16,7 +16,6 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
 import { useRouter } from "vue-router";
-import { defineProps, defineEmits } from "vue";
 import { APP_BASE_ROUTE } from "../router/utils";
 import { useAppStore } from "../stores/appStore";
 import { routerPush } from "../utils";
