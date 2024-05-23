@@ -1,9 +1,9 @@
 <template>
-    <div>
+    <div style="display: flex; flex-direction: column; height: calc(100vh - 48px)">
         <LMap
             class="map"
             ref="map"
-            style="height: calc(100vh - 48px); width: 100%"
+            style="width: 100%; flex: 1 1 100%"
             @update:bounds="finishUpdatingMap"
             @ready="updateMap"
             :max-bounds-viscosity="1"
@@ -16,10 +16,15 @@
                 <ResetMapButton :selected-indicator="mapSettings.indicator" @reset-view="updateRegionBounds" />
             </LControl>
             <LControl position="topright">
-                <AdminLevelToggle @change-admin-level="handleChangeAdminLevel" v-if="mapSettings.country" />
                 <HelpAlert />
             </LControl>
+            <LControl v-if="isLargeScreen" position="bottomleft" style="margin-left: 2rem; margin-bottom: 2rem;">
+               <map-settings-menu :is-large-screen="true"></map-settings-menu>
+           </LControl>
         </LMap>
+        <div v-if="!isLargeScreen">
+            <map-settings-menu :is-large-screen="false"></map-settings-menu>
+        </div>
         <div style="visibility: hidden" class="choropleth-data-summary" v-bind="dataSummary"></div>
     </div>
 </template>
@@ -39,13 +44,15 @@ import { routerPush, AdminLevel } from "../utils";
 import { backgroundLayer } from "./utils";
 import { useLoadingSpinner } from "../composables/useLoadingSpinner";
 import { useSelectedMapInfo } from "../composables/useSelectedMapInfo";
-import AdminLevelToggle from "./AdminLevelToggle.vue";
+import { useMediaQuery } from '@vueuse/core';
+import MapSettingsMenu from "./mapSettingsMenu/MapSettingsMenu.vue";
 
 const mapLoading = ref(true);
 const router = useRouter();
 const { mapSettings, appConfig } = storeToRefs(useAppStore());
 const featureProperties = appConfig.value.geoJsonFeatureProperties;
 const { selectedFeatures, selectedIndicators } = useSelectedMapInfo();
+const isLargeScreen = useMediaQuery("(min-width: 1024px)");
 
 const { tooltipForFeature } = useTooltips(selectedIndicators);
 const { getFillAndOutlineColor } = useIndicatorColors(selectedIndicators);
