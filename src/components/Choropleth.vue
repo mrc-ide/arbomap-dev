@@ -20,7 +20,10 @@
                 <HelpAlert />
             </LControl>
             <LControl position="topright">
-                <v-btn @click="downloadExcel()">Download Excel</v-btn>
+                <v-btn id="download-excel-btn" aria-label="Download Excel" icon density="compact" @click="downloadExcel()">
+                    <v-icon>mdi-download</v-icon>
+                    <v-tooltip location="bottom" activator="parent">Download Excel</v-tooltip>
+                </v-btn>
             </LControl>
         </LMap>
         <div style="visibility: hidden" class="choropleth-data-summary" v-bind="dataSummary"></div>

@@ -76,7 +76,7 @@ export const useAppStore = defineStore("app", {
         async downloadExcel() {
             const { country } = this.mapSettings;
             const admin2DataMissing = country && this.appConfig.countriesWithoutAdmin2.includes(country);
-            const download = new IndicatorsExcelDownload("arbomap.xlsx", this.appConfig, this.countryNames);
+            const download = new IndicatorsExcelDownload(`arbomap_${country || "GLOBAL"}.xlsx"`, this.appConfig, this.countryNames);
             debounce(() => {
                 if (country) {
                     // TODO: cope with countries w no admin2 - pass admin1 only and include flag to download
