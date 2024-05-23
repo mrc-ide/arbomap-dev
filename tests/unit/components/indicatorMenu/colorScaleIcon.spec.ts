@@ -3,6 +3,7 @@ import { interpolatePurples } from "d3-scale-chromatic";
 import { render, screen } from "@testing-library/vue";
 import { mockPinia } from "../../mocks/mockPinia";
 import ColorScaleIcon from "../../../../src/components/indicatorMenu/ColorScaleIcon.vue";
+import { MOCK_APP_CONFIG } from "../../mocks/mockObjects";
 
 describe("ColorScaleIcon", () => {
     test("renders as expected for color scale", async () => {
@@ -45,5 +46,35 @@ describe("ColorScaleIcon", () => {
         expect(colorBlocks[1].getAttribute("fill")).toBe("#ff5800");
         expect(colorBlocks[2].getAttribute("fill")).toBe("#fcf75e");
         expect(colorBlocks[3].getAttribute("fill")).toBe("#dc143c");
+    });
+
+    test("throws error when render with invalid config (color categories with length 0)", async () => {
+        const pinia = mockPinia({
+            appConfig: {
+                ...MOCK_APP_CONFIG,
+                indicators: {
+                    serop9_class: {
+                        colors: {
+                            type: "category",
+                            categories: []
+                        },
+                        humanReadableName: "Seroprevalence classification at age 9 years",
+                        description: "",
+                        unit: ""
+                    }
+                }
+            }
+        });
+        await expect(async () => {
+            await render(ColorScaleIcon, {
+                props: {
+                    size: 24,
+                    indicator: "serop9_class"
+                },
+                global: {
+                    plugins: [pinia]
+                }
+            });
+        }).rejects.toThrowError("Empty color categories config for serop9_class");
     });
 });

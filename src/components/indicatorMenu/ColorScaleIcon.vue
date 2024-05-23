@@ -33,6 +33,9 @@ const iconColors = computed(() => {
     }
     const result = [];
     const categoryColors = getIndicatorColorCategories(props.indicator).map((cat) => cat.color);
+    if (categoryColors.length === 0) {
+        throw new Error(`Empty color categories config for ${props.indicator}`);
+    }
     while (result.length < 4) {
         result.push(...categoryColors);
     }
