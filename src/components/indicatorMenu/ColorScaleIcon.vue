@@ -1,15 +1,16 @@
 <template>
     <svg role="presentation" :width="size" :height="size">
-        <rect :width="size" :height="size" :fill="getColor(0.7)" />
-        <rect :width="size / 2" :height="size" :fill="getColor(0.9)" />
-        <polygon :points="`0,0 0,${0.7 * size} ${halfway},${halfway} ${halfway},0`" :fill="getColor(0.4)" />
-        <polygon :points="`${halfway},0 ${halfway},${halfway} ${size},${0.3 * size} ${size},0`" :fill="getColor(0.1)" />
+        <rect :width="size" :height="size" :fill="iconColors[0]" />
+        <rect :width="size / 2" :height="size" :fill="iconColors[1]" />
+        <polygon :points="`0,0 0,${0.7 * size} ${halfway},${halfway} ${halfway},0`" :fill="iconColors[2]" />
+        <polygon :points="`${halfway},0 ${halfway},${halfway} ${size},${0.3 * size} ${size},0`" :fill="iconColors[3]" />
     </svg>
 </template>
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { useColorScale } from "../../composables/useColorScale";
+import { useIndicatorColors } from "../../composables/useIndicatorColors";
+import { ColorType } from "../../types/resourceTypes";
 
 const props = defineProps({
     size: {
@@ -23,8 +24,21 @@ const props = defineProps({
 });
 
 const halfway = computed(() => props.size / 2);
-const { colorScales } = useColorScale();
+const { getIndicatorValueColor, getIndicatorColorType, getIndicatorColorCategories } = useIndicatorColors();
 
-const colorScale = computed(() => colorScales.value[props.indicator]);
-const getColor = (value) => colorScale.value(value);
+const iconColors = computed(() => {
+    if (getIndicatorColorType(props.indicator) === ColorType.Scale) {
+        const colorScaleSampleValues = [0.7, 0.9, 0.4, 0.1];
+        return colorScaleSampleValues.map((value) => getIndicatorValueColor(props.indicator, value, false));
+    }
+    const result = [];
+    const categoryColors = getIndicatorColorCategories(props.indicator).map((cat) => cat.color);
+    if (categoryColors.length === 0) {
+        throw new Error(`Empty color categories config for ${props.indicator}`);
+    }
+    while (result.length < 4) {
+        result.push(...categoryColors);
+    }
+    return result;
+});
 </script>

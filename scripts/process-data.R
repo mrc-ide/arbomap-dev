@@ -12,6 +12,7 @@ process_country <- function(x, country_codes, level) {
     list(
       FOI = list(mean = el$mean_FOI, sd = el$sd_FOI),
       serop9 = list(mean = el$mean_p9, sd = el$sd_p9),
+      serop9_class = list(mean = el$mean_p9, sd = el$sd_p9),  # repeat serop_9 values for category indicator
       hosp_total = list(mean = el$mean_hosp_total, sd = el$sd_hosp_total),
       hosp_0_4 = list(mean = el$mean_hosp_0_4, sd = el$sd_hosp_0_4),
       hosp_5_9 = list(mean = el$mean_hosp_5_9, sd = el$sd_hosp_5_9),

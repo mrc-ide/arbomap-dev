@@ -4,7 +4,6 @@
             <div class="legend-item" v-for="(level, index) in scaleLevels" v-bind:key="index" data-testid="legendItem">
                 <i v-bind:style="level.style"></i>
                 <span class="level">{{ level.label }}</span>
-                <br />
             </div>
         </div>
     </div>
@@ -13,12 +12,14 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
 import { useAppStore } from "../stores/appStore";
-import { useColorScale } from "../composables/useColorScale";
+import { useIndicatorColors } from "../composables/useIndicatorColors";
 import { useSelectedMapInfo } from "../composables/useSelectedMapInfo";
+import { ColorType } from "../types/resourceTypes";
 
 const { appConfig, mapSettings } = storeToRefs(useAppStore());
 const { selectedIndicators } = useSelectedMapInfo();
-const { colorScales, indicatorExtremes } = useColorScale(selectedIndicators);
+const { getIndicatorValueColor, indicatorExtremes, getIndicatorColorCategories, getIndicatorColorType } =
+    useIndicatorColors(selectedIndicators);
 
 const props = defineProps({
     numberOfSteps: {
@@ -26,10 +27,6 @@ const props = defineProps({
         default: 6,
         validator: (value: number) => value >= 2
     }
-});
-
-const colorFunction = computed(() => {
-    return colorScales.value[mapSettings.value.indicator];
 });
 
 const indicatorUnit = computed(() => {
@@ -56,48 +53,67 @@ const roundToSensiblePrecision = (value: number, stepSize: number) => {
     return Math.round(value * roundingNum) / roundingNum;
 };
 
-const stepStyle = (val: number) => {
-    let valAsProportion = indicatorHasSomeVariance.value
+const stepStyle = (color: string) => {
+    return { background: color };
+};
+
+const scaleStepStyle = (val: number) => {
+    const valAsProportion = indicatorHasSomeVariance.value
         ? (val - indicatorMin.value) / (indicatorMax.value - indicatorMin.value)
         : 0;
-    if (appConfig.value.indicators[mapSettings.value.indicator].colorScale?.reverse) {
-        valAsProportion = 1 - valAsProportion;
-    }
-    return { background: colorFunction.value(valAsProportion) };
+    const color = getIndicatorValueColor(mapSettings.value.indicator, valAsProportion, false);
+    return stepStyle(color);
 };
 
 const scaleLevels = computed(() => {
-    if (!(mapSettings.value.indicator in indicatorExtremes.value)) return [];
+    const { indicator } = mapSettings.value;
+    if (!(indicator in indicatorExtremes.value)) return [];
     const stepSize = (indicatorMax.value - indicatorMin.value) / (props.numberOfSteps - 1);
-    return Array.from({ length: indicatorHasSomeVariance.value ? props.numberOfSteps : 1 }, (_, index) => {
-        const stepValue = indicatorMin.value + index * stepSize;
-        return {
-            label: roundToSensiblePrecision(stepValue, stepSize) + indicatorUnit.value,
-            style: stepStyle(stepValue)
-        };
-    }).reverse();
+    let steps;
+    if (getIndicatorColorType(indicator) === ColorType.Scale) {
+        steps = Array.from({ length: indicatorHasSomeVariance.value ? props.numberOfSteps : 1 }, (_, index) => {
+            const stepValue = indicatorMin.value + index * stepSize;
+            return {
+                label: roundToSensiblePrecision(stepValue, stepSize) + indicatorUnit.value,
+                style: scaleStepStyle(stepValue)
+            };
+        });
+    } else {
+        steps = getIndicatorColorCategories(indicator).map((category) => ({
+            label: category.name,
+            style: stepStyle(category.color)
+        }));
+    }
+    return steps.reverse();
 });
 </script>
 
 <style>
 .legend-container {
-    display: table-cell;
     position: absolute;
-    left: -4rem;
+    right: 0.5rem;
     bottom: 0.5rem;
+    background-color: rgba(255, 255, 255, 0.6);
+    padding: 0.2rem;
 }
+
 .legend-element {
     vertical-align: bottom;
-    display: inline-block;
 }
+
 .legend-item {
     height: 1.125rem;
-
+    display: table-row;
     i {
         width: 1.125rem;
         height: 1.125rem;
         float: left;
-        margin-right: 0.5rem;
+    }
+    span {
+        display: table-cell;
+        padding-left: 0.2rem;
+        vertical-align: bottom;
+        white-space: pre;
     }
 }
 </style>

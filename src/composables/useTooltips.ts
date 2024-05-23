@@ -1,9 +1,12 @@
 import { storeToRefs } from "pinia";
+import { ComputedRef } from "vue";
 import { useAppStore } from "../stores/appStore";
-import { FeatureIndicators } from "../types/resourceTypes";
+import { ColorType, FeatureIndicators } from "../types/resourceTypes";
+import { useIndicatorColors } from "./useIndicatorColors";
 
 export const useTooltips = (selectedIndicators: ComputedRef<FeatureIndicators>) => {
     const { mapSettings, appConfig } = storeToRefs(useAppStore());
+    const { getIndicatorColorType, getIndicatorValueColorCategory } = useIndicatorColors();
 
     const sortedIndicators = computed(() => {
         // We show currently selected indicator first, then each configured indicator group's
@@ -39,9 +42,18 @@ export const useTooltips = (selectedIndicators: ComputedRef<FeatureIndicators>) 
             if (!featureValues[indicatorKey]) {
                 return; // shouldn't really occur, but may sometimes not have all indicator values for a feature
             }
+
+            // show data values for scale type indicators, and category for category types
+            let displayValue;
             const { mean } = featureValues[indicatorKey];
-            const headlineNumber = mean.toPrecision(3);
-            const line = `${metadata.humanReadableName}: ${headlineNumber}${metadata.unit}<br/>`;
+            if (getIndicatorColorType(indicatorKey) === ColorType.Scale) {
+                const headlineNumber = mean.toPrecision(3);
+                displayValue = `${headlineNumber}${metadata.unit}`;
+            } else {
+                displayValue = getIndicatorValueColorCategory(indicatorKey, mean).name;
+            }
+
+            const line = `${metadata.humanReadableName}: ${displayValue}<br/>`;
             indicatorValues +=
                 indicatorKey.toLowerCase() === mapSettings.value.indicator.toLowerCase()
                     ? `<span class="font-weight-bold">${line}</span>`
