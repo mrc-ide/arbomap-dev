@@ -81,9 +81,12 @@ export class IndicatorsExcelDownload {
     }
 
     private _buildCountryIndicatorsWorkbook(countryId: string, admin1Indicators: Dict<FeatureIndicators>, admin1Geojson: Dict<Geojson>,
-                                            admin2Indicators: Dict<FeatureIndicators>, admin2Geojson: Dict<Geojson>): void {
+                                            admin2Indicators: Dict<FeatureIndicators>, admin2Geojson: Dict<Geojson>,
+                                            admin1Only: boolean): void {
         this._writeTab(1, admin1Indicators, admin1Geojson, countryId);
-        this._writeTab(2, admin2Indicators, admin2Geojson, countryId);
+        if (!admin1Only) {
+            this._writeTab(2, admin2Indicators, admin2Geojson, countryId);
+        }
     }
 
     private _writeFile(buildWorkbook: () => void): void {
@@ -101,9 +104,10 @@ export class IndicatorsExcelDownload {
     }
 
     downloadCountryIndicators = (countryId: string, admin1Indicators: Dict<FeatureIndicators>, admin1Geojson: Dict<Geojson>,
-                                 admin2Indicators: Dict<FeatureIndicators>, admin2Geojson: Dict<Geojson>) => {
+                                 admin2Indicators: Dict<FeatureIndicators>, admin2Geojson: Dict<Geojson>,
+                                 admin1Only:boolean) => {
         this._writeFile(() => {
-            this._buildCountryIndicatorsWorkbook(countryId, admin1Indicators, admin1Geojson, admin2Indicators, admin2Geojson);
+            this._buildCountryIndicatorsWorkbook(countryId, admin1Indicators, admin1Geojson, admin2Indicators, admin2Geojson, admin1Only);
         });
     }
 }

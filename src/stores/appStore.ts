@@ -74,14 +74,14 @@ export const useAppStore = defineStore("app", {
             state.mapSettings = finalMapSettings;
         },
         async downloadExcel() {
-            // TODO: download selected country if there is one
+            const { country } = this.mapSettings;
+            const admin2DataMissing = country && this.appConfig.countriesWithoutAdmin2.includes(country);
             const download = new IndicatorsExcelDownload("arbomap.xlsx", this.appConfig, this.countryNames);
             debounce(() => {
-                const { country } = this.mapSettings;
                 if (country) {
                     // TODO: cope with countries w no admin2 - pass admin1 only and include flag to download
                     download.downloadCountryIndicators(country, this.admin1Indicators, this.admin1Geojson,
-                        this.admin2Indicators, this.admin2Geojson);
+                        this.admin2Indicators, this.admin2Geojson, admin2DataMissing);
                 } else {
                     download.downloadGlobalIndicators(this.admin1Indicators, this.admin1Geojson);
                 }
