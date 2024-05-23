@@ -10,18 +10,23 @@ export const useDataSummary = (bounds: Ref<LatLngBounds>) => {
 
     const { selectedFeatures } = useSelectedMapInfo();
 
-    const dataSummary = computed(() => ({
-        "selected-indicator": mapSettings.value.indicator,
-        "selected-country-id": mapSettings.value.country,
-        "color-scale": appConfig.value?.indicators[mapSettings.value.indicator]?.colorScale.name,
-        "feature-count": selectedFeatures.value?.length,
-        "selected-country-feature-count": selectedFeatures.value?.filter(
-            (f) => f.properties![featureProperties.country] === mapSettings.value.country
-        ).length,
-        bounds:
-            `S: ${bounds.value?.getSouth()} W: ${bounds.value?.getWest()} N: ${bounds.value?.getNorth()}` +
-            `E: ${bounds.value?.getEast()}`
-    }));
+    const dataSummary = computed(() => {
+        const { colors } = appConfig.value.indicators[mapSettings.value.indicator];
+        return {
+            "selected-indicator": mapSettings.value.indicator,
+            "selected-country-id": mapSettings.value.country,
+            "color-type": colors.type,
+            "color-scale": colors.colorScale?.name,
+            "color-categories": colors.categories?.map((c) => c.name).join(","),
+            "feature-count": selectedFeatures.value?.length,
+            "selected-country-feature-count": selectedFeatures.value?.filter(
+                (f) => f.properties![featureProperties.country] === mapSettings.value.country
+            ).length,
+            bounds:
+                `S: ${bounds.value?.getSouth()} W: ${bounds.value?.getWest()} N: ${bounds.value?.getNorth()}` +
+                `E: ${bounds.value?.getEast()}`
+        };
+    });
 
     return { dataSummary };
 };

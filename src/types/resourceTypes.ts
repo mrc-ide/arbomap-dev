@@ -1,11 +1,32 @@
 import { Feature, MultiPolygon, Polygon } from "geojson";
 import { Dict } from "./utilTypes";
 
-export interface IndicatorConfig {
+export enum ColorType {
+    Scale = "scale",
+    Category = "category"
+}
+
+export interface IndicatorColorScale {
+    type: ColorType.Scale;
     colorScale: {
         name: string;
         reverse: boolean | undefined;
     };
+}
+
+export interface IndicatorColorCategories {
+    type: ColorType.Category;
+    categories: {
+        name: string;
+        upperLimit: number | null;
+        color: string;
+    }[];
+}
+
+export type IndicatorColors = IndicatorColorScale | IndicatorColorCategories;
+
+export interface IndicatorConfig {
+    colors: IndicatorColors;
     unit: string;
     humanReadableName: string;
     description: string;

@@ -9,14 +9,30 @@ const appConfig = {
     ...MOCK_APP_CONFIG,
     indicators: {
         indicatorThatHasSmallNumbers: {
-            colorScale: { name: "interpolateReds" },
+            colors: {
+                type: "scale",
+                colorScale: { name: "interpolateReds" }
+            },
             humanReadableName: "Widgets per 100,000 capita",
             unit: "widgets"
         },
         indicatorMeasuredInPercent: {
-            colorScale: { name: "interpolateBlues", reverse: true },
+            colors: {
+                type: "scale",
+                colorScale: { name: "interpolateBlues", reverse: true }
+            },
             humanReadableName: "Comorbidity with diabetes",
             unit: "%"
+        },
+        indicatorWithCategories: {
+            colors: {
+                type: "category",
+                categories: [
+                    { name: "little", upperLimit: 5, color: "yellow" },
+                    { name: "medium", upperLimit: 10, color: "red" },
+                    { name: "big", upperLimit: null, color: "blue" }
+                ]
+            }
         }
     }
 } as any;
@@ -24,11 +40,13 @@ const admin1Indicators = {
     TZA: {
         Region1: {
             indicatorThatHasSmallNumbers: { mean: 0.0005123456789, sd: 1 },
-            indicatorMeasuredInPercent: { mean: 0.1123456789, sd: 1 }
+            indicatorMeasuredInPercent: { mean: 0.1123456789, sd: 1 },
+            indicatorWithCategories: { mean: 1, sd: 0 }
         },
         Region2: {
             indicatorThatHasSmallNumbers: { mean: 0.0002123456789, sd: 1 },
-            indicatorMeasuredInPercent: { mean: 0.3123456789, sd: 1 }
+            indicatorMeasuredInPercent: { mean: 0.3123456789, sd: 1 },
+            indicatorWithCategories: { mean: 1, sd: 0 }
         }
     }
 };
@@ -36,19 +54,23 @@ const admin2Indicators = {
     TZA: {
         "Region1-a": {
             indicatorThatHasSmallNumbers: { mean: 0.0003123456789, sd: 1 },
-            indicatorMeasuredInPercent: { mean: 0.4123456789, sd: 1 }
+            indicatorMeasuredInPercent: { mean: 0.4123456789, sd: 1 },
+            indicatorWithCategories: { mean: 1, sd: 0 }
         },
         "Region1-b": {
             indicatorThatHasSmallNumbers: { mean: 0.0003223456789, sd: 1 },
-            indicatorMeasuredInPercent: { mean: 0.4223456789, sd: 1 }
+            indicatorMeasuredInPercent: { mean: 0.4223456789, sd: 1 },
+            indicatorWithCategories: { mean: 2, sd: 0 }
         },
         "Region2-a": {
             indicatorThatHasSmallNumbers: { mean: 0.0003987654321, sd: 1 },
-            indicatorMeasuredInPercent: { mean: 0.4123456789, sd: 1 }
+            indicatorMeasuredInPercent: { mean: 0.4123456789, sd: 1 },
+            indicatorWithCategories: { mean: 3, sd: 0 }
         },
         "Region2-b": {
             indicatorThatHasSmallNumbers: { mean: 0.0003, sd: 1 },
-            indicatorMeasuredInPercent: { mean: 0.4223456789, sd: 1 }
+            indicatorMeasuredInPercent: { mean: 0.4223456789, sd: 1 },
+            indicatorWithCategories: { mean: 4, sd: 0 }
         }
     }
 };
@@ -232,6 +254,38 @@ describe("Legend", () => {
                 expect(displayedValues[5]).toEqual(0.11);
                 // Test units are displayed
                 expect(legendItems[0].textContent).toEqual("0.31%");
+            });
+        });
+
+        describe("when the selected indicator uses colour categories", () => {
+            beforeAll(() => {
+                store = mockPinia({
+                    admin1Indicators,
+                    admin2Indicators,
+                    appConfig,
+                    mapSettings: mockMapSettings({
+                        country: selectedCountryId,
+                        indicator: "indicatorWithCategories",
+                        adminLevel: 2
+                    })
+                });
+            });
+
+            test("renders category names", async () => {
+                renderComponent();
+                const legendItems = screen.getAllByTestId("legendItem");
+                expect(legendItems).toHaveLength(3);
+                const displayedValues = legendItems.map((item) => item.textContent);
+                expect(displayedValues[0]).toEqual("big");
+                expect(displayedValues[1]).toEqual("medium");
+                expect(displayedValues[2]).toEqual("little");
+            });
+
+            test("renders category colors", () => {
+                renderComponent();
+                expectLegendIconColor(0, "blue");
+                expectLegendIconColor(1, "red");
+                expectLegendIconColor(2, "yellow");
             });
         });
     });

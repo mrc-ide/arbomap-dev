@@ -62,7 +62,7 @@ test.describe("Index page", () => {
         // open menu
         await page.click(".indicator-menu-activator");
         // click menu item
-        await page.getByText("Seroprevalence at 9 years of age").click();
+        await page.getByText("Seroprevalence at age 9 years").click();
         await page.waitForURL(/dengue\/may24\/serop9/);
         await expect(await firstRegion.getAttribute("fill")).not.toEqual(color);
         await expect(await firstRegion.getAttribute("stroke")).not.toEqual(stroke);
@@ -73,8 +73,9 @@ test.describe("Index page", () => {
         await firstRegion.hover();
         await expect(await page.innerText(".leaflet-tooltip-pane")).toContain("Bengo");
         await expect(await page.innerText(".leaflet-tooltip-pane")).toContain("Force of infection: 0.0455");
+        await expect(await page.innerText(".leaflet-tooltip-pane")).toContain("Seroprevalence at age 9 years: 33.5%");
         await expect(await page.innerText(".leaflet-tooltip-pane")).toContain(
-            "Seroprevalence at 9 years of age: 33.5%"
+            "Seroprevalence classification at age 9 years: Under 40%"
         );
         await expect(await page.innerText(".leaflet-tooltip-pane")).toContain("Hospital admissions: 126");
     });
@@ -126,13 +127,13 @@ test.describe("Index page", () => {
 
     test("indicator menu renders as expected", async ({ page }) => {
         await page.click(".indicator-menu-activator");
-        await expect(await page.locator(".v-menu .v-list-item").count()).toBe(3);
+        await expect(await page.locator(".v-menu .v-list-item").count()).toBe(4);
         const foiMenuItem = await page.locator(":nth-match(.v-menu .v-list-item, 1)");
         await expect(await foiMenuItem.locator(".v-list-item-title").innerText()).toBe("Force of infection");
         await expect(await foiMenuItem.locator(".v-list-item-subtitle").innerText()).toBe(
             "Annual per capita risk of dengue infection for a susceptible person"
         );
-        const hospMenuItem = await page.locator(":nth-match(.v-menu .v-list-item, 3)");
+        const hospMenuItem = await page.locator(":nth-match(.v-menu .v-list-item, 4)");
         await expect(await hospMenuItem.locator(".v-list-item-title").innerText()).toBe("Hospital admissions");
         await expect(await hospMenuItem.locator(".v-list-item-subtitle").innerText()).toBe(
             "Annual number of hospital admissions per 100,000 population by age group"
@@ -168,6 +169,14 @@ test.describe("Index page", () => {
         await page.locator(":nth-match(.v-menu .v-list-item, 2)").click();
         await page.waitForURL(/dengue\/may24\/serop9/);
         await expect(await page.locator(".leaflet-control-zoom-out.leaflet-disabled")).toHaveCount(1);
+    });
+
+    test("can view map for colour category indicator", async ({ page }) => {
+        await page.goto("/dengue/may24/serop9_class");
+        const summary = await page.locator(".choropleth-data-summary");
+        await expect(await summary).toHaveAttribute("color-type", "category");
+        await expect(await summary).toHaveAttribute("color-categories", "Under 40%,40-60%,Above 60%");
+        await expect(await summary).toHaveAttribute("feature-count", "1915");
     });
 
     test("admin level toggle works", async ({ page }) => {

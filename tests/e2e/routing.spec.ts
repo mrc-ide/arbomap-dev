@@ -50,7 +50,7 @@ test.describe("Router", () => {
             page,
             "/serop9",
             "serop9",
-            "Seroprevalence at 9 years of age",
+            "Seroprevalence at age 9 years",
             "",
             "interpolateGreens",
             1915,
@@ -75,8 +75,8 @@ test.describe("Router", () => {
 
     test("is case-insensitive", async ({ page }) => {
         await page.goto("/DENGUE/May24/SEROP9/tza");
-        await page.waitForURL(/\/dengue\/may24\/serop9\/TZA/);
-        await expect(await page.textContent(".indicator-menu-activator")).toBe("Seroprevalence at 9 years of age");
+        await page.waitForURL(/\/DENGUE\/May24\/SEROP9\/tza/);
+        await expect(await page.textContent(".indicator-menu-activator")).toBe("Seroprevalence at age 9 years");
         const summary = await page.locator(".choropleth-data-summary");
         await expect(await summary).toHaveAttribute("color-scale", "interpolateGreens");
         await expect(await summary).toHaveAttribute("feature-count", "2070");
