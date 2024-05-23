@@ -23,7 +23,6 @@ export class IndicatorsExcelDownload {
         const { indicators, countries, geoJsonFeatureProperties } = this._appConfig;
 
         const countryIds = country ? [country] : countries;
-        // TODO: make notes about which scripts to run when in the README
         // TODO: cope with countriesWithoutAdmin2
 
         const indicatorIds = Object.keys(indicators);
@@ -81,6 +80,12 @@ export class IndicatorsExcelDownload {
         this._writeTab(1, admin1Indicators, admin1Geojson);
     }
 
+    private _buildCountryIndicatorsWorkbook(countryId: string, admin1Indicators: Dict<FeatureIndicators>, admin1Geojson: Dict<Geojson>,
+                                            admin2Indicators: Dict<FeatureIndicators>, admin2Geojson: Dict<Geojson>): void {
+        this._writeTab(1, admin1Indicators, admin1Geojson, countryId);
+        this._writeTab(2, admin2Indicators, admin2Geojson, countryId);
+    }
+
     private _writeFile(buildWorkbook: () => void): void {
         try {
             buildWorkbook();
@@ -93,5 +98,12 @@ export class IndicatorsExcelDownload {
 
     downloadGlobalIndicators = (admin1Indicators: Dict<FeatureIndicators>, admin1Geojson: Dict<Geojson>) => {
         this._writeFile(() => { this._buildGlobalIndicatorsWorkbook(admin1Indicators, admin1Geojson); });
+    }
+
+    downloadCountryIndicators = (countryId: string, admin1Indicators: Dict<FeatureIndicators>, admin1Geojson: Dict<Geojson>,
+                                 admin2Indicators: Dict<FeatureIndicators>, admin2Geojson: Dict<Geojson>) => {
+        this._writeFile(() => {
+            this._buildCountryIndicatorsWorkbook(countryId, admin1Indicators, admin1Geojson, admin2Indicators, admin2Geojson);
+        });
     }
 }

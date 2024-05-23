@@ -77,7 +77,14 @@ export const useAppStore = defineStore("app", {
             // TODO: download selected country if there is one
             const download = new IndicatorsExcelDownload("arbomap.xlsx", this.appConfig, this.countryNames);
             debounce(() => {
-                download.downloadGlobalIndicators(this.admin1Indicators, this.admin1Geojson);
+                const { country } = this.mapSettings;
+                if (country) {
+                    // TODO: cope with countries w no admin2 - pass admin1 only and include flag to download
+                    download.downloadCountryIndicators(country, this.admin1Indicators, this.admin1Geojson,
+                        this.admin2Indicators, this.admin2Geojson);
+                } else {
+                    download.downloadGlobalIndicators(this.admin1Indicators, this.admin1Geojson);
+                }
             })();
         }
     }
