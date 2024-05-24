@@ -20,7 +20,7 @@
                 <HelpAlert />
             </LControl>
             <LControl position="topright">
-                <v-btn id="download-excel-btn" aria-label="Download Excel" icon density="compact" @click="downloadExcel()">
+                <v-btn id="download-excel-btn" aria-label="Download Excel" icon density="compact" @click="download()">
                     <v-icon>mdi-download</v-icon>
                     <v-tooltip location="bottom" activator="parent">Download Excel</v-tooltip>
                 </v-btn>
@@ -45,6 +45,7 @@ import { routerPush, AdminLevel } from "../utils";
 import { backgroundLayer } from "./utils";
 import { useLoadingSpinner } from "../composables/useLoadingSpinner";
 import { useSelectedMapInfo } from "../composables/useSelectedMapInfo";
+import { useExcelDownload } from "../composables/useExcelDownload";
 import AdminLevelToggle from "./AdminLevelToggle.vue";
 
 const mapLoading = ref(true);
@@ -56,6 +57,7 @@ const { selectedFeatures, selectedIndicators } = useSelectedMapInfo();
 
 const { tooltipForFeature } = useTooltips(selectedIndicators);
 const { getFillAndOutlineColor } = useIndicatorColors(selectedIndicators);
+const { download } = useExcelDownload();
 
 const featureInSelectedCountry = (feature: Feature) =>
     feature.properties[featureProperties.country] === mapSettings.value.country;

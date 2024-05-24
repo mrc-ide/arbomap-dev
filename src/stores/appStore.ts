@@ -8,7 +8,7 @@ import {
     getIndicators
 } from "../resources/utils";
 import { AppState } from "../types/storeTypes";;
-import {IndicatorsExcelDownload} from "../excel/indicatorsExcelDownload";
+
 import {debounce} from "../utils";
 
 import { MapSettings } from "../types/resourceTypes";
@@ -76,7 +76,7 @@ export const useAppStore = defineStore("app", {
         async downloadExcel() {
             const { country } = this.mapSettings;
             const admin2DataMissing = country && this.appConfig.countriesWithoutAdmin2.includes(country);
-            const download = new IndicatorsExcelDownload(`arbomap_${country || "GLOBAL"}.xlsx"`, this.appConfig, this.countryNames);
+            const download = new UseExcelDownload(`arbomap_${country || "GLOBAL"}.xlsx"`, this.appConfig, this.countryNames);
             debounce(() => {
                 if (country) {
                     download.downloadCountryIndicators(country, this.admin1Indicators, this.admin1Geojson,

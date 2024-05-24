@@ -3,27 +3,43 @@ import {Dict} from "../types/utilTypes";
 import * as XLSX from "xlsx";
 import {geoJson} from "leaflet";
 import {Feature} from "geojson";
+import {storeToRefs} from "pinia";
+import {useAppStore} from "../stores/appStore";
+import {useIndicatorColors} from "./useIndicatorColors";
+import {debounce} from "../utils";
+import {WorkBook} from "xlsx";
 
-export class IndicatorsExcelDownload {
-    private readonly _fileName: string;
-    private readonly _workbook: XLSX.WorkBook;
-    private readonly _appConfig: AppConfig;
-    private readonly _countryNames: Dict<string>;
+export const useExcelDownload = () => {
+   //export class UseExcelDownload {
+   // private readonly _fileName: string;
+    //private readonly _workbook: XLSX.WorkBook;
+    //private readonly _appConfig: AppConfig;
+    //private readonly _countryNames: Dict<string>;
 
-    constructor(fileName: string, appConfig: AppConfig, countryNames: Dict<string>) {
+    /*constructor(fileName: string, appConfig: AppConfig, countryNames: Dict<string>) {
         this._fileName = fileName;
         this._appConfig = appConfig;
         this._countryNames = countryNames;
         this._workbook = XLSX.utils.book_new();
-    }
+    }*/
 
-    private _writeTab(level: number, indicatorValues: Dict<FeatureIndicators>, geojson: Dict<Geojson>, country?: string) {
+    const {
+        mapSettings,
+        appConfig,
+        admin1Indicators,
+        admin2Indicators,
+        admin1Geojson,
+        admin2Geojson,
+        countryNames
+    } = storeToRefs(useAppStore());
+    const {getIndicatorValueColorCategory} = useIndicatorColors(ref({})); // TODO: Maybe pull out category for value, seems daft to use indicator colors here
+
+    const writeTab = (workbook: WorkBook, level: number, indicatorValues: Dict<FeatureIndicators>, geojson: Dict<Geojson>, country?: string) => {
         const sheetData = [];
 
-        const { indicators, countries, geoJsonFeatureProperties } = this._appConfig;
+        const { indicators, countries, geoJsonFeatureProperties } = appConfig.value;
 
         const countryIds = country ? [country] : countries;
-        // TODO: cope with countriesWithoutAdmin2
 
         const indicatorIds = Object.keys(indicators);
 
@@ -38,7 +54,7 @@ export class IndicatorsExcelDownload {
         const levelFeatureIdProp = geoJsonFeatureProperties[`idAdm${level}`];
 
         countryIds.forEach((countryId) => {
-            const countryName = this._countryNames[countryId] || "";
+            const countryName = countryNames.value[countryId] || "";
             const countryValues = indicatorValues[countryId];
             const countryGeojson = geojson[countryId];
 
@@ -73,41 +89,48 @@ export class IndicatorsExcelDownload {
 
 
         const sheet = XLSX.utils.aoa_to_sheet(sheetData);
-        XLSX.utils.book_append_sheet(this._workbook, sheet, `admin${level}`)
+        XLSX.utils.book_append_sheet(workbook, sheet, `admin${level}`)
     }
 
-    private _buildGlobalIndicatorsWorkbook(admin1Indicators: Dict<FeatureIndicators>, admin1Geojson: Dict<Geojson>): void {
-        this._writeTab(1, admin1Indicators, admin1Geojson);
+    const buildGlobalIndicatorsWorkbook = (workbook: WorkBook) => {
+        writeTab(workbook, 1, admin1Indicators.value, admin1Geojson.value);
     }
 
-    private _buildCountryIndicatorsWorkbook(countryId: string, admin1Indicators: Dict<FeatureIndicators>, admin1Geojson: Dict<Geojson>,
-                                            admin2Indicators: Dict<FeatureIndicators>, admin2Geojson: Dict<Geojson>,
-                                            admin1Only: boolean): void {
-        this._writeTab(1, admin1Indicators, admin1Geojson, countryId);
+    const buildCountryIndicatorsWorkbook = (workbook: WorkBook, countryId: string, admin1Only: boolean) => {
+        writeTab(workbook, 1, admin1Indicators.value, admin1Geojson.value, countryId);
         if (!admin1Only) {
-            this._writeTab(2, admin2Indicators, admin2Geojson, countryId);
+            writeTab(workbook, 2, admin2Indicators.value, admin2Geojson.value, countryId);
         }
     }
 
-    private _writeFile(buildWorkbook: () => void): void {
+    const writeFile = (fileName: string, buildWorkbook: () => WorkBook) => {
         try {
-            buildWorkbook();
-            XLSX.writeFile(this._workbook, this._fileName);
+            const workbook = buildWorkbook();
+            XLSX.writeFile(workbook, fileName);
         } catch (e) {
             // TODO: error handling
             console.log(e)
         }
     }
 
-    downloadGlobalIndicators = (admin1Indicators: Dict<FeatureIndicators>, admin1Geojson: Dict<Geojson>) => {
-        this._writeFile(() => { this._buildGlobalIndicatorsWorkbook(admin1Indicators, admin1Geojson); });
+
+   const download = () => {
+        const { country } = mapSettings.value;
+        const { countriesWithoutAdmin2 } = appConfig.value;
+        const admin2DataMissing = country && countriesWithoutAdmin2.includes(country);
+        const fileName = `arbomap_${country || "GLOBAL"}.xlsx`;
+        debounce(() => {
+            writeFile(fileName, () => {
+                const workbook = XLSX.utils.book_new();
+                if (country) {
+                    buildCountryIndicatorsWorkbook(workbook, country, admin2DataMissing);
+                } else {
+                    buildGlobalIndicatorsWorkbook(workbook);
+                }
+                return workbook;
+            });
+        })();
     }
 
-    downloadCountryIndicators = (countryId: string, admin1Indicators: Dict<FeatureIndicators>, admin1Geojson: Dict<Geojson>,
-                                 admin2Indicators: Dict<FeatureIndicators>, admin2Geojson: Dict<Geojson>,
-                                 admin1Only:boolean) => {
-        this._writeFile(() => {
-            this._buildCountryIndicatorsWorkbook(countryId, admin1Indicators, admin1Geojson, admin2Indicators, admin2Geojson, admin1Only);
-        });
-    }
+    return { download };
 }
