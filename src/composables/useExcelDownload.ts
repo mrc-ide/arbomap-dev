@@ -8,6 +8,7 @@ import {useAppStore} from "../stores/appStore";
 import {useIndicatorColors} from "./useIndicatorColors";
 import {debounce} from "../utils";
 import {WorkBook} from "xlsx";
+import {ca} from "vuetify/locale";
 
 export const useExcelDownload = () => {
     const {
@@ -31,23 +32,31 @@ export const useExcelDownload = () => {
 
         const indicatorIds = Object.keys(indicators);
 
+        const categoryIndicators = Object.keys(indicators).filter((i) => getIndicatorColorType(i) === ColorType.Category);
+        console.log(`category indicators: ${JSON.stringify(categoryIndicators)}`)
+
         // We use the configured feature prop names as the column headers for ID and names
         const headers = [];
         for (let i = 0; i <= level; i++) {
             headers.push(geoJsonFeatureProperties[`idAdm${i}`], geoJsonFeatureProperties[`nameAdm${i}`]);
         }
-        indicatorIds.forEach((i) => headers.push(`mean_${i}`, `sd_${i}`));
+
+        indicatorIds.forEach((indicatorId) => {
+            if (categoryIndicators.includes(indicatorId)) {
+                // Include category only for that type of indicator
+                headers.push(indicatorId);
+            } else {
+                headers.push(`mean_${indicatorId}`, `sd_${indicatorId}`);
+            }
+        });
         sheetData.push(headers);
 
         const levelFeatureIdProp = geoJsonFeatureProperties[`idAdm${level}`];
-
-        const categoryIndicators = Object.keys(indicators).filter((i) => getIndicatorColorType(i) === ColorType.Category);
 
         countryIds.forEach((countryId) => {
             const countryName = countryNames.value[countryId] || "";
             const countryValues = indicatorValues[countryId];
             const countryGeojson = geojson[countryId];
-
 
             // Iterate features in geojson, but only emit a row if we have values in the indicators
             // Deal with inconsistency in admin1 vs admin2 geojson format
@@ -71,8 +80,12 @@ export const useExcelDownload = () => {
                     }
 
                     indicatorIds.forEach((indicatorId) => {
-                        // TODO: values - and columns! - for category indicators
-                        row.push(featureValues[indicatorId].mean, featureValues[indicatorId].sd)
+                        const mean = featureValues[indicatorId].mean;
+                        if (categoryIndicators.includes(indicatorId)) {
+                            row.push(getIndicatorValueColorCategory(indicatorId, mean).name)
+                        } else {
+                            row.push(mean, featureValues[indicatorId].sd);
+                        }
                     });
                     sheetData.push(row);
                 }
