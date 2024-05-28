@@ -46,7 +46,7 @@ export const useExcelDownload = () => {
 
         indicatorIds.forEach((indicatorId) => {
             if (categoryIndicators.includes(indicatorId)) {
-                // Include category only for that type of indicator
+                // Include category only for category indicators
                 headers.push(indicatorId);
             } else {
                 headers.push(`mean_${indicatorId}`, `sd_${indicatorId}`);
@@ -89,7 +89,6 @@ export const useExcelDownload = () => {
                 }
             });
         });
-
 
         const sheet = XLSX.utils.aoa_to_sheet(sheetData);
         XLSX.utils.book_append_sheet(workbook, sheet, `admin${level}`)

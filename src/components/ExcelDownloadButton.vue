@@ -3,7 +3,7 @@
         <v-icon>mdi-download</v-icon>
         <v-tooltip location="bottom" activator="parent">Download Excel</v-tooltip>
     </v-btn>
-    <v-snackbar v-model="snackbarOpen" variant="outlined" color="error" opacity="100%" :close-delay="600000">
+    <v-snackbar v-model="snackbarOpen" variant="outlined" color="error">
         Error downloading Excel file: {{ downloadError.message || downloadError.toString() }}
         <template v-slot:actions>
             <v-btn
