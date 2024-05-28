@@ -1,4 +1,4 @@
-import {AppConfig, FeatureIndicators, Geojson} from "../types/resourceTypes";
+import {AppConfig, ColorType, FeatureIndicators, Geojson} from "../types/resourceTypes";
 import {Dict} from "../types/utilTypes";
 import * as XLSX from "xlsx";
 import {geoJson} from "leaflet";
@@ -10,19 +10,6 @@ import {debounce} from "../utils";
 import {WorkBook} from "xlsx";
 
 export const useExcelDownload = () => {
-   //export class UseExcelDownload {
-   // private readonly _fileName: string;
-    //private readonly _workbook: XLSX.WorkBook;
-    //private readonly _appConfig: AppConfig;
-    //private readonly _countryNames: Dict<string>;
-
-    /*constructor(fileName: string, appConfig: AppConfig, countryNames: Dict<string>) {
-        this._fileName = fileName;
-        this._appConfig = appConfig;
-        this._countryNames = countryNames;
-        this._workbook = XLSX.utils.book_new();
-    }*/
-
     const {
         mapSettings,
         appConfig,
@@ -32,7 +19,8 @@ export const useExcelDownload = () => {
         admin2Geojson,
         countryNames
     } = storeToRefs(useAppStore());
-    const {getIndicatorValueColorCategory} = useIndicatorColors(ref({})); // TODO: Maybe pull out category for value, seems daft to use indicator colors here
+
+    const { getIndicatorColorType, getIndicatorValueColorCategory } = useIndicatorColors();
 
     const writeTab = (workbook: WorkBook, level: number, indicatorValues: Dict<FeatureIndicators>, geojson: Dict<Geojson>, country?: string) => {
         const sheetData = [];
@@ -53,10 +41,13 @@ export const useExcelDownload = () => {
 
         const levelFeatureIdProp = geoJsonFeatureProperties[`idAdm${level}`];
 
+        const categoryIndicators = Object.keys(indicators).filter((i) => getIndicatorColorType(i) === ColorType.Category);
+
         countryIds.forEach((countryId) => {
             const countryName = countryNames.value[countryId] || "";
             const countryValues = indicatorValues[countryId];
             const countryGeojson = geojson[countryId];
+
 
             // Iterate features in geojson, but only emit a row if we have values in the indicators
             // Deal with inconsistency in admin1 vs admin2 geojson format
@@ -80,6 +71,7 @@ export const useExcelDownload = () => {
                     }
 
                     indicatorIds.forEach((indicatorId) => {
+                        // TODO: values - and columns! - for category indicators
                         row.push(featureValues[indicatorId].mean, featureValues[indicatorId].sd)
                     });
                     sheetData.push(row);
@@ -96,16 +88,27 @@ export const useExcelDownload = () => {
         writeTab(workbook, 1, admin1Indicators.value, admin1Geojson.value);
     }
 
-    const buildCountryIndicatorsWorkbook = (workbook: WorkBook, countryId: string, admin1Only: boolean) => {
+    const buildCountryIndicatorsWorkbook = (workbook: WorkBook, countryId: string) => {
         writeTab(workbook, 1, admin1Indicators.value, admin1Geojson.value, countryId);
+
+        const { countriesWithoutAdmin2 } = appConfig.value;
+        const admin1Only = countriesWithoutAdmin2.includes(countryId);
         if (!admin1Only) {
             writeTab(workbook, 2, admin2Indicators.value, admin2Geojson.value, countryId);
         }
     }
 
-    const writeFile = (fileName: string, buildWorkbook: () => WorkBook) => {
+    const downloadFile = () => {
         try {
-            const workbook = buildWorkbook();
+            const workbook = XLSX.utils.book_new();
+            const { country } = mapSettings.value;
+            const fileName = `arbomap_${country || "GLOBAL"}.xlsx`;
+            if (country) {
+                buildCountryIndicatorsWorkbook(workbook, country);
+            } else {
+                buildGlobalIndicatorsWorkbook(workbook);
+            }
+
             XLSX.writeFile(workbook, fileName);
         } catch (e) {
             // TODO: error handling
@@ -115,20 +118,8 @@ export const useExcelDownload = () => {
 
 
    const download = () => {
-        const { country } = mapSettings.value;
-        const { countriesWithoutAdmin2 } = appConfig.value;
-        const admin2DataMissing = country && countriesWithoutAdmin2.includes(country);
-        const fileName = `arbomap_${country || "GLOBAL"}.xlsx`;
         debounce(() => {
-            writeFile(fileName, () => {
-                const workbook = XLSX.utils.book_new();
-                if (country) {
-                    buildCountryIndicatorsWorkbook(workbook, country, admin2DataMissing);
-                } else {
-                    buildGlobalIndicatorsWorkbook(workbook);
-                }
-                return workbook;
-            });
+            downloadFile();
         })();
     }
 
