@@ -20,10 +20,7 @@
                 <HelpAlert />
             </LControl>
             <LControl position="topright">
-                <v-btn id="download-excel-btn" aria-label="Download Excel" icon density="compact" @click="download()">
-                    <v-icon>mdi-download</v-icon>
-                    <v-tooltip location="bottom" activator="parent">Download Excel</v-tooltip>
-                </v-btn>
+                <ExcelDownloadButton />
             </LControl>
         </LMap>
         <div style="visibility: hidden" class="choropleth-data-summary" v-bind="dataSummary"></div>
@@ -45,19 +42,18 @@ import { routerPush, AdminLevel } from "../utils";
 import { backgroundLayer } from "./utils";
 import { useLoadingSpinner } from "../composables/useLoadingSpinner";
 import { useSelectedMapInfo } from "../composables/useSelectedMapInfo";
-import { useExcelDownload } from "../composables/useExcelDownload";
 import AdminLevelToggle from "./AdminLevelToggle.vue";
+import ExcelDownloadButton from "./ExcelDownloadButton.vue";
 
 const mapLoading = ref(true);
 const router = useRouter();
 const { mapSettings, appConfig } = storeToRefs(useAppStore());
-const { downloadExcel } = useAppStore();
 const featureProperties = appConfig.value.geoJsonFeatureProperties;
 const { selectedFeatures, selectedIndicators } = useSelectedMapInfo();
 
 const { tooltipForFeature } = useTooltips(selectedIndicators);
 const { getFillAndOutlineColor } = useIndicatorColors(selectedIndicators);
-const { download } = useExcelDownload();
+
 
 const featureInSelectedCountry = (feature: Feature) =>
     feature.properties[featureProperties.country] === mapSettings.value.country;

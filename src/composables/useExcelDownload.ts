@@ -1,14 +1,12 @@
-import {AppConfig, ColorType, FeatureIndicators, Geojson, MapFeature} from "../types/resourceTypes";
+import {ColorType, FeatureIndicators, Geojson, MapFeature} from "../types/resourceTypes";
 import {Dict} from "../types/utilTypes";
 import * as XLSX from "xlsx";
-import {geoJson} from "leaflet";
-import {Feature} from "geojson";
 import {storeToRefs} from "pinia";
 import {useAppStore} from "../stores/appStore";
 import {useIndicatorColors} from "./useIndicatorColors";
 import {debounce} from "../utils";
 import {WorkBook} from "xlsx";
-import {ca} from "vuetify/locale";
+import {Ref, ref} from "vue";
 
 export const useExcelDownload = () => {
     const {
@@ -22,6 +20,8 @@ export const useExcelDownload = () => {
     } = storeToRefs(useAppStore());
 
     const { getIndicatorColorType, getIndicatorValueColorCategory } = useIndicatorColors();
+
+    const downloadError: Ref<Error | null> = ref(null);
 
     const writeTab = (workbook: WorkBook, level: number, indicatorValues: Dict<FeatureIndicators>, geojson: Dict<MapFeature[]>, country?: string) => {
         const sheetData = [];
@@ -110,29 +110,29 @@ export const useExcelDownload = () => {
     }
 
     const downloadFile = () => {
-        try {
-            const workbook = XLSX.utils.book_new();
-            const { country } = mapSettings.value;
-            const fileName = `arbomap_${country || "GLOBAL"}.xlsx`;
-            if (country) {
-                buildCountryIndicatorsWorkbook(workbook, country);
-            } else {
-                buildGlobalIndicatorsWorkbook(workbook);
-            }
-
-            XLSX.writeFile(workbook, fileName);
-        } catch (e) {
-            // TODO: error handling
-            console.log(e)
+        const workbook = XLSX.utils.book_new();
+        const { country } = mapSettings.value;
+        const fileName = `arbomap_${country || "GLOBAL"}.xlsx`;
+        if (country) {
+            buildCountryIndicatorsWorkbook(workbook, country);
+        } else {
+            buildGlobalIndicatorsWorkbook(workbook);
         }
-    }
 
+        XLSX.writeFile(workbook, fileName);
+    };
 
    const download = () => {
+        downloadError.value = null;
         debounce(() => {
-            downloadFile();
+            try {
+                downloadFile();
+            } catch(e) {
+                console.log(`Error downloading Excel file: ${e}`);
+                downloadError.value = e;
+            }
         })();
     }
 
-    return { download };
+    return { download, downloadError };
 }
