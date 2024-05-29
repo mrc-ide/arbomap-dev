@@ -6,7 +6,8 @@ import {
     MOCK_APP_CONFIG,
     MOCK_ADMIN2_INDICATORS,
     MOCK_ADMIN2_GEOJSON,
-    MOCK_BOUNDS, MOCK_COUNTRY_NAMES
+    MOCK_BOUNDS,
+    MOCK_COUNTRY_NAMES
 } from "./mockObjects";
 
 export const defaultHandlers = [http.all("*", () => new HttpResponse(null, { status: 200 }))];

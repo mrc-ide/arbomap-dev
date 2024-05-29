@@ -1,10 +1,9 @@
-import {describe, it, expect} from "vitest"
+import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/vue";
 import { userEvent } from "@testing-library/user-event";
-import {mockDownload, mockDownloadError} from "../mocks/composables/mockUseExcelDownload";
+import { mockDownload, mockDownloadError } from "../mocks/composables/mockUseExcelDownload";
 import ExcelDownloadButton from "../../../src/components/ExcelDownloadButton.vue";
-import {render} from "@testing-library/vue";
-import {mockVuetify} from "../mocks/mockVuetify";
+import { mockVuetify } from "../mocks/mockVuetify";
 
 const renderComponent = () => {
     return render(ExcelDownloadButton, {
@@ -15,7 +14,7 @@ const renderComponent = () => {
 describe("ExcelDownloadButton", () => {
     it("renders as expected", async () => {
         renderComponent();
-        const button = await screen.findByRole("button") as HTMLElement;
+        const button = (await screen.findByRole("button")) as HTMLElement;
         expect(button.getAttribute("aria-label")).toBe("Download Excel");
         expect(button.getElementsByTagName("i").item(0).className).toContain("mdi-download");
         expect(mockDownloadError.value).toBe(null);
@@ -43,4 +42,3 @@ describe("ExcelDownloadButton", () => {
         expect(await screen.findByText(/Error downloading Excel file: oops/)).not.toBeVisible();
     });
 });
-

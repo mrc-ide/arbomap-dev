@@ -25,8 +25,24 @@ describe("useSelectedMapInfo", () => {
         await store.updateMapSettings(mockMapSettings({ country: "TZA", adminLevel: 2 }));
         const { selectedFeatures } = useSelectedMapInfo();
         expect(selectedFeatures.value).toStrictEqual([
-            { properties: { shapeID_1: "789", shapeName_1: "Test789", shapeID_2: "789-a", shapeName_2: "Test789-a", shapeGroup: "TZA" } },
-            { properties: { shapeID_1: "789", shapeName_1: "Test789", shapeID_2: "789-b", shapeName_2: "Test789-b", shapeGroup: "TZA" } },
+            {
+                properties: {
+                    shapeID_1: "789",
+                    shapeName_1: "Test789",
+                    shapeID_2: "789-a",
+                    shapeName_2: "Test789-a",
+                    shapeGroup: "TZA"
+                }
+            },
+            {
+                properties: {
+                    shapeID_1: "789",
+                    shapeName_1: "Test789",
+                    shapeID_2: "789-b",
+                    shapeName_2: "Test789-b",
+                    shapeGroup: "TZA"
+                }
+            },
             { properties: { shapeID_1: "123", shapeName_1: "Test123", shapeGroup: "MWI" } }
         ]);
     });

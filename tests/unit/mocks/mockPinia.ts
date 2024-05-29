@@ -1,5 +1,5 @@
 import { createTestingPinia } from "@pinia/testing";
-import {MOCK_ADMIN1_GEOJSON, MOCK_ADMIN1_INDICATORS, MOCK_APP_CONFIG, MOCK_COUNTRY_NAMES} from "./mockObjects";
+import { MOCK_ADMIN1_GEOJSON, MOCK_ADMIN1_INDICATORS, MOCK_APP_CONFIG, MOCK_COUNTRY_NAMES } from "./mockObjects";
 import { AppState } from "../../../src/types/storeTypes";
 import { MapSettings } from "../../../src/types/resourceTypes";
 import { PATHOGEN, VERSION } from "../../../src/router/utils";

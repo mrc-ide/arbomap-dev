@@ -14,12 +14,12 @@ test.describe("Excel download button", () => {
         expect(download.suggestedFilename()).toBe(expectedFilename);
     };
 
-    test("can download global indicators", async ({page}) => {
+    test("can download global indicators", async ({ page }) => {
         await page.goto("/");
-        await testCanDownloadFile(page,"arbomap_GLOBAL.xlsx");
+        await testCanDownloadFile(page, "arbomap_GLOBAL.xlsx");
     });
 
-    test("can download country indicators", async ({page}) => {
+    test("can download country indicators", async ({ page }) => {
         await page.goto("/dengue/may24/FOI/MEX");
         await page.waitForURL(/dengue\/may24\/FOI\/MEX\/admin2/i);
         await testCanDownloadFile(page, "arbomap_MEX.xlsx");

@@ -1,29 +1,28 @@
-import {ColorType, FeatureIndicators, Geojson, MapFeature} from "../types/resourceTypes";
-import {Dict} from "../types/utilTypes";
 import * as XLSX from "xlsx";
-import {storeToRefs} from "pinia";
-import {useAppStore} from "../stores/appStore";
-import {useIndicatorColors} from "./useIndicatorColors";
-import {debounce} from "../utils";
-import {WorkBook} from "xlsx";
-import {Ref, ref} from "vue";
+import { storeToRefs } from "pinia";
+import { WorkBook } from "xlsx";
+import { Ref, ref } from "vue";
+import { ColorType, FeatureIndicators, MapFeature } from "../types/resourceTypes";
+import { Dict } from "../types/utilTypes";
+import { useAppStore } from "../stores/appStore";
+import { useIndicatorColors } from "./useIndicatorColors";
+import { debounce } from "../utils";
 
 export const useExcelDownload = () => {
-    const {
-        mapSettings,
-        appConfig,
-        admin1Indicators,
-        admin2Indicators,
-        admin1Geojson,
-        admin2Geojson,
-        countryNames
-    } = storeToRefs(useAppStore());
+    const { mapSettings, appConfig, admin1Indicators, admin2Indicators, admin1Geojson, admin2Geojson, countryNames } =
+        storeToRefs(useAppStore());
 
     const { getIndicatorColorType, getIndicatorValueColorCategory } = useIndicatorColors();
 
     const downloadError: Ref<Error | null> = ref(null);
 
-    const writeTab = (workbook: WorkBook, level: number, indicatorValues: Dict<FeatureIndicators>, geojson: Dict<MapFeature[]>, country?: string) => {
+    const writeTab = (
+        workbook: WorkBook,
+        level: number,
+        indicatorValues: Dict<FeatureIndicators>,
+        geojson: Dict<MapFeature[]>,
+        country?: string
+    ) => {
         const sheetData = [];
 
         const { indicators, countries, geoJsonFeatureProperties } = appConfig.value;
@@ -32,16 +31,18 @@ export const useExcelDownload = () => {
 
         const indicatorIds = Object.keys(indicators);
 
-        const categoryIndicators = Object.keys(indicators).filter((i) => getIndicatorColorType(i) === ColorType.Category);
+        const categoryIndicators = Object.keys(indicators).filter(
+            (i) => getIndicatorColorType(i) === ColorType.Category
+        );
 
         // Include IDs and names for all region levels from 0 to the requested level
-        const levels = Array.from({length: level+1}, (_, v) => v);
+        const levels = Array.from({ length: level + 1 }, (_, v) => v);
         const [, ...subCountryLevels] = levels;
 
         // We use the configured feature prop names as the column headers for ID and names
         const headers = [];
-        levels.forEach((level) => {
-            headers.push(geoJsonFeatureProperties[`idAdm${level}`], geoJsonFeatureProperties[`nameAdm${level}`]);
+        levels.forEach((lvl) => {
+            headers.push(geoJsonFeatureProperties[`idAdm${lvl}`], geoJsonFeatureProperties[`nameAdm${lvl}`]);
         });
 
         indicatorIds.forEach((indicatorId) => {
@@ -68,19 +69,19 @@ export const useExcelDownload = () => {
                 if (featureValues) {
                     const row = [];
 
-                    //country level
+                    // country level
                     row.push(countryId, countryName);
 
-                    subCountryLevels.forEach((level) => {
-                        const idProp = geoJsonFeatureProperties[`idAdm${level}`];
-                        const nameProp = geoJsonFeatureProperties[`nameAdm${level}`];
+                    subCountryLevels.forEach((lvl) => {
+                        const idProp = geoJsonFeatureProperties[`idAdm${lvl}`];
+                        const nameProp = geoJsonFeatureProperties[`nameAdm${lvl}`];
                         row.push(feature.properties[idProp], feature.properties[nameProp]);
                     });
 
                     indicatorIds.forEach((indicatorId) => {
-                        const mean = featureValues[indicatorId].mean;
+                        const { mean } = featureValues[indicatorId];
                         if (categoryIndicators.includes(indicatorId)) {
-                            row.push(getIndicatorValueColorCategory(indicatorId, mean).name)
+                            row.push(getIndicatorValueColorCategory(indicatorId, mean).name);
                         } else {
                             row.push(mean, featureValues[indicatorId].sd);
                         }
@@ -91,12 +92,12 @@ export const useExcelDownload = () => {
         });
 
         const sheet = XLSX.utils.aoa_to_sheet(sheetData);
-        XLSX.utils.book_append_sheet(workbook, sheet, `admin${level}`)
-    }
+        XLSX.utils.book_append_sheet(workbook, sheet, `admin${level}`);
+    };
 
     const buildGlobalIndicatorsWorkbook = (workbook: WorkBook) => {
         writeTab(workbook, 1, admin1Indicators.value, admin1Geojson.value);
-    }
+    };
 
     const buildCountryIndicatorsWorkbook = (workbook: WorkBook, countryId: string) => {
         writeTab(workbook, 1, admin1Indicators.value, admin1Geojson.value, countryId);
@@ -106,7 +107,7 @@ export const useExcelDownload = () => {
         if (!admin1Only) {
             writeTab(workbook, 2, admin2Indicators.value, admin2Geojson.value, countryId);
         }
-    }
+    };
 
     const downloadFile = () => {
         const workbook = XLSX.utils.book_new();
@@ -121,17 +122,17 @@ export const useExcelDownload = () => {
         XLSX.writeFile(workbook, fileName);
     };
 
-   const download = () => {
+    const download = () => {
         downloadError.value = null;
         debounce(() => {
             try {
                 downloadFile();
-            } catch(e) {
+            } catch (e) {
                 console.log(`Error downloading Excel file: ${e}`);
                 downloadError.value = e;
             }
         })();
-    }
+    };
 
     return { download, downloadError };
-}
+};

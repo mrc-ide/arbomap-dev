@@ -6,10 +6,7 @@
     <v-snackbar v-model="snackbarOpen" variant="outlined" color="error">
         Error downloading Excel file: {{ downloadError.message || downloadError.toString() }}
         <template v-slot:actions>
-            <v-btn
-                icon
-                @click="snackbarOpen = false"
-            >
+            <v-btn icon @click="snackbarOpen = false">
                 <v-icon>mdi-close</v-icon>
             </v-btn>
         </template>
@@ -17,8 +14,8 @@
 </template>
 
 <script setup lang="ts">
-import { useExcelDownload } from "../composables/useExcelDownload";
 import { ref, watch } from "vue";
+import { useExcelDownload } from "../composables/useExcelDownload";
 
 const { download, downloadError } = useExcelDownload();
 
@@ -31,6 +28,6 @@ watch(downloadError, () => {
 
 <style lang="scss">
 .v-snackbar__wrapper {
-    background-color: rgba(255, 255, 255, 1)!important;
+    background-color: rgba(255, 255, 255, 1) !important;
 }
 </style>

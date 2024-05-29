@@ -1,18 +1,16 @@
 import { defineStore } from "pinia";
 import {
     getAppConfig,
-    getCountryBoundingBoxes, getCountryNames,
+    getCountryBoundingBoxes,
+    getCountryNames,
     getGeojsonFeatures,
     getGlobalGeojsonFeatures,
     getGlobalIndicators,
     getIndicators
 } from "../resources/utils";
-import { AppState } from "../types/storeTypes";;
-
-import {debounce} from "../utils";
+import { AppState } from "../types/storeTypes";
 
 import { MapSettings } from "../types/resourceTypes";
-
 
 export const useAppStore = defineStore("app", {
     state: (): AppState => ({

@@ -54,7 +54,6 @@ const { selectedFeatures, selectedIndicators } = useSelectedMapInfo();
 const { tooltipForFeature } = useTooltips(selectedIndicators);
 const { getFillAndOutlineColor } = useIndicatorColors(selectedIndicators);
 
-
 const featureInSelectedCountry = (feature: Feature) =>
     feature.properties[featureProperties.country] === mapSettings.value.country;
 

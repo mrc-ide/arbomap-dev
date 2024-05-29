@@ -115,12 +115,38 @@ export const MOCK_ADMIN1_GEOJSON = {
 export const MOCK_ADMIN2_GEOJSON = {
     TZA: {
         features: [
-            { properties: { shapeID_1: "789", shapeName_1: "Test789", shapeID_2: "789-a", shapeName_2: "Test789-a", shapeGroup: "TZA" } },
-            { properties: { shapeID_1: "789", shapeName_1: "Test789", shapeID_2: "789-b", shapeName_2: "Test789-b", shapeGroup: "TZA" } }
+            {
+                properties: {
+                    shapeID_1: "789",
+                    shapeName_1: "Test789",
+                    shapeID_2: "789-a",
+                    shapeName_2: "Test789-a",
+                    shapeGroup: "TZA"
+                }
+            },
+            {
+                properties: {
+                    shapeID_1: "789",
+                    shapeName_1: "Test789",
+                    shapeID_2: "789-b",
+                    shapeName_2: "Test789-b",
+                    shapeGroup: "TZA"
+                }
+            }
         ]
     },
     MWI: {
-        features: [{ properties: { shapeID_1: "123", shapeName_1: "Test123", shapeID_2: "123-a", shapeName_2: "Test123-a", shapeGroup: "TZA" } }]
+        features: [
+            {
+                properties: {
+                    shapeID_1: "123",
+                    shapeName_1: "Test123",
+                    shapeID_2: "123-a",
+                    shapeName_2: "Test123-a",
+                    shapeGroup: "TZA"
+                }
+            }
+        ]
     }
 };
 
