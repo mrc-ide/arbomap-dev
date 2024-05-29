@@ -72,19 +72,6 @@ export const useAppStore = defineStore("app", {
             // account for the fact that some countries do not have admin level 2 data
             const finalMapSettings: MapSettings = { ...newMapSettings, adminLevel: level };
             state.mapSettings = finalMapSettings;
-        },
-        async downloadExcel() {
-            const { country } = this.mapSettings;
-            const admin2DataMissing = country && this.appConfig.countriesWithoutAdmin2.includes(country);
-            const download = new UseExcelDownload(`arbomap_${country || "GLOBAL"}.xlsx"`, this.appConfig, this.countryNames);
-            debounce(() => {
-                if (country) {
-                    download.downloadCountryIndicators(country, this.admin1Indicators, this.admin1Geojson,
-                        this.admin2Indicators, this.admin2Geojson, admin2DataMissing);
-                } else {
-                    download.downloadGlobalIndicators(this.admin1Indicators, this.admin1Geojson);
-                }
-            })();
         }
     }
 });

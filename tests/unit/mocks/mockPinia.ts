@@ -24,6 +24,10 @@ export const mockPinia = (appState: Partial<AppState> = {}) => {
             admin2Indicators: {},
             admin2Geojson: {},
             mapSettings: mockMapSettings(),
+            countryNames: {
+                MWI: "Malawi",
+                TZA: "Tanzania"
+            },
             ...appState
         }
     };
