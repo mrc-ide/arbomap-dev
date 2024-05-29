@@ -50,6 +50,7 @@ describe("useExcelDownload", () => {
                 sheets: [expectedSheet]
             });
             expect(mockWriteFile.mock.calls[0][1]).toBe("arbomap_GLOBAL.xlsx");
+            expect(sut.downloadError.value).toBe(null);
         });
     });
 
@@ -129,6 +130,23 @@ describe("useExcelDownload", () => {
                 sheets: [expectedAdmin1Sheet] // admin1 sheet only
             });
             expect(mockWriteFile.mock.calls[0][1]).toBe("arbomap_TZA.xlsx");
+        });
+    });
+
+    describe("when there is an error while writing the file", () => {
+        beforeAll(() => {
+            mockPinia({
+                mapSettings: mockMapSettings({country: "TZA"}),
+                admin2Geojson: {"duff": "data"}
+            });
+        });
+
+        test("sets downloadError", () => {
+            const sut = useExcelDownload();
+            sut.download();
+            vi.runAllTimers();
+            expect(mockWriteFile).toHaveBeenCalledTimes(0);
+            expect(sut.downloadError.value.name).toBe("TypeError");
         });
     });
 });
