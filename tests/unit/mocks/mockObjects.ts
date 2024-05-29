@@ -98,6 +98,11 @@ export const MOCK_APP_CONFIG = {
     ]
 };
 
+export const MOCK_COUNTRY_NAMES = {
+    MWI: "Malawi",
+    TZA: "Tanzania"
+};
+
 export const MOCK_ADMIN0_GEOJSON = {
     features: [{ properties: { shapeID: "456-a", shapeName: "Test456-a", shapeGroup: "TZA" } }]
 };

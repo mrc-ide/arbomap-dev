@@ -6,13 +6,14 @@ import {
     MOCK_APP_CONFIG,
     MOCK_ADMIN2_INDICATORS,
     MOCK_ADMIN2_GEOJSON,
-    MOCK_BOUNDS
+    MOCK_BOUNDS, MOCK_COUNTRY_NAMES
 } from "./mockObjects";
 
 export const defaultHandlers = [http.all("*", () => new HttpResponse(null, { status: 200 }))];
 const resourcesBase = "/dengue/may24/resources";
 export const handlers: HttpHandler[] = [
     http.get(`${resourcesBase}/config.json`, () => HttpResponse.json(MOCK_APP_CONFIG)),
+    http.get(`${resourcesBase}/countryNames.json`, () => HttpResponse.json(MOCK_COUNTRY_NAMES)),
     http.get(`${resourcesBase}/indicators/admin1/global_adm1.json`, () => HttpResponse.json(MOCK_ADMIN1_INDICATORS)),
     http.get(`${resourcesBase}/indicators/admin2/TZA.json`, () => HttpResponse.json(MOCK_ADMIN2_INDICATORS.TZA)),
     http.get(`${resourcesBase}/indicators/admin1/MWI.json`, () => HttpResponse.json(MOCK_ADMIN1_INDICATORS.MWI)),
