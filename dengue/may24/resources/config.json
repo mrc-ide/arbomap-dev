@@ -14,8 +14,7 @@
             "colors": {
                 "type": "scale",
                 "colorScale": {
-                    "name": "interpolateRdYlBu",
-                    "reverse": true
+                    "name": "interpolateBlues"
                 }
             },
             "humanReadableName": "Force of infection",
