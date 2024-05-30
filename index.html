@@ -6,8 +6,15 @@
     <link rel="icon" href="/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title></title>
-    <!--<script defer src="https://cloud.umami.is/script.js" data-website-id="50ca37bf-c6c0-48fb-bc48-44d5411627f9"></script>-->
     <script>
+        // load analytics script on production only
+        if (window.location.hostname === "arbomap.org") {
+            var tag = document.createElement('script');
+            tag.src = "https://cloud.umami.is/script.js";
+            tag.defer = true;
+            tag.setAttribute("data-website-id", "50ca37bf-c6c0-48fb-bc48-44d5411627f9");
+            document.head.appendChild(tag);
+        }
     </script>
 </head>
 
