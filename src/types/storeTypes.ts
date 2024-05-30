@@ -18,4 +18,6 @@ export interface AppState {
     // these variables change every time there is an update to the map
     mapSettings: MapSettings | null;
     admin0GeojsonFeature: MapFeature | null;
+
+    mapLoading: boolean;
 }

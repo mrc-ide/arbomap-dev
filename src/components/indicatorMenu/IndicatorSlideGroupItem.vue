@@ -34,5 +34,6 @@ const { mapSettings } = storeToRefs(useAppStore());
 <style lang="scss">
 .selected-slide-group-item {
     border-width: medium !important;
+    font-weight: 800;
 }
 </style>

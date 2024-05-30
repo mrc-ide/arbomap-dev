@@ -22,7 +22,8 @@ export const useAppStore = defineStore("app", {
         admin2Geojson: {},
 
         mapSettings: null,
-        admin0GeojsonFeature: null
+        admin0GeojsonFeature: null,
+        mapLoading: false
     }),
     actions: {
         async initialiseData() {

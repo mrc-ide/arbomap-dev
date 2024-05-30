@@ -18,9 +18,9 @@
             <LControl position="topright">
                 <HelpAlert />
             </LControl>
-            <LControl v-if="isLargeScreen" position="bottomleft" style="margin-left: 2rem; margin-bottom: 2rem;">
-               <map-settings-menu :is-large-screen="true"></map-settings-menu>
-           </LControl>
+            <LControl v-if="isLargeScreen" position="bottomleft" style="margin-left: 2rem; margin-bottom: 2rem">
+                <map-settings-menu :is-large-screen="true"></map-settings-menu>
+            </LControl>
         </LMap>
         <div v-if="!isLargeScreen">
             <map-settings-menu :is-large-screen="false"></map-settings-menu>
@@ -34,6 +34,7 @@ import { storeToRefs } from "pinia";
 import { LMap, LTileLayer, LControl } from "@vue-leaflet/vue-leaflet";
 import { Feature } from "geojson";
 import { useRouter } from "vue-router";
+import { useMediaQuery } from "@vueuse/core";
 import { useAppStore } from "../stores/appStore";
 import { useIndicatorColors } from "../composables/useIndicatorColors";
 import { useLeaflet } from "../composables/useLeaflet";
@@ -44,12 +45,10 @@ import { routerPush, AdminLevel } from "../utils";
 import { backgroundLayer } from "./utils";
 import { useLoadingSpinner } from "../composables/useLoadingSpinner";
 import { useSelectedMapInfo } from "../composables/useSelectedMapInfo";
-import { useMediaQuery } from '@vueuse/core';
 import MapSettingsMenu from "./mapSettingsMenu/MapSettingsMenu.vue";
 
-const mapLoading = ref(true);
 const router = useRouter();
-const { mapSettings, appConfig } = storeToRefs(useAppStore());
+const { mapSettings, appConfig, mapLoading } = storeToRefs(useAppStore());
 const featureProperties = appConfig.value.geoJsonFeatureProperties;
 const { selectedFeatures, selectedIndicators } = useSelectedMapInfo();
 const isLargeScreen = useMediaQuery("(min-width: 1024px)");
@@ -72,13 +71,6 @@ const getFeatureName = (feature: Feature) =>
     featureAdminLevel(feature) === 2
         ? feature.properties[featureProperties.nameAdm2]
         : feature.properties[featureProperties.nameAdm1];
-
-const handleChangeAdminLevel = (level: number) => {
-    mapLoading.value = true;
-    const { indicator, country } = mapSettings.value;
-    const adminLevel = level === 1 ? AdminLevel.ONE : AdminLevel.TWO;
-    routerPush(router, `/${APP_BASE_ROUTE}/${indicator}/${country}/${adminLevel}`);
-};
 
 const style = (f: Feature) => {
     const { country, indicator } = mapSettings.value;

@@ -30,6 +30,7 @@ export interface IndicatorConfig {
     unit: string;
     humanReadableName: string;
     description: string;
+    shortName: string;
 }
 
 // Used for display in the indicator selection menu -
