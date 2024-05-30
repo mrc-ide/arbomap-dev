@@ -25,7 +25,7 @@ const expectIndexPage = async (
 };
 
 const expectDefaultView = async (page) => {
-    await expectIndexPage(page, "/FOI", "FOI", "Force of infection", "", "interpolateRdYlBu", 1915, 0);
+    await expectIndexPage(page, "/FOI", "FOI", "Force of infection", "", "interpolateBlues", 1915, 0);
 };
 
 test.describe("Router", () => {
@@ -60,14 +60,14 @@ test.describe("Router", () => {
 
     test("browse to indicator and country loads expected data", async ({ page }) => {
         await page.goto(`${BASE_URL}/FOI/TZA`);
-        await expectIndexPage(page, "/FOI/TZA", "FOI", "Force of infection", "TZA", "interpolateRdYlBu", 2070, 186);
+        await expectIndexPage(page, "/FOI/TZA", "FOI", "Force of infection", "TZA", "interpolateBlues", 2070, 186);
     });
 
     test("browse to indicator and country at admin1 loads expected data", async ({ page }) => {
         await page.goto(`${BASE_URL}/FOI/VEN/admin1`);
         await expect(await page.textContent(".indicator-menu-activator")).toBe("Force of infection");
         const summary = await page.locator(".choropleth-data-summary");
-        await expect(await summary).toHaveAttribute("color-scale", "interpolateRdYlBu");
+        await expect(await summary).toHaveAttribute("color-scale", "interpolateBlues");
         await expect(await summary).toHaveAttribute("selected-country-id", "VEN");
         await expect(await summary).toHaveAttribute("feature-count", "1915");
         await expect(await summary).toHaveAttribute("selected-country-feature-count", "25");
