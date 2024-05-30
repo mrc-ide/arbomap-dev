@@ -1,13 +1,21 @@
 <template>
-    <div style="padding-top: 0.75rem;">
-        <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; padding-inline: 16px;">
+    <div style="padding-top: 0.75rem">
+        <div
+            style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                width: 100%;
+                padding-inline: 16px;
+            "
+        >
             <h3 style="font-weight: 1000">{{ admin0GeojsonFeature?.properties.COUNTRY || "Global" }}</h3>
             <div v-if="mapSettings.country">
-                <AdminLevelToggle/>
+                <AdminLevelToggle />
             </div>
         </div>
         <v-divider style="margin-bottom: 1rem; margin-top: 1rem" :thickness="3"></v-divider>
-        <div style="padding-inline: 16px;">
+        <div style="padding-inline: 16px">
             <div v-for="(id, index) in indicatorGroupIds" style="margin-top: 1rem; margin-bottom: 1rem" :key="id">
                 <v-divider v-if="index !== 0" style="margin-bottom: 1rem" :thickness="2"></v-divider>
                 <router-link :to="`/${APP_BASE_ROUTE}/${id}/${mapSettings.country}`" custom v-slot="{ navigate }">
@@ -46,18 +54,21 @@
 </template>
 
 <script setup lang="ts">
+import { storeToRefs } from "pinia";
 import { useAppStore } from "../../stores/appStore";
 import { APP_BASE_ROUTE } from "../../router/utils";
-import { storeToRefs } from "pinia";
 
 const { admin0GeojsonFeature, appConfig, mapSettings } = storeToRefs(useAppStore());
 const indicatorGroupIds = computed(() => {
-    console.log(appConfig.value.indicatorGroups)
-    return appConfig.value.indicatorGroups.map((ig) => ig.mainIndicator)
+    console.log(appConfig.value.indicatorGroups);
+    return appConfig.value.indicatorGroups.map((ig) => ig.mainIndicator);
 });
 
 const isSelectedIndicator = (indicatorId: string, index: number) => {
-    return indicatorId === mapSettings.value.indicator || appConfig.value.indicatorGroups[index].subIndicators?.includes(mapSettings.value.indicator);
+    return (
+        indicatorId === mapSettings.value.indicator ||
+        appConfig.value.indicatorGroups[index].subIndicators?.includes(mapSettings.value.indicator)
+    );
 };
 
 const slideGroupClicked = (event: PointerEvent) => {

@@ -20,7 +20,10 @@
                     class="bg-transparent opacity-80 elevation-0"
                     :class="isLargeScreen ? 'indicator-menu-list-item-desktop' : 'indicator-menu-list-item-mobile'"
                 >
-                    <v-list-item class="bg-black mb-2 rounded elevation-4 border-lg indicator-menu-list-item-wrapper" :ripple="false">
+                    <v-list-item
+                        class="bg-black mb-2 rounded elevation-4 border-lg indicator-menu-list-item-wrapper"
+                        :ripple="false"
+                    >
                         <slot></slot>
                     </v-list-item>
                 </v-list>
@@ -75,7 +78,8 @@ const buttonSummary = computed(() => {
     border-radius: 0;
 }
 
-.indicator-menu-activator-mobile, .indicator-menu-activator-desktop {
+.indicator-menu-activator-mobile,
+.indicator-menu-activator-desktop {
     height: auto !important;
     padding-block: 10px;
 }
