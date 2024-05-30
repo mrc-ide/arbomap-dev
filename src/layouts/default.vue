@@ -27,6 +27,9 @@
                     <v-list-item link :to="pagePathWithPathogen('accessibility')" prepend-icon="mdi-monitor-eye">
                         <v-list-item-title>Accessibility</v-list-item-title>
                     </v-list-item>
+                    <v-list-item link href="https://imperial.eu.qualtrics.com/jfe/form/SV_1OfpYMUpy4uHlRQ" prepend-icon="mdi-email-outline">
+                        <v-list-item-title>Contact</v-list-item-title>
+                    </v-list-item>
                 </v-list>
             </v-navigation-drawer>
         </v-theme-provider>
