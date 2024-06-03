@@ -66,3 +66,13 @@ html {
 .missing-data-tooltip-text {
   color: grey
 }
+
+.icon-button {
+  width: 32px!important;
+  min-width: 32px!important;
+  height: 32px!important;
+
+  i {
+    font-size: 26px;
+  }
+}

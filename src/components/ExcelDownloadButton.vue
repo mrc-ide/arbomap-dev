@@ -1,7 +1,7 @@
 <template>
-    <v-btn id="download-excel-btn" aria-label="Download Excel" icon density="compact" @click="download()">
+    <v-btn id="download-excel-btn" aria-label="Download Excel" class="icon-button" density="compact" @click="download()">
         <v-icon>mdi-download</v-icon>
-        <v-tooltip location="bottom" activator="parent">Download Excel</v-tooltip>
+        <v-tooltip location="left" activator="parent">Download Excel</v-tooltip>
     </v-btn>
     <v-snackbar v-model="snackbarOpen" variant="outlined" color="error">
         Error downloading Excel file: {{ downloadError.message || downloadError.toString() }}
