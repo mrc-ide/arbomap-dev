@@ -7,7 +7,7 @@
         title="How to use this map"
         :text="helpText"
     />
-    <v-btn id="helpButton" aria-label="Help" class="icon-button" density="compact" v-show="!isActive" @click="isActive = !isActive">
+    <v-btn id="helpButton" aria-label="Help" class="icon-button" v-show="!isActive" @click="isActive = !isActive">
         <v-icon>mdi-help-circle-outline</v-icon>
         <v-tooltip location="left" activator="parent">Help</v-tooltip>
     </v-btn>

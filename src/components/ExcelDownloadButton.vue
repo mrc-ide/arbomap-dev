@@ -1,5 +1,5 @@
 <template>
-    <v-btn id="download-excel-btn" aria-label="Download Excel" class="icon-button" density="compact" @click="download()">
+    <v-btn id="download-excel-btn" aria-label="Download Excel" class="icon-button" @click="download()">
         <v-icon>mdi-download</v-icon>
         <v-tooltip location="left" activator="parent">Download Excel</v-tooltip>
     </v-btn>
