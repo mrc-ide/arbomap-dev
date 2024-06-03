@@ -19,6 +19,9 @@
                 <AdminLevelToggle @change-admin-level="handleChangeAdminLevel" v-if="mapSettings.country" />
                 <HelpAlert />
             </LControl>
+            <LControl position="topright">
+                <ExcelDownloadButton />
+            </LControl>
         </LMap>
         <div style="visibility: hidden" class="choropleth-data-summary" v-bind="dataSummary"></div>
     </div>
@@ -40,6 +43,7 @@ import { backgroundLayer } from "./utils";
 import { useLoadingSpinner } from "../composables/useLoadingSpinner";
 import { useSelectedMapInfo } from "../composables/useSelectedMapInfo";
 import AdminLevelToggle from "./AdminLevelToggle.vue";
+import ExcelDownloadButton from "./ExcelDownloadButton.vue";
 
 const mapLoading = ref(true);
 const router = useRouter();

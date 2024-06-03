@@ -1,6 +1,6 @@
 {
   "name": "dengue-map",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "type": "module",
   "engines": {
     "node": "^20.0.0"
@@ -30,7 +30,8 @@
     "spin.js": "^4.1.1",
     "vue": "^3.4.21",
     "vue-leaflet": "^0.1.0",
-    "vuetify": "^3.6.0"
+    "vuetify": "^3.6.0",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.2/xlsx-0.20.2.tgz"
   },
   "devDependencies": {
     "@babel/types": "^7.24.0",

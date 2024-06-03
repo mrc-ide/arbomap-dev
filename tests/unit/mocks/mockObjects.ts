@@ -3,10 +3,12 @@ export const MOCK_APP_CONFIG = {
     countries: ["MWI", "TZA"],
     countriesWithoutAdmin2: [],
     geoJsonFeatureProperties: {
-        idAdm1: "shapeID",
-        idAdm2: "shapeID",
-        nameAdm1: "shapeName",
-        nameAdm2: "shapeName",
+        idAdm0: "shapeGroup",
+        idAdm1: "shapeID_1",
+        idAdm2: "shapeID_2",
+        nameAdm0: "countryName",
+        nameAdm1: "shapeName_1",
+        nameAdm2: "shapeName_2",
         country: "shapeGroup"
     },
     indicators: {
@@ -96,24 +98,55 @@ export const MOCK_APP_CONFIG = {
     ]
 };
 
+export const MOCK_COUNTRY_NAMES = {
+    MWI: "Malawi",
+    TZA: "Tanzania"
+};
+
 export const MOCK_ADMIN0_GEOJSON = {
     features: [{ properties: { shapeID: "456-a", shapeName: "Test456-a", shapeGroup: "TZA" } }]
 };
 
 export const MOCK_ADMIN1_GEOJSON = {
-    MWI: [{ properties: { shapeID: "123", shapeName: "Test123", shapeGroup: "MWI" } }],
-    TZA: [{ properties: { shapeID: "789", shapeName: "Test789", shapeGroup: "TZA" } }]
+    MWI: [{ properties: { shapeID_1: "123", shapeName_1: "Test123", shapeGroup: "MWI" } }],
+    TZA: [{ properties: { shapeID_1: "789", shapeName_1: "Test789", shapeGroup: "TZA" } }]
 };
 
 export const MOCK_ADMIN2_GEOJSON = {
     TZA: {
         features: [
-            { properties: { shapeID: "789-a", shapeName: "Test789-a", shapeGroup: "TZA" } },
-            { properties: { shapeID: "789-b", shapeName: "Test789-b", shapeGroup: "TZA" } }
+            {
+                properties: {
+                    shapeID_1: "789",
+                    shapeName_1: "Test789",
+                    shapeID_2: "789-a",
+                    shapeName_2: "Test789-a",
+                    shapeGroup: "TZA"
+                }
+            },
+            {
+                properties: {
+                    shapeID_1: "789",
+                    shapeName_1: "Test789",
+                    shapeID_2: "789-b",
+                    shapeName_2: "Test789-b",
+                    shapeGroup: "TZA"
+                }
+            }
         ]
     },
     MWI: {
-        features: [{ properties: { shapeID: "123-a", shapeName: "Test123-a", shapeGroup: "TZA" } }]
+        features: [
+            {
+                properties: {
+                    shapeID_1: "123",
+                    shapeName_1: "Test123",
+                    shapeID_2: "123-a",
+                    shapeName_2: "Test123-a",
+                    shapeGroup: "TZA"
+                }
+            }
+        ]
     }
 };
 
@@ -122,6 +155,7 @@ export const MOCK_ADMIN1_INDICATORS = {
         "123": {
             FOI: { mean: 0.1, sd: 0.01 },
             serop9: { mean: 0.2, sd: 0.02 },
+            serop9_class: { mean: 20, sd: 0.02 },
             hosp_total: { mean: 0.3, sd: 0.03 },
             hosp_0_4: { mean: 0.4, sd: 0.04 },
             hosp_5_9: { mean: 0.5, sd: 0.05 }
@@ -131,6 +165,7 @@ export const MOCK_ADMIN1_INDICATORS = {
         "789": {
             FOI: { mean: 0.3, sd: 0.03 },
             serop9: { mean: 0.4, sd: 0.04 },
+            serop9_class: { mean: 40, sd: 0.04 },
             hosp_total: { mean: 0.5, sd: 0.05 },
             hosp_0_4: { mean: 0.6, sd: 0.06 },
             hosp_5_9: { mean: 0.7, sd: 0.07 }
@@ -142,17 +177,29 @@ export const MOCK_ADMIN2_INDICATORS = {
     TZA: {
         "789-a": {
             FOI: { mean: 0.31, sd: 0.031 },
-            serop9: { mean: 0.41, sd: 0.041 }
+            serop9: { mean: 0.41, sd: 0.041 },
+            serop9_class: { mean: 41, sd: 0.041 },
+            hosp_total: { mean: 0.31, sd: 0.031 },
+            hosp_0_4: { mean: 0.41, sd: 0.041 },
+            hosp_5_9: { mean: 0.51, sd: 0.051 }
         },
         "789-b": {
             FOI: { mean: 0.32, sd: 0.032 },
-            serop9: { mean: 0.42, sd: 0.042 }
+            serop9: { mean: 0.62, sd: 0.062 },
+            serop9_class: { mean: 62, sd: 0.062 },
+            hosp_total: { mean: 0.51, sd: 0.051 },
+            hosp_0_4: { mean: 0.61, sd: 0.061 },
+            hosp_5_9: { mean: 0.71, sd: 0.071 }
         }
     },
     MWI: {
         "123-a": {
             FOI: { mean: 0.1, sd: 0.01 },
-            serop9: { mean: 0.2, sd: 0.02 }
+            serop9: { mean: 0.2, sd: 0.02 },
+            serop9_class: { mean: 0.2, sd: 0.02 },
+            hosp_total: { mean: 0.53, sd: 0.053 },
+            hosp_0_4: { mean: 0.63, sd: 0.063 },
+            hosp_5_9: { mean: 0.73, sd: 0.073 }
         }
     }
 };
