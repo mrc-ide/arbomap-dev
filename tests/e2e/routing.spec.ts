@@ -13,7 +13,9 @@ const expectIndexPage = async (
     selectedCountryName: string
 ) => {
     await page.waitForURL(new RegExp(`${BASE_URL}${url}`));
-    await expect(await page.textContent(".indicator-menu-activator-desktop")).toBe(`${selectedCountryName} | ${selectedIndicatorName}${selectedCountry ? " | Admin 2" : ""}`);
+    await expect(await page.textContent(".indicator-menu-activator-desktop")).toBe(
+        `${selectedCountryName} | ${selectedIndicatorName}${selectedCountry ? " | Admin 2" : ""}`
+    );
     const summary = await page.locator(".choropleth-data-summary");
     await expect(await summary).toHaveAttribute("selected-indicator", selectedIndicatorId);
     await expect(await summary).toHaveAttribute("selected-country-id", selectedCountry);
@@ -62,12 +64,24 @@ test.describe("Router", () => {
 
     test("browse to indicator and country loads expected data", async ({ page }) => {
         await page.goto(`${BASE_URL}/FOI/TZA`);
-        await expectIndexPage(page, "/FOI/TZA", "FOI", "Force of infection", "TZA", "interpolateBlues", 2070, 186, "Tanzania");
+        await expectIndexPage(
+            page,
+            "/FOI/TZA",
+            "FOI",
+            "Force of infection",
+            "TZA",
+            "interpolateBlues",
+            2070,
+            186,
+            "Tanzania"
+        );
     });
 
     test("browse to indicator and country at admin1 loads expected data", async ({ page }) => {
         await page.goto(`${BASE_URL}/FOI/VEN/admin1`);
-        await expect(await page.textContent(".indicator-menu-activator-desktop")).toBe("Venezuela | Force of infection | Admin 1");
+        await expect(await page.textContent(".indicator-menu-activator-desktop")).toBe(
+            "Venezuela | Force of infection | Admin 1"
+        );
         const summary = await page.locator(".choropleth-data-summary");
         await expect(await summary).toHaveAttribute("color-scale", "interpolateBlues");
         await expect(await summary).toHaveAttribute("selected-country-id", "VEN");
@@ -78,7 +92,9 @@ test.describe("Router", () => {
     test("is case-insensitive", async ({ page }) => {
         await page.goto("/DENGUE/May24/SEROP9/tza");
         await page.waitForURL(/\/DENGUE\/May24\/SEROP9\/tza/);
-        await expect(await page.textContent(".indicator-menu-activator-desktop")).toBe("Tanzania | Seroprevalence at age 9 years | Admin 2");
+        await expect(await page.textContent(".indicator-menu-activator-desktop")).toBe(
+            "Tanzania | Seroprevalence at age 9 years | Admin 2"
+        );
         const summary = await page.locator(".choropleth-data-summary");
         await expect(await summary).toHaveAttribute("color-scale", "interpolateGreens");
         await expect(await summary).toHaveAttribute("feature-count", "2070");
