@@ -43,8 +43,8 @@ process <- function(path, dest, level) {
   dir.create(dest, FALSE, TRUE)
   countries <- unique(dat$ID_0)
   # we deliberately exclude these countries which have values derived from
-  # neighbouring countries
-  countries <- countries[!(countries %in% c("ASM", "CYM", "DMA", "KNA", "MNP", "MSR", "NRU", "PLW", "TCA", "TUV", "VGB", "WLF"))]
+  # neighbouring countries. Also leave out "Z" ISOs for disputed regions
+  countries <- countries[!(countries %in% c("ASM", "CYM", "DMA", "KNA", "MNP", "MSR", "NRU", "PLW", "TCA", "TUV", "VGB", "WLF", "Z01", "Z04", "Z05", "Z07", "Z09"))]
 
   if (level == 2) {
     for (iso in countries) {
@@ -67,10 +67,10 @@ process <- function(path, dest, level) {
 }
 
 root <- here::here()
-process(file.path(root, "data/raw/Adm1_Estimates_v3_gadm41_filled_gaps.xlsx"),
+process(file.path(root, "data/raw/Adm1_Estimates_v4_gadm41_filled_gaps.xlsx"),
         file.path(root, "data/processed/admin1"),
         1)
-process(file.path(root, "data/raw/Adm2_Estimates_v3_gadm41_filled_gaps.xlsx"),
+process(file.path(root, "data/raw/Adm2_Estimates_v4_gadm41_filled_gaps.xlsx"),
         file.path(root, "data/processed/admin2"),
        2)
 
