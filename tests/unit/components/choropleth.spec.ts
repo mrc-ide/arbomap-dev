@@ -2,12 +2,13 @@ import { render } from "@testing-library/vue";
 import { describe, expect, test } from "vitest";
 import { mockPinia } from "../mocks/mockPinia";
 import Choropleth from "../../../src/components/Choropleth.vue";
+import { mockVuetify } from "../mocks/mockVuetify";
 
 const store = mockPinia();
 const renderComponent = () => {
     return render(Choropleth, {
         global: {
-            plugins: [store]
+            plugins: [store, mockVuetify]
         }
     });
 };

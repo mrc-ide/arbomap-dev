@@ -2,7 +2,7 @@ import { describe, expect, test } from "vitest";
 import { interpolatePurples } from "d3-scale-chromatic";
 import { render, screen } from "@testing-library/vue";
 import { mockPinia } from "../../mocks/mockPinia";
-import ColorScaleIcon from "../../../../src/components/indicatorMenu/ColorScaleIcon.vue";
+import ColorScaleIcon from "../../../../src/components/mapSettingsMenu/ColorScaleIcon.vue";
 import { MOCK_APP_CONFIG } from "../../mocks/mockObjects";
 
 describe("ColorScaleIcon", () => {
@@ -61,7 +61,7 @@ describe("ColorScaleIcon", () => {
                         humanReadableName: "Seroprevalence classification at age 9 years",
                         description: "",
                         unit: ""
-                    }
+                    } as any
                 }
             }
         });

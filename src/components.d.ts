@@ -9,10 +9,10 @@ declare module 'vue' {
   export interface GlobalComponents {
     AdminLevelToggle: typeof import('./components/AdminLevelToggle.vue')['default']
     Choropleth: typeof import('./components/Choropleth.vue')['default']
-    ColorScaleIcon: typeof import('./components/indicatorMenu/ColorScaleIcon.vue')['default']
+    ColorScaleIcon: typeof import('./components/mapSettingsMenu/ColorScaleIcon.vue')['default']
     HelpAlert: typeof import('./components/HelpAlert.vue')['default']
     IndicatorMenu: typeof import('./components/indicatorMenu/IndicatorMenu.vue')['default']
-    IndicatorSlideGroupItem: typeof import('./components/indicatorMenu/IndicatorSlideGroupItem.vue')['default']
+    IndicatorSlideGroupItem: typeof import('./components/mapSettingsMenu/IndicatorSlideGroupItem.vue')['default']
     Legend: typeof import('./components/Legend.vue')['default']
     ListItem: typeof import('./components/mapSettingsMenu/ListItem.vue')['default']
     MapSettingsMenu: typeof import('./components/mapSettingsMenu/MapSettingsMenu.vue')['default']

@@ -64,7 +64,7 @@ export interface IndicatorValue {
 // Indicator values for a singe feature area - a dictionary of indicator ids to  values
 export type FeatureIndicatorValues = Dict<IndicatorValue>;
 
-export type MapFeature = Feature<Polygon | MultiPolygon>;
+export type MapFeature = Feature<Polygon | MultiPolygon, { [name: string]: string }>;
 
 export interface Geojson {
     features: MapFeature[];

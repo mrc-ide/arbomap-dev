@@ -11,6 +11,7 @@
 import { computed } from "vue";
 import { useIndicatorColors } from "../../composables/useIndicatorColors";
 import { ColorType } from "../../types/resourceTypes";
+import { useSelectedMapInfo } from "../../composables/useSelectedMapInfo";
 
 const props = defineProps({
     size: {
@@ -24,7 +25,9 @@ const props = defineProps({
 });
 
 const halfway = computed(() => props.size / 2);
-const { getIndicatorValueColor, getIndicatorColorType, getIndicatorColorCategories } = useIndicatorColors();
+const { selectedIndicators } = useSelectedMapInfo();
+const { getIndicatorValueColor, getIndicatorColorType, getIndicatorColorCategories } =
+    useIndicatorColors(selectedIndicators);
 
 const iconColors = computed(() => {
     if (getIndicatorColorType(props.indicator) === ColorType.Scale) {
@@ -32,7 +35,7 @@ const iconColors = computed(() => {
         return colorScaleSampleValues.map((value) => getIndicatorValueColor(props.indicator, value, false));
     }
     const result = [];
-    const categoryColors = getIndicatorColorCategories(props.indicator).map((cat) => cat.color);
+    const categoryColors = getIndicatorColorCategories(props.indicator)!.map((cat) => cat.color);
     if (categoryColors.length === 0) {
         throw new Error(`Empty color categories config for ${props.indicator}`);
     }

@@ -2,6 +2,7 @@ import { storeToRefs } from "pinia";
 import { LatLngBounds } from "leaflet";
 import { useAppStore } from "../stores/appStore";
 import { useSelectedMapInfo } from "./useSelectedMapInfo";
+import { IndicatorColorCategories, IndicatorColorScale } from "../types/resourceTypes";
 
 // This composable is only for e2e testing
 export const useDataSummary = (bounds: Ref<LatLngBounds>) => {
@@ -16,8 +17,8 @@ export const useDataSummary = (bounds: Ref<LatLngBounds>) => {
             "selected-indicator": mapSettings.value.indicator,
             "selected-country-id": mapSettings.value.country,
             "color-type": colors.type,
-            "color-scale": colors.colorScale?.name,
-            "color-categories": colors.categories?.map((c) => c.name).join(","),
+            "color-scale": (colors as IndicatorColorScale).colorScale?.name,
+            "color-categories": (colors as IndicatorColorCategories).categories?.map((c) => c.name).join(","),
             "feature-count": selectedFeatures.value?.length,
             "selected-country-feature-count": selectedFeatures.value?.filter(
                 (f) => f.properties![featureProperties.country] === mapSettings.value.country

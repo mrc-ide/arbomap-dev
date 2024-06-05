@@ -1,5 +1,5 @@
 <template>
-    <menu-activator :is-large-screen="props.isLargeScreen">
+    <menu-activator data-testid="menu-activator" :is-large-screen="props.isLargeScreen">
         <menu-layout></menu-layout>
     </menu-activator>
 </template>

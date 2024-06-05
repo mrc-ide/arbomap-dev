@@ -1,27 +1,24 @@
 <template>
-    <div style="padding-top: 0.75rem">
-        <div
-            style="
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                width: 100%;
-                padding-inline: 16px;
-            "
-        >
-            <h3 style="font-weight: 1000">{{ admin0GeojsonFeature?.properties.COUNTRY || "Global" }}</h3>
+    <div class="menu-container">
+        <div class="country-name-and-admin-toggle-container px-4">
+            <h3 class="max-bold-text">{{ admin0GeojsonFeature?.properties.COUNTRY || "Global" }}</h3>
             <div v-if="mapSettings.country">
                 <AdminLevelToggle />
             </div>
         </div>
-        <v-divider style="margin-bottom: 1rem; margin-top: 1rem" :thickness="3"></v-divider>
-        <div style="padding-inline: 16px">
-            <div v-for="(id, index) in indicatorGroupIds" style="margin-top: 1rem; margin-bottom: 1rem" :key="id">
-                <v-divider v-if="index !== 0" style="margin-bottom: 1rem" :thickness="2"></v-divider>
+        <v-divider class="menu-divider" :thickness="3"></v-divider>
+        <div class="px-4">
+            <div v-for="(id, index) in indicatorGroupIds" :key="id">
+                <v-divider v-if="index !== 0" class="menu-divider" :thickness="2"></v-divider>
                 <router-link :to="`/${APP_BASE_ROUTE}/${id}/${mapSettings.country}`" custom v-slot="{ navigate }">
                     <button class="text-left w-100" type="button" @click="navigate">
-                        <ColorScaleIcon class="float-left mr-2" :size="24" :indicator="id"></ColorScaleIcon>
-                        <v-list-item-title :class="isSelectedIndicator(id, index) ? 'selected-indicator-text' : ''">
+                        <ColorScaleIcon
+                            class="float-left mr-2"
+                            :size="24"
+                            :indicator="id"
+                            :class="isSelectedIndicator(id, index) ? '' : 'unselected-color-icon'"
+                        ></ColorScaleIcon>
+                        <v-list-item-title :class="isSelectedIndicator(id, index) ? 'max-bold-text' : ''">
                             {{ appConfig.indicators[id].humanReadableName }}
                         </v-list-item-title>
                         <v-list-item-subtitle class="pt-1">
@@ -59,10 +56,7 @@ import { useAppStore } from "../../stores/appStore";
 import { APP_BASE_ROUTE } from "../../router/utils";
 
 const { admin0GeojsonFeature, appConfig, mapSettings } = storeToRefs(useAppStore());
-const indicatorGroupIds = computed(() => {
-    console.log(appConfig.value.indicatorGroups);
-    return appConfig.value.indicatorGroups.map((ig) => ig.mainIndicator);
-});
+const indicatorGroupIds = computed(() => appConfig.value.indicatorGroups.map((ig) => ig.mainIndicator));
 
 const isSelectedIndicator = (indicatorId: string, index: number) => {
     return (
@@ -81,7 +75,26 @@ const slideGroupClicked = (event: PointerEvent) => {
 </script>
 
 <style>
-.selected-indicator-text {
+.max-bold-text {
     font-weight: 1000;
+}
+
+.unselected-color-icon {
+    opacity: 0.6;
+}
+
+.menu-container {
+    padding-block: 0.75rem;
+}
+
+.country-name-and-admin-toggle-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.menu-divider {
+    margin-block: 1rem;
 }
 </style>
