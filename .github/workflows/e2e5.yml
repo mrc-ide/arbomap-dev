@@ -13,14 +13,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Set up Node
-        uses: actions/setup-node@v4
+
+      - name: Run E2E shard
+        uses: ./.github/actions/run-e2e-shard
         with:
-          node-version: 20
-          cache: 'npm'
-      - name: Install dependencies
-        run: npm ci
-      - name: Install playwright
-        run: npx playwright install --with-deps
-      - name: Run e2e tests
-        run: npm run test:e2e:5
+          shard: 5
