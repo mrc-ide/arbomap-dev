@@ -8,7 +8,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     ActivatorVerticalDivider: typeof import('./components/mapSettingsMenu/ActivatorVerticalDivider.vue')['default']
-    AdminLevelToggle: typeof import('./components/AdminLevelToggle.vue')['default']
+    AdminLevelToggle: typeof import('./components/mapSettingsMenu/AdminLevelToggle.vue')['default']
     Choropleth: typeof import('./components/Choropleth.vue')['default']
     ColorScaleIcon: typeof import('./components/mapSettingsMenu/ColorScaleIcon.vue')['default']
     ExcelDownloadButton: typeof import('./components/ExcelDownloadButton.vue')['default']
