@@ -1,4 +1,4 @@
-name: E2E Tests
+name: E2E Tests Part 1
 on:
   push:
     branches:
@@ -23,4 +23,4 @@ jobs:
       - name: Install playwright
         run: npx playwright install --with-deps
       - name: Run e2e tests
-        run: npm run test:e2e
+        run: npm run test:e2e:5

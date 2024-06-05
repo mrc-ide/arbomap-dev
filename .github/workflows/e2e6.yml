@@ -1,0 +1,26 @@
+name: E2E Tests Part 1
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+      - "mrc-*"
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci
+      - name: Install playwright
+        run: npx playwright install --with-deps
+      - name: Run e2e tests
+        run: npm run test:e2e:6
