@@ -17,6 +17,8 @@
             </LControl>
             <LControl position="topright">
                 <HelpAlert />
+            </LControl>
+            <LControl position="topright">
                 <ExcelDownloadButton />
             </LControl>
             <LControl v-if="isLargeScreen" position="bottomleft" style="margin-left: 2rem; margin-bottom: 2rem">

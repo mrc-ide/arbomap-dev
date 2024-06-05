@@ -4,7 +4,7 @@ import { defineConfig, devices } from "@playwright/test";
 export default defineConfig({
     testDir: "./tests/e2e",
     /* Maximum time one test can run for. */
-    timeout: process.env.CI ? 60 * 1000 : 30 * 1000,
+    timeout: process.env.CI ? 10 * 1000 : 5 * 1000,
     expect: {
         /**
          * Maximum time expect() should wait for the condition to be met.

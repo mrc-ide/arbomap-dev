@@ -11,7 +11,7 @@
             <div v-for="(id, index) in indicatorGroupIds" :key="id">
                 <v-divider v-if="index !== 0" class="menu-divider" :thickness="2"></v-divider>
                 <router-link :to="`/${APP_BASE_ROUTE}/${id}/${mapSettings.country}`" custom v-slot="{ navigate }">
-                    <button class="text-left w-100" type="button" @click="navigate">
+                    <button class="text-left w-100 indicator-button" type="button" @click="navigate">
                         <ColorScaleIcon
                             class="float-left mr-2"
                             :size="24"
