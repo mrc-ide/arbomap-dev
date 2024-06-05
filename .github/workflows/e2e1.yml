@@ -11,6 +11,9 @@ jobs:
   e2e:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Run E2E shard
         uses: ./.github/actions/run-e2e-shard
         with:
