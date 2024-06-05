@@ -7,9 +7,9 @@
         title="How to use this map"
         :text="helpText"
     />
-    <v-btn id="helpButton" aria-label="Help" icon density="compact" v-show="!isActive" @click="isActive = !isActive">
+    <v-btn id="helpButton" aria-label="Help" class="icon-button" v-show="!isActive" @click="isActive = !isActive">
         <v-icon>mdi-help-circle-outline</v-icon>
-        <v-tooltip location="bottom" activator="parent">Help</v-tooltip>
+        <v-tooltip location="left" activator="parent">Help</v-tooltip>
     </v-btn>
 </template>
 
@@ -22,7 +22,8 @@ const helpText = `
     Click on a region to view that country's values at higher resolution. Click on the selected
     country again to return to default view. Use buttons at the bottom left to select estimate indicator,
     and at the top left to control the zoom level. To toggle admin level when viewing a selected country,
-    use the controls in the top right.
+    use the controls in the top right. Click the download icon on the top right to download values as an
+    Excel file.
 `;
 
 // Initialize alert as open or closed based on localStorage

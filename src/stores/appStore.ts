@@ -2,17 +2,21 @@ import { defineStore } from "pinia";
 import {
     getAppConfig,
     getCountryBoundingBoxes,
+    getCountryNames,
     getGeojsonFeatures,
     getGlobalGeojsonFeatures,
     getGlobalIndicators,
     getIndicators
 } from "../resources/utils";
 import { AppState } from "../types/storeTypes";
+
 import { MapSettings } from "../types/resourceTypes";
 
 export const useAppStore = defineStore("app", {
     state: (): AppState => ({
         appConfig: null,
+
+        countryNames: null,
         countryBoundingBoxes: {},
         admin1Indicators: {},
         admin1Geojson: {},
@@ -29,10 +33,10 @@ export const useAppStore = defineStore("app", {
         async initialiseData() {
             const state = this as AppState;
             state.appConfig = await getAppConfig();
+            state.countryNames = await getCountryNames();
             state.countryBoundingBoxes = await getCountryBoundingBoxes();
             state.admin1Geojson = await getGlobalGeojsonFeatures(1);
             state.admin1Indicators = await getGlobalIndicators(1);
-
             state.initialisationComplete = true;
         },
         async updateMapSettings(newMapSettings: MapSettings) {

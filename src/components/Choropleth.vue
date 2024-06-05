@@ -17,6 +17,7 @@
             </LControl>
             <LControl position="topright">
                 <HelpAlert />
+                <ExcelDownloadButton />
             </LControl>
             <LControl v-if="isLargeScreen" position="bottomleft" style="margin-left: 2rem; margin-bottom: 2rem">
                 <map-settings-menu :is-large-screen="true"></map-settings-menu>
@@ -46,6 +47,7 @@ import { useLoadingSpinner } from "../composables/useLoadingSpinner";
 import { useSelectedMapInfo } from "../composables/useSelectedMapInfo";
 import MapSettingsMenu from "./mapSettingsMenu/MapSettingsMenu.vue";
 import { MapFeature } from "../types/resourceTypes";
+import ExcelDownloadButton from "./ExcelDownloadButton.vue";
 
 const router = useRouter();
 const { mapSettings, appConfig, mapLoading } = storeToRefs(useAppStore());

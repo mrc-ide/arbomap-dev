@@ -12,6 +12,10 @@ export const getAppConfig = async () => {
     return (await getResource("config.json")) as AppConfig;
 };
 
+export const getCountryNames = async () => {
+    return (await getResource("countryNames.json")) as Dict<string>;
+};
+
 export const getIndicators = async (country: string, level: number) => {
     return (await getResource(`indicators/admin${level}/${country}.json`)) as FeatureIndicators;
 };

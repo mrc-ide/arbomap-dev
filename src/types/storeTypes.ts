@@ -5,6 +5,7 @@ export interface AppState {
     // these state variables only get updated once on initialisation, we keep all data in
     // dictionaries with country ids as keys, mirroring the resources on disk
     appConfig: AppConfig;
+    countryNames: Dict<string>;
     countryBoundingBoxes: Dict<BoundingBox>;
     admin1Indicators: Dict<FeatureIndicators>;
     admin1Geojson: Dict<MapFeature[]>;
