@@ -1,4 +1,4 @@
-name: E2E Tests Part 1
+name: E2E Tests Part 6
 on:
   push:
     branches:
