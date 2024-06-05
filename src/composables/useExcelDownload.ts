@@ -7,6 +7,7 @@ import { Dict } from "../types/utilTypes";
 import { useAppStore } from "../stores/appStore";
 import { useIndicatorColors } from "./useIndicatorColors";
 import { debounce } from "../utils";
+import {PATHOGEN, VERSION} from "../router/utils";
 
 export const useExcelDownload = () => {
     const { mapSettings, appConfig, admin1Indicators, admin2Indicators, admin1Geojson, admin2Geojson, countryNames } =
@@ -95,8 +96,11 @@ export const useExcelDownload = () => {
         XLSX.utils.book_append_sheet(workbook, sheet, `admin${level}`);
     };
 
-    const buildGlobalIndicatorsWorkbook = (workbook: WorkBook) => {
+    const buildGlobalIndicatorsWorkbook = (workbook: WorkBook, includeAdmin2: boolean) => {
         writeTab(workbook, 1, admin1Indicators.value, admin1Geojson.value);
+        if (includeAdmin2) {
+            console.log("should include admin2")
+        }
     };
 
     const buildCountryIndicatorsWorkbook = (workbook: WorkBook, countryId: string) => {
@@ -109,24 +113,24 @@ export const useExcelDownload = () => {
         }
     };
 
-    const downloadFile = () => {
+    const downloadFile = (includeAdmin2ForGlobal) => {
         const workbook = XLSX.utils.book_new();
         const { country } = mapSettings.value;
-        const fileName = `arbomap_${country || "GLOBAL"}.xlsx`;
+        const fileName = `arbomap_${PATHOGEN}_${VERSION}_${country || "GLOBAL"}.xlsx`;
         if (country) {
             buildCountryIndicatorsWorkbook(workbook, country);
         } else {
-            buildGlobalIndicatorsWorkbook(workbook);
+            buildGlobalIndicatorsWorkbook(workbook, includeAdmin2ForGlobal);
         }
 
         XLSX.writeFile(workbook, fileName);
     };
 
-    const download = () => {
+    const download = (includeAdmin2ForGlobal = false) => {
         downloadError.value = null;
         debounce(() => {
             try {
-                downloadFile();
+                downloadFile(includeAdmin2ForGlobal);
             } catch (e) {
                 console.log(`Error downloading Excel file: ${e}`);
                 downloadError.value = e;

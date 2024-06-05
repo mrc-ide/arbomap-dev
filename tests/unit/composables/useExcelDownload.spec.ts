@@ -55,7 +55,7 @@ describe("useExcelDownload", () => {
             expect(mockWriteFile.mock.calls[0][0]).toStrictEqual({
                 sheets: [expectedSheet]
             });
-            expect(mockWriteFile.mock.calls[0][1]).toBe("arbomap_GLOBAL.xlsx");
+            expect(mockWriteFile.mock.calls[0][1]).toBe("arbomap_dengue_may24_GLOBAL.xlsx");
             expect(sut.downloadError.value).toBe(null);
         });
     });
@@ -166,7 +166,7 @@ describe("useExcelDownload", () => {
             expect(mockWriteFile.mock.calls[0][0]).toStrictEqual({
                 sheets: [expectedAdmin1Sheet, expectedAdmin2Sheet]
             });
-            expect(mockWriteFile.mock.calls[0][1]).toBe("arbomap_TZA.xlsx");
+            expect(mockWriteFile.mock.calls[0][1]).toBe("arbomap_dengue_may24_TZA.xlsx");
         });
     });
 
@@ -188,7 +188,7 @@ describe("useExcelDownload", () => {
             expect(mockWriteFile.mock.calls[0][0]).toStrictEqual({
                 sheets: [expectedAdmin1Sheet] // admin1 sheet only
             });
-            expect(mockWriteFile.mock.calls[0][1]).toBe("arbomap_TZA.xlsx");
+            expect(mockWriteFile.mock.calls[0][1]).toBe("arbomap_dengue_may24_TZA.xlsx");
         });
     });
 

@@ -4,20 +4,18 @@
         <v-tooltip location="left" activator="parent">Download Excel</v-tooltip>
     </v-btn>
     <v-dialog v-model="dialogOpen" width="auto">
-
             <v-card title="Excel Download">
                 <v-card-text>
-                    Do you want to include Admin2 region values in the download?
+                    Do you want to include Admin 2 region values in the download?
                 </v-card-text>
                 <template v-slot:actions>
                     <v-card-actions>
-                        <v-spacer></v-spacer>
-                        <v-btn
-                            text="Yes, include Admin2"
+                       <v-btn
+                            text="Yes"
                             @click="downloadGlobal(true)"
                         ></v-btn>
                         <v-btn
-                            text="No, download Admin1 only"
+                            text="No"
                             @click="downloadGlobal(true)"
                         ></v-btn>
                         <v-btn
