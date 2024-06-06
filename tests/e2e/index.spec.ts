@@ -72,7 +72,7 @@ test.describe("Index page", () => {
         const firstRegion = await getNthRegion(page, 1);
         await firstRegion.hover();
         await expect(await page.innerText(".leaflet-tooltip-pane")).toContain("Bengo");
-        await expect(await page.innerText(".leaflet-tooltip-pane")).toContain("Force of infection: 0.0455");
+        await expect(await page.innerText(".leaflet-tooltip-pane")).toContain("Force of infection: 0.0508");
         await expect(await page.innerText(".leaflet-tooltip-pane")).toContain("Seroprevalence at age 9 years: 33.5%");
         await expect(await page.innerText(".leaflet-tooltip-pane")).toContain(
             "Seroprevalence classification at age 9 years: Under 40%"
