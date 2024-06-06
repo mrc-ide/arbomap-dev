@@ -20,7 +20,7 @@
 import { storeToRefs } from "pinia";
 import { useAppStore } from "../../stores/appStore";
 import { APP_BASE_ROUTE } from "../../router/utils";
-import { routerPush, AdminLevel } from "../../utils";
+import { routerPush } from "../../utils";
 
 const router = useRouter();
 
@@ -53,16 +53,15 @@ const customFilter = (itemTitle: string, queryText: string) => {
 
 const handleChangeCountry = (countryCode: string) => {
     if (countryCode === null) {
-        // User is probably just trying to clear the input field, not to go to a global view
+        // User is probably just trying to clear the input field, not trying to go to a global view
         return;
     }
 
     mapLoading.value = true;
-    const { indicator, adminLevel } = mapSettings.value;
+    const { indicator } = mapSettings.value;
 
     if (countryCode) {
-        const level = adminLevel === 1 ? AdminLevel.ONE : AdminLevel.TWO;
-        routerPush(router, `/${APP_BASE_ROUTE}/${indicator}/${countryCode}/${level}`);
+        routerPush(router, `/${APP_BASE_ROUTE}/${indicator}/${countryCode}`);
     } else {
         routerPush(router, `/${APP_BASE_ROUTE}/${indicator}`);
     }
