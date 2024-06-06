@@ -10,18 +10,22 @@ import { debounce } from "../utils";
 import {PATHOGEN, VERSION} from "../router/utils";
 import {BuildExcel} from "../excel/buildExcel";
 
+export const excelFilename = (country?: string, level?: AdminLevel) => {
+    const levelPart = level ? `_${level}` : '';
+    return `arbomap_${PATHOGEN}_${VERSION}_${country || "GLOBAL"}${levelPart}.xlsx`;
+}
+
 export const useExcelDownload = () => {
     const { mapSettings, appConfig, admin1Indicators, admin2Indicators, admin1Geojson, admin2Geojson, countryNames } =
         storeToRefs(useAppStore());
-
-    //const { getIndicatorColorType, getIndicatorValueColorCategory } = useIndicatorColors(appConfig);
 
     const downloadError: Ref<Error | null> = ref(null);
 
     const downloadFile = (includeAdmin2ForGlobal) => {
         const workbook = XLSX.utils.book_new();
         const { country } = mapSettings.value;
-        const fileName = `arbomap_${PATHOGEN}_${VERSION}_${country || "GLOBAL"}.xlsx`;
+        //const fileName = `arbomap_${PATHOGEN}_${VERSION}_${country || "GLOBAL"}.xlsx`;
+        const fileName = excelFilename(country);
         const builder = new BuildExcel(appConfig.value, countryNames.value, admin1Indicators.value, admin2Indicators.value,
             admin1Geojson.value, admin2Geojson.value);
         if (country) {

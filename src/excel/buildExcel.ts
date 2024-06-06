@@ -115,7 +115,7 @@ export class BuildExcel {
     public buildGlobalIndicatorsWorkbook (workbook: WorkBook, includeAdmin2: boolean)  {
         this._writeTab(workbook, 1, this._admin1Indicators, this._admin1Geojson);
         if (includeAdmin2) {
-            console.log("should include admin2")
+            this._writeTab(workbook, 2, this._admin2Indicators, this._admin2Geojson);
         }
     };
 
