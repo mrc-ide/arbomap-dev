@@ -1,8 +1,8 @@
-import { computed, ComputedRef } from "vue";
+import {computed, ComputedRef, Ref} from "vue";
 import { storeToRefs } from "pinia";
 import * as d3ScaleChromatic from "d3-scale-chromatic";
 import Color from "color";
-import { FeatureIndicatorValues, FeatureIndicators, IndicatorValue, ColorType } from "../types/resourceTypes";
+import {FeatureIndicatorValues, FeatureIndicators, IndicatorValue, ColorType, AppConfig} from "../types/resourceTypes";
 import { Dict } from "../types/utilTypes";
 import { useAppStore } from "../stores/appStore";
 
@@ -17,10 +17,10 @@ type FillAndOutlineColor = {
     outlineColor: string;
 };
 
-export const useIndicatorColors = (selectedIndicators: ComputedRef<FeatureIndicators>) => {
+export const useIndicatorColors = (appConfig: Ref<AppConfig>, selectedIndicators: ComputedRef<FeatureIndicators>) => {
     // TODO: we currently just scale colours to min and max in data, but
     // we can also provide option to scale to config
-    const { appConfig } = storeToRefs(useAppStore());
+    //const { appConfig } = storeToRefs(useAppStore());
 
     const getIndicatorColorType = (indicator: string) => appConfig.value.indicators[indicator].colors.type;
 

@@ -11,6 +11,8 @@
 import { computed } from "vue";
 import { useIndicatorColors } from "../../composables/useIndicatorColors";
 import { ColorType } from "../../types/resourceTypes";
+import {storeToRefs} from "pinia";
+import {useAppStore} from "../../stores/appStore";
 
 const props = defineProps({
     size: {
@@ -24,7 +26,9 @@ const props = defineProps({
 });
 
 const halfway = computed(() => props.size / 2);
-const { getIndicatorValueColor, getIndicatorColorType, getIndicatorColorCategories } = useIndicatorColors();
+
+const { appConfig } = storeToRefs(useAppStore());
+const { getIndicatorValueColor, getIndicatorColorType, getIndicatorColorCategories } = useIndicatorColors(appConfig);
 
 const iconColors = computed(() => {
     if (getIndicatorColorType(props.indicator) === ColorType.Scale) {

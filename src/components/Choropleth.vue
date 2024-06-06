@@ -52,7 +52,7 @@ const featureProperties = appConfig.value.geoJsonFeatureProperties;
 const { selectedFeatures, selectedIndicators } = useSelectedMapInfo();
 
 const { tooltipForFeature } = useTooltips(selectedIndicators);
-const { getFillAndOutlineColor } = useIndicatorColors(selectedIndicators);
+const { getFillAndOutlineColor } = useIndicatorColors(appConfig, selectedIndicators);
 
 const featureInSelectedCountry = (feature: Feature) =>
     feature.properties[featureProperties.country] === mapSettings.value.country;
