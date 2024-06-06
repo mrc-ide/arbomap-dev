@@ -15,7 +15,7 @@
     "test:unit": "vitest",
     "test:coverage": "vitest --coverage",
     "test:e2e": "playwright test",
-    "generate:global-excel": "npx vite-node scripts/generate_global_excel.ts"
+    "generate:global-excel": "npx vite-node scripts/npm/generate_global_excel.ts"
   },
   "dependencies": {
     "@mdi/font": "6.2.95",
