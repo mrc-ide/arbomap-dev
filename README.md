@@ -21,6 +21,22 @@ Run e2e tests: `npm run test:e2e`
 
 ## Data and Scripts
 
+### TL;DR
+
+If you haven't already installed the R packages we use for our R script please run
+```
+./scripts/install-r-deps.R
+```
+
+To update all the data and copy it to public folder, run
+```
+./scripts/update-data
+```
+
+To configure whether each individual script is run or to stop automatic copying of the files into the public folder please run `./scripts/update-data --help` for a list of flags you can use.
+
+### More detail
+
 We work with two sets of data:
 - indicator values: these are provided by the researchers in the form of xlsx files, and can be found in the `data/raw` 
 directory, with `Adm1_` and `Adm2_` prefixes. These provide indicator values (force of infection, seroprevalence at age 9,
