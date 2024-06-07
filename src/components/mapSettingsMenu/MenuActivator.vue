@@ -5,20 +5,20 @@
             role="button"
             :class="props.isLargeScreen ? 'indicator-menu-activator-desktop' : 'indicator-menu-activator-mobile'"
         >
-            <p class="text-wrap">
-                <div v-if="isGlobal">
+            <div class="text-wrap">
+                <p v-if="isGlobal">
                     {{ buttonSummary.indicator }}
                     <activator-vertical-divider />
                     {{ buttonSummary.country }}
-                </div>
-                <div v-else>
+                </p>
+                <p v-else>
                     {{ buttonSummary.indicator }}
                     <activator-vertical-divider />
                     {{ buttonSummary.country }}
                     <activator-vertical-divider />
                     {{ buttonSummary.adminLevel }}
-                </div>
-            </p>
+                </p>
+            </div>
             <v-icon :icon="menuOpen ? 'mdi-chevron-down' : 'mdi-chevron-up'" end></v-icon>
             <v-menu
                 :class="props.isLargeScreen ? 'indicator-menu-desktop' : 'indicator-menu-mobile'"
