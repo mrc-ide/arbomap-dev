@@ -6,7 +6,18 @@
             :class="props.isLargeScreen ? 'indicator-menu-activator-desktop' : 'indicator-menu-activator-mobile'"
         >
             <p class="text-wrap">
-                {{ buttonSummary }}
+                <div v-if="isGlobal">
+                    {{ buttonSummary.indicator }}
+                    <activator-vertical-divider />
+                    {{ buttonSummary.country }}
+                </div>
+                <div v-else>
+                    {{ buttonSummary.indicator }}
+                    <activator-vertical-divider />
+                    {{ buttonSummary.country }}
+                    <activator-vertical-divider />
+                    {{ buttonSummary.adminLevel }}
+                </div>
             </p>
             <v-icon :icon="menuOpen ? 'mdi-chevron-down' : 'mdi-chevron-up'" end></v-icon>
             <v-menu
@@ -21,7 +32,8 @@
                     :class="isLargeScreen ? 'indicator-menu-list-item-desktop' : 'indicator-menu-list-item-mobile'"
                 >
                     <v-list-item
-                        class="bg-black mb-2 rounded elevation-4 border-lg indicator-menu-list-item-wrapper"
+                        class="bg-black rounded elevation-4 indicator-menu-list-item-wrapper"
+                        :class="isLargeScreen ? 'border-lg' : ''"
                         :ripple="false"
                     >
                         <slot></slot>
@@ -47,12 +59,13 @@ const props = defineProps({
     }
 });
 
+const isGlobal = computed(() => !admin0GeojsonFeature.value?.properties.COUNTRY);
+
 const buttonSummary = computed(() => {
-    const isGlobal = !admin0GeojsonFeature.value?.properties.COUNTRY;
     const country = admin0GeojsonFeature.value?.properties.COUNTRY || "Global";
     const indicator = appConfig.value.indicators[mapSettings.value.indicator].humanReadableName;
     const adminLevel = mapSettings.value.adminLevel === 1 ? "Admin 1" : "Admin 2";
-    return isGlobal ? `${country} | ${indicator}` : `${country} | ${indicator} | ${adminLevel}`;
+    return { country, indicator, adminLevel };
 });
 </script>
 
@@ -64,6 +77,7 @@ const buttonSummary = computed(() => {
 .indicator-menu-mobile {
     .v-overlay__content {
         left: 0px !important;
+        border-radius: 0 !important;
     }
 }
 
@@ -84,7 +98,16 @@ const buttonSummary = computed(() => {
     padding-block: 10px;
 }
 
-.indicator-menu-list-item-wrapper {
+.indicator-menu-list-item-mobile .indicator-menu-list-item-wrapper {
     padding-inline: 0px !important;
+    border-radius: 0 !important;
+}
+
+.indicator-menu-list-item-desktop .indicator-menu-list-item-wrapper {
+    padding-inline: 0px !important;
+}
+
+.indicator-menu-list-item-mobile {
+    padding-bottom: 0 !important;
 }
 </style>
