@@ -229,6 +229,8 @@ test.describe("Index page", () => {
     });
 
     test("selecting a country or 'global' from the country-select navigates to the correct view", async ({ page }) => {
+        test.setTimeout(10000);
+
         // currently just check that selecting a country increases the number of rendered regions
         // (drills down to admin2 on selected country)
         await page.waitForURL(/dengue\/may24\/FOI/i);
@@ -240,9 +242,6 @@ test.describe("Index page", () => {
         await page.click(".indicator-menu-activator-desktop");
         await expect(page.locator(".indicator-menu-desktop")).toBeVisible();
         await page.focus(".v-field__input input");
-        for (let i = 0; i < "Global".length; i++) {
-            await page.keyboard.press("Backspace");
-        }
         await page.keyboard.type("Indi");
 
         // select India
@@ -257,10 +256,8 @@ test.describe("Index page", () => {
         expect(newBounds).not.toEqual(globalBounds);
 
         await expect(page.locator(".indicator-menu-desktop")).toBeVisible();
+        await page.locator(".v-field__input input").blur();
         await page.focus(".v-field__input input");
-        for (let i = 0; i < "India".length; i++) {
-            await page.keyboard.press("Backspace");
-        }
         await page.keyboard.type("Gl");
 
         // select Global

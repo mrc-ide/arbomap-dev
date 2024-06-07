@@ -1,4 +1,5 @@
-import { render } from "@testing-library/vue";
+import { render, screen } from "@testing-library/vue";
+import userEvent from "@testing-library/user-event";
 import { describe, expect, test } from "vitest";
 import { mockMapSettings, mockPinia } from "../../mocks/mockPinia";
 import CountrySelector from "../../../../src/components/mapSettingsMenu/CountrySelector.vue";
@@ -27,5 +28,17 @@ describe("CountrySelector", () => {
     test("renders as expected on country view", async () => {
         const { findByText } = renderComponent("MWI");
         expect(await findByText("Malawi")).toBeVisible();
+    });
+
+    test("items appear when click input", async () => {
+        await renderComponent("");
+        const user = userEvent.setup();
+        const globalListItem = await screen.findByText("Global");
+        expect(globalListItem).toBeVisible();
+        expect((globalListItem as HTMLElement).className).toContain("v-autocomplete__selection-text");
+        await user.click(globalListItem);
+        const mwiListItem = await screen.findByText("Malawi");
+        expect(mwiListItem).toBeVisible();
+        expect((mwiListItem as HTMLElement).className).toContain("v-list-item-title");
     });
 });

@@ -1,17 +1,19 @@
 <template>
     <v-autocomplete
         label="Country"
-        :model-value="mapSettings.country"
+        :model-value="country"
+        @focus="clearSearchInput"
         @update:model-value="handleChangeCountry"
+        @update:search="handleChangeSearchQuery"
         :items="countryItems"
         :custom-filter="customFilter"
-        placeholder="Start typing to filter"
+        placeholder="Start typing to find a country"
         no-data-text="No matching countries found"
         variant="solo-filled"
         density="compact"
+        :min-width="autocompleteMinWidth"
         single-line
         hide-details
-        clearable
         auto-select-first
     ></v-autocomplete>
 </template>
@@ -25,33 +27,85 @@ import { routerPush } from "../../utils";
 const router = useRouter();
 
 const { mapSettings, countryNames, mapLoading } = storeToRefs(useAppStore());
+// A ref to be used for the v-autocomplete model (which tracks what option is currently selected)
+const country = ref<string | null>(mapSettings.value.country);
+// A ref to be used as a copy of the v-autocomplete query (which tracks what has been typed in the input),
+// so that we can sort the options in the dropdown.
+const searchQuery = ref("");
+
+const globalOption = { title: "Global", value: "" };
+const autocompleteMinWidth = 265; // Determined by pixel width of placeholder text
+
+const normalizeCountryName = (name: string) => {
+    let normalizedName = name.toLowerCase();
+
+    // Normalize characters used in Réunion, México, and Côte d'Ivoire
+    normalizedName = normalizedName.replace("é", "e");
+    normalizedName = normalizedName.replace("ô", "o");
+    // Remove commas and periods
+    normalizedName = normalizedName.replace(/[,./]/g, "");
+
+    return normalizedName;
+};
+
+const handleChangeSearchQuery = (query: string) => {
+    searchQuery.value = query;
+};
 
 const countryItems = computed(() => {
-    const items = Object.entries(countryNames.value).map(([code, name]) => ({
-        title: name,
-        value: code
-    }));
-    items.unshift({ title: "Global", value: "" });
+    const items = Object.entries(countryNames.value)
+        .sort(([, firstName], [, secondName]) => {
+            // Sort by whether the query is a prefix of the country name, so that a search for
+            // 'Republic' lists 'Republic of the Congo' before 'Central African Republic'
+            const query = normalizeCountryName(searchQuery.value);
+            const firstStartsWithQuery = normalizeCountryName(firstName).startsWith(query);
+            const secondStartsWithQuery = secondName.startsWith(query);
+            if (firstStartsWithQuery && !secondStartsWithQuery) {
+                return -1;
+            }
+            if (!firstStartsWithQuery && secondStartsWithQuery) {
+                return 1;
+            }
+            return 0;
+        })
+        .map(([code, name]) => ({
+            title: name,
+            value: code
+        }));
+    // Show the global option at the top so that it's easy to find
+    items.unshift(globalOption);
     return items;
 });
+
+const clearSearchInput = () => {
+    // Use null rather than empty string because we generally use empty string to represent the 'global' option
+    country.value = null;
+};
 
 // A custom filter that matches on the starts of words, rather than including substrings, so that
 // a query 'B' returns countries starting with B, not just countries that contain 'b'.
 const customFilter = (itemTitle: string, queryText: string) => {
-    const itemText = itemTitle.toLowerCase();
-    const query = queryText.toLowerCase();
-    if (query.includes(" ")) {
+    if (itemTitle === globalOption.title) {
+        // Always show the global option
+        return true;
+    }
+
+    const itemText = normalizeCountryName(itemTitle);
+    const query = normalizeCountryName(queryText);
+    if (query.includes(" ") || query.includes("-")) {
         return itemText.includes(query);
     }
 
-    const words = itemText.split(" ").filter((word) => {
+    const words = itemText.split(/\s|-/).filter((word) => {
         // Ignore 'functor' words that are unlikely to be what people are querying for
         return !["and", "the", "of"].includes(word);
     });
+
+    // Show the option if any of its words start with the query
     return words.some((word) => word.startsWith(query));
 };
 
-const handleChangeCountry = (countryCode: string) => {
+const handleChangeCountry = (countryCode: string | null) => {
     if (countryCode === null) {
         // User is probably just trying to clear the input field, not trying to go to a global view
         return;
