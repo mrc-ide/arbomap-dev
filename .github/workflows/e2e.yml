@@ -1,0 +1,70 @@
+name: E2E Tests Part 1
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+      - "mrc-*"
+jobs:
+  e2e-1:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run E2E shard
+        uses: ./.github/actions/run-e2e-shard
+        with:
+          shard: 1
+  e2e-2:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run E2E shard
+        uses: ./.github/actions/run-e2e-shard
+        with:
+          shard: 2
+  e2e-3:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run E2E shard
+        uses: ./.github/actions/run-e2e-shard
+        with:
+          shard: 3
+  e2e-4:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run E2E shard
+        uses: ./.github/actions/run-e2e-shard
+        with:
+          shard: 4
+  e2e-5:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run E2E shard
+        uses: ./.github/actions/run-e2e-shard
+        with:
+          shard: 5
+  e2e-6:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run E2E shard
+        uses: ./.github/actions/run-e2e-shard
+        with:
+          shard: 6

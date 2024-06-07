@@ -37,4 +37,4 @@ runs:
 
     - name: Run e2e tests
       shell: bash
-      run: npm run test:e2e:${{ inputs.shard }}
+      run: npm run test:e2e -- --shard=${{ inputs.shard }}/6
