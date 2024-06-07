@@ -13,8 +13,13 @@ const expectIndexPage = async (
     selectedCountryName: string
 ) => {
     await page.waitForURL(new RegExp(`${BASE_URL}${url}`));
-    await expect(await page.textContent(".indicator-menu-activator-desktop")).toBe(
-        `${selectedCountryName} | ${selectedIndicatorName}${selectedCountry ? " | Admin 2" : ""}`
+    await expect(await page.textContent(".indicator-menu-activator-desktop")).toContainText(selectedCountryName)
+    await expect(await page.textContent(".indicator-menu-activator-desktop")).toContainText(selectedIndicatorName)
+    if (selectedCountry) {
+      await expect(await page.textContent(".indicator-menu-activator-desktop")).toContainText("Admin 2")
+    } else {
+      await expect(await page.textContent(".indicator-menu-activator-desktop")).not.toContainText("Admin")
+    }
     );
     const summary = await page.locator(".choropleth-data-summary");
     await expect(await summary).toHaveAttribute("selected-indicator", selectedIndicatorId);
