@@ -118,7 +118,7 @@ test.describe("Index page", () => {
         await expect(page).toHaveURL("/dengue/may24/serop9");
     });
 
-    test("map settings menu renders as expected global", async ({ page }) => {
+    test("map settings menu renders as expected when no country is selected", async ({ page }) => {
         await page.click(".indicator-menu-activator-desktop");
         await expect(await page.locator(".v-menu .v-list-item").count()).toBe(1);
 
