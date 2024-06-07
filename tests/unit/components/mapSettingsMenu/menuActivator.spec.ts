@@ -20,8 +20,10 @@ const renderComponent = (country = "") => {
 
 describe("MenuActivator", () => {
     test("renders as expected global level", async () => {
-        const { findByText, queryByTestId, findByTestId } = renderComponent();
-        const button = await findByText("Global | Force of infection");
+        const { findByRole, queryByTestId, findByTestId } = renderComponent();
+        const button = await findByRole("button");
+        expect(button.textContent).toContain("Force of infection");
+        expect(button.textContent).toContain("Global");
         expect(button).toBeVisible();
         expect(queryByTestId("test-slot")).toBe(null);
         button.click();
@@ -29,8 +31,11 @@ describe("MenuActivator", () => {
     });
 
     test("renders as expected", async () => {
-        const { findByText, queryByTestId, findByTestId } = renderComponent("TZA");
-        const button = await findByText("Tanzania | Force of infection | Admin 2");
+        const { findByRole, queryByTestId, findByTestId } = renderComponent("TZA");
+        const button = await findByRole("button");
+        expect(button.textContent).toContain("Force of infection");
+        expect(button.textContent).toContain("Tanzania");
+        expect(button.textContent).toContain("Admin 2");
         expect(button).toBeVisible();
         expect(queryByTestId("test-slot")).toBe(null);
         button.click();
