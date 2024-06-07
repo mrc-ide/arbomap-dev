@@ -12,11 +12,11 @@
                     <v-card-actions>
                        <v-btn
                             text="Yes"
-                            @click="downloadGlobal(true)"
+                            @click="handleDownloadGlobal(true)"
                         ></v-btn>
                         <v-btn
                             text="No"
-                            @click="downloadGlobal(true)"
+                            @click="handleDownloadGlobal(false)"
                         ></v-btn>
                         <v-btn
                             text="Cancel"
@@ -43,7 +43,7 @@ import { useExcelDownload } from "../composables/useExcelDownload";
 import {storeToRefs} from "pinia";
 import {useAppStore} from "../stores/appStore";
 
-const { download, downloadError } = useExcelDownload();
+const { downloadSelectedCountry, downloadGlobal, downloadError } = useExcelDownload();
 const { mapSettings } = storeToRefs(useAppStore());
 
 const snackbarOpen = ref(false);
@@ -51,15 +51,15 @@ const dialogOpen = ref(false);
 
 const downloadOrOpenDialog = () => {
     if (mapSettings.value.country) {
-        download();
+        downloadSelectedCountry();
     } else {
         dialogOpen.value = true;
     }
 }
 
-const downloadGlobal = (includeAdmin2) => {
+const handleDownloadGlobal = (includeAdmin2) => {
     dialogOpen.value = false;
-    download(includeAdmin2);
+    downloadGlobal(includeAdmin2);
 }
 
 watch(downloadError, () => {

@@ -1,13 +1,9 @@
 import * as XLSX from "xlsx";
 import { storeToRefs } from "pinia";
-import { WorkBook } from "xlsx";
 import { Ref, ref } from "vue";
-import { ColorType, FeatureIndicators, MapFeature } from "../types/resourceTypes";
-import { Dict } from "../types/utilTypes";
 import { useAppStore } from "../stores/appStore";
-import { useIndicatorColors } from "./useIndicatorColors";
-import { debounce } from "../utils";
-import {PATHOGEN, VERSION} from "../router/utils";
+import {AdminLevel, debounce, downloadFile} from "../utils";
+import {APP_BASE_URL, PATHOGEN, VERSION} from "../router/utils";
 import {BuildExcel} from "../excel/buildExcel";
 
 export const excelFilename = (country?: string, level?: AdminLevel) => {
@@ -21,27 +17,31 @@ export const useExcelDownload = () => {
 
     const downloadError: Ref<Error | null> = ref(null);
 
-    const downloadFile = (includeAdmin2ForGlobal) => {
+    const doDownloadSelectedCountry = () => {
         const workbook = XLSX.utils.book_new();
         const { country } = mapSettings.value;
-        //const fileName = `arbomap_${PATHOGEN}_${VERSION}_${country || "GLOBAL"}.xlsx`;
+        if (!country) {
+            throw Error("No selected country");
+        }
         const fileName = excelFilename(country);
         const builder = new BuildExcel(appConfig.value, countryNames.value, admin1Indicators.value, admin2Indicators.value,
             admin1Geojson.value, admin2Geojson.value);
-        if (country) {
-            builder.buildCountryIndicatorsWorkbook(workbook, country);
-        } else {
-            builder.buildGlobalIndicatorsWorkbook(workbook, includeAdmin2ForGlobal);
-        }
 
+        builder.buildCountryIndicatorsWorkbook(workbook, country);
         XLSX.writeFile(workbook, fileName);
     };
 
-    const download = (includeAdmin2ForGlobal = false) => {
+    const doDownloadGlobal = async (includeAdmin2: boolean) => {
+        const filename = excelFilename(null, includeAdmin2 ? AdminLevel.TWO : AdminLevel.ONE);
+        const url = `${APP_BASE_URL}/resources/excel/${filename}`;
+        await downloadFile(url, filename);
+    };
+
+    const download = (doDownload: () => void | Promise<void>) => {
         downloadError.value = null;
-        debounce(() => {
+        debounce(async () => {
             try {
-                downloadFile(includeAdmin2ForGlobal);
+                await doDownload();
             } catch (e) {
                 console.log(`Error downloading Excel file: ${e}`);
                 downloadError.value = e;
@@ -49,5 +49,15 @@ export const useExcelDownload = () => {
         })();
     };
 
-    return { download, downloadError };
+    const downloadSelectedCountry = () => {
+        download(doDownloadSelectedCountry);
+    };
+
+    const downloadGlobal = (includeAdmin2: bool) => {
+        download(async () => {
+            await doDownloadGlobal(includeAdmin2);
+        });
+    };
+
+    return { downloadSelectedCountry, downloadGlobal, downloadError };
 };
