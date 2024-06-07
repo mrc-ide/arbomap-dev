@@ -23,6 +23,14 @@ const renderComponent = (adminLevel: number, missingAdmin2Data = false) => {
 };
 
 describe("AdminLevelToggle", () => {
+    beforeAll(() => {
+        vi.useFakeTimers();
+    });
+
+    afterAll(() => {
+        vi.useRealTimers();
+    });
+
     test("renders as expected with admin level 1", async () => {
         const { findAllByRole } = renderComponent(1);
         const buttons = await findAllByRole("button");
@@ -47,7 +55,6 @@ describe("AdminLevelToggle", () => {
     });
 
     test("router push when admin level is changed", async () => {
-        vi.useFakeTimers();
         const spyRouterPush = vi.spyOn(router, "push");
         const { findAllByRole } = renderComponent(2, true);
         const buttons = await findAllByRole("button");
@@ -55,6 +62,5 @@ describe("AdminLevelToggle", () => {
         admin1Button.click();
         vi.runAllTimers();
         expect(spyRouterPush).toHaveBeenCalledWith(`/${APP_BASE_ROUTE}/FOI/TZA/admin1`);
-        vi.useRealTimers();
     });
 });
