@@ -156,6 +156,20 @@ test.describe("Index page", () => {
         await expect(adminToggle).toHaveCount(1);
     });
 
+    test("admin toggle works when a country has been selected", async ({ page }) => {
+        await page.goto("dengue/may24/FOI/AGO");
+        await page.click(".indicator-menu-activator-desktop");
+        const adminToggle = await page.locator("#admin-toggle");
+        const allRegions = await page.locator(GEOJSON_SELECTOR);
+
+        await expect(await allRegions).toHaveCount(2060);
+
+        await adminToggle.getByRole("button", { name: "Admin 1" }).click();
+        await page.waitForURL(/dengue\/may24\/FOI\/AGO\/admin1/i);
+
+        await expect(await allRegions).toHaveCount(1915);
+    });
+
     test("clicking hospitalisation age group browses to indicator", async ({ page }) => {
         await page.click(".indicator-menu-activator-desktop");
         await page.locator(":nth-match(.v-slide-group button, 3)").click();

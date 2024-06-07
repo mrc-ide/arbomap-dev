@@ -13,12 +13,12 @@ const expectIndexPage = async (
     selectedCountryName: string
 ) => {
     await page.waitForURL(new RegExp(`${BASE_URL}${url}`));
-    await expect(await page.textContent(".indicator-menu-activator-desktop")).toContainText(selectedCountryName)
-    await expect(await page.textContent(".indicator-menu-activator-desktop")).toContainText(selectedIndicatorName)
+    await expect(await page.locator(".indicator-menu-activator-desktop")).toContainText(selectedCountryName)
+    await expect(await page.locator(".indicator-menu-activator-desktop")).toContainText(selectedIndicatorName)
     if (selectedCountry) {
-      await expect(await page.textContent(".indicator-menu-activator-desktop")).toContainText("Admin 2")
+      await expect(await page.locator(".indicator-menu-activator-desktop")).toContainText("Admin 2")
     } else {
-      await expect(await page.textContent(".indicator-menu-activator-desktop")).not.toContainText("Admin")
+      await expect(await page.locator(".indicator-menu-activator-desktop")).not.toContainText("Admin")
     }
     const summary = await page.locator(".choropleth-data-summary");
     await expect(await summary).toHaveAttribute("selected-indicator", selectedIndicatorId);
@@ -95,7 +95,7 @@ test.describe("Router", () => {
 
     test("is case-insensitive", async ({ page }) => {
         await page.goto("/DENGUE/May24/SEROP9/tza");
-        await page.waitForURL(/\/DENGUE\/May24\/SEROP9\/tza/);
+        await page.waitForURL(/\/dengue\/may24\/serop9\/TZA/);
         await expect(await page.textContent(".indicator-menu-activator-desktop")).toContain("Tanzania");
         await expect(await page.textContent(".indicator-menu-activator-desktop")).toContain("Seroprevalence at age 9 years");
         await expect(await page.textContent(".indicator-menu-activator-desktop")).toContain("Admin 2");
