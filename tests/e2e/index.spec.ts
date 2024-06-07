@@ -145,7 +145,7 @@ test.describe("Index page", () => {
         await expect(await ageGroupButtons.last().innerText()).toBe("95-99");
     });
 
-    test("map settings menu renders as expected", async ({ page }) => {
+    test("map settings menu renders as expected when a country has been selected", async ({ page }) => {
         await page.goto("dengue/may24/FOI/AGO");
         await page.click(".indicator-menu-activator-desktop");
         await expect(await page.locator(".v-menu .v-list-item").count()).toBe(1);
