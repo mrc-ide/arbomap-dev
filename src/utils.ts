@@ -41,9 +41,7 @@ const getFileObjectUrl = async (url: string, filename: string)=> {
     });
 
     if (!res.ok) {
-        const json = await res.json();
-        const msg = json.error?.detail ? `Error: ${json.error.detail}` : `Error downloading ${filename}`;
-        throw new Error(msg);
+        throw new Error("Error fetching file");
     }
 
     const blob = await res.blob().catch(() => { throw new Error("Error retrieving data from response"); });
