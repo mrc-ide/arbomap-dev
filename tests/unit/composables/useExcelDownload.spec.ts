@@ -39,7 +39,6 @@ describe("useExcelDownload", () => {
         test("can download global indicators file with indicators 2 values", () => {
             expectCanDownloadGlobal(true);
         });
-
     });
 
     const expectedAdmin1Sheet = {

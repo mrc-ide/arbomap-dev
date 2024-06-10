@@ -9,10 +9,10 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
+import { storeToRefs } from "pinia";
 import { useIndicatorColors } from "../../composables/useIndicatorColors";
 import { ColorType } from "../../types/resourceTypes";
-import {storeToRefs} from "pinia";
-import {useAppStore} from "../../stores/appStore";
+import { useAppStore } from "../../stores/appStore";
 
 const props = defineProps({
     size: {

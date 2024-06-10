@@ -1,18 +1,23 @@
-import {Dict} from "../types/utilTypes";
-import {ColorType, FeatureIndicators, MapFeature} from "../types/resourceTypes";
-import {WorkBook} from "xlsx";
+import { WorkBook } from "xlsx";
 import * as XLSX from "xlsx";
-import {useIndicatorColors} from "../composables/useIndicatorColors";
+import { Dict } from "../types/utilTypes";
+import { ColorType, FeatureIndicators, MapFeature } from "../types/resourceTypes";
+import { useIndicatorColors } from "../composables/useIndicatorColors";
 
 export class BuildExcel {
-
     private readonly _appConfig: AppConfig;
+
     private readonly _countryNames: Dict<string>;
+
     private readonly _admin1Indicators: Dict<FeatureIndicators>;
+
     private readonly _admin2Indicators: Dict<FeatureIndicators>;
+
     private readonly _admin1Geojson: Dict<MapFeature[]>;
+
     private readonly _admin2Geojson: Dict<MapFeature[]>;
-    private readonly _indicatorColors: any;
+
+    private readonly _indicatorColors;
 
     constructor(
         appConfig: AppConfig,
@@ -110,14 +115,14 @@ export class BuildExcel {
 
         const sheet = XLSX.utils.aoa_to_sheet(sheetData);
         XLSX.utils.book_append_sheet(workbook, sheet, `admin${level}`);
-    };
+    }
 
-    public buildGlobalIndicatorsWorkbook (workbook: WorkBook, includeAdmin2: boolean)  {
+    public buildGlobalIndicatorsWorkbook(workbook: WorkBook, includeAdmin2: boolean) {
         this._writeTab(workbook, 1, this._admin1Indicators, this._admin1Geojson);
         if (includeAdmin2) {
             this._writeTab(workbook, 2, this._admin2Indicators, this._admin2Geojson);
         }
-    };
+    }
 
     public buildCountryIndicatorsWorkbook = (workbook: WorkBook, countryId: string) => {
         this._writeTab(workbook, 1, this._admin1Indicators, this._admin1Geojson, countryId);

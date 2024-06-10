@@ -1,13 +1,14 @@
+import { beforeEach, vi } from "vitest";
 import { mockBookAppendSheet } from "../mocks/mockXlsx";
-import {BuildExcel} from "../../../src/excel/buildExcel";
+import { BuildExcel } from "../../../src/excel/buildExcel";
 import {
     MOCK_ADMIN1_GEOJSON,
-    MOCK_ADMIN1_INDICATORS, MOCK_ADMIN2_GEOJSON,
+    MOCK_ADMIN1_INDICATORS,
+    MOCK_ADMIN2_GEOJSON,
     MOCK_ADMIN2_INDICATORS,
     MOCK_APP_CONFIG,
     MOCK_COUNTRY_NAMES
 } from "../mocks/mockObjects";
-import {beforeEach, vi} from "vitest";
 
 describe("buildExcel", () => {
     // NB buildCountryIndicatorsWorkbook is tested via useExcelDownload tests

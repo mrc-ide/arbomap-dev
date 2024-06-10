@@ -1,10 +1,14 @@
-import {computed, ComputedRef, Ref} from "vue";
-import { storeToRefs } from "pinia";
+import { computed, ComputedRef, Ref } from "vue";
 import * as d3ScaleChromatic from "d3-scale-chromatic";
 import Color from "color";
-import {FeatureIndicatorValues, FeatureIndicators, IndicatorValue, ColorType, AppConfig} from "../types/resourceTypes";
+import {
+    FeatureIndicatorValues,
+    FeatureIndicators,
+    IndicatorValue,
+    ColorType,
+    AppConfig
+} from "../types/resourceTypes";
 import { Dict } from "../types/utilTypes";
-import { useAppStore } from "../stores/appStore";
 
 interface IndicatorRange {
     min: number;

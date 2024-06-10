@@ -15,11 +15,11 @@ test.describe("Excel download button", () => {
     };
 
     test("can download global indicators without admin 2", async ({ page }) => {
-        await page.goto("/")
+        await page.goto("/");
         await page.click("#download-excel-btn");
         // Press 'No' from dialog
         await testCanDownloadFile(page, "arbomap_dengue_may24_GLOBAL_admin1.xlsx", "#confirm-excel-admin-1");
-    })
+    });
 
     test("can download global indicators with admin 2", async ({ page }) => {
         await page.goto("/");

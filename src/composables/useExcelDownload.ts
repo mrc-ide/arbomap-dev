@@ -2,14 +2,14 @@ import * as XLSX from "xlsx";
 import { storeToRefs } from "pinia";
 import { Ref, ref } from "vue";
 import { useAppStore } from "../stores/appStore";
-import {AdminLevel, debounce, downloadFile} from "../utils";
-import {APP_BASE_URL, PATHOGEN, VERSION} from "../router/utils";
-import {BuildExcel} from "../excel/buildExcel";
+import { AdminLevel, debounce, downloadFile } from "../utils";
+import { APP_BASE_URL, PATHOGEN, VERSION } from "../router/utils";
+import { BuildExcel } from "../excel/buildExcel";
 
 export const excelFilename = (country?: string, level?: AdminLevel) => {
-    const levelPart = level ? `_${level}` : '';
+    const levelPart = level ? `_${level}` : "";
     return `arbomap_${PATHOGEN}_${VERSION}_${country || "GLOBAL"}${levelPart}.xlsx`;
-}
+};
 
 export const useExcelDownload = () => {
     const { mapSettings, appConfig, admin1Indicators, admin2Indicators, admin1Geojson, admin2Geojson, countryNames } =
@@ -24,8 +24,14 @@ export const useExcelDownload = () => {
             throw Error("No selected country");
         }
         const fileName = excelFilename(country);
-        const builder = new BuildExcel(appConfig.value, countryNames.value, admin1Indicators.value, admin2Indicators.value,
-            admin1Geojson.value, admin2Geojson.value);
+        const builder = new BuildExcel(
+            appConfig.value,
+            countryNames.value,
+            admin1Indicators.value,
+            admin2Indicators.value,
+            admin1Geojson.value,
+            admin2Geojson.value
+        );
 
         builder.buildCountryIndicatorsWorkbook(workbook, country);
         XLSX.writeFile(workbook, fileName);

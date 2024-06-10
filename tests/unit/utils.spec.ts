@@ -22,7 +22,7 @@ describe("debounce util", () => {
 
 describe("downloadFile", () => {
     const setMockFetch = (mockResponse) => {
-        const mockFetch = vi.fn(() => new Promise((resolve) => resolve(mockResponse)));
+        const mockFetch = vi.fn(async () => mockResponse);
         global.fetch = mockFetch;
     };
 
@@ -30,12 +30,12 @@ describe("downloadFile", () => {
         const mockFileBlob = new Blob(["test contents"]);
         const mockResponse = {
             ok: true,
-            blob: vi.fn(() => new Promise((resolve) => resolve(mockFileBlob)))
+            blob: async () => mockFileBlob
         };
         setMockFetch(mockResponse);
 
         const fakeObjectUrl = "fakeObjectUrl";
-        const mockCreateObjectUrl = vi.fn(() => fakeObjectUrl)
+        const mockCreateObjectUrl = vi.fn(() => fakeObjectUrl);
         const mockRevokeObjectUrl = vi.fn();
 
         URL.createObjectURL = mockCreateObjectUrl;
@@ -76,10 +76,14 @@ describe("downloadFile", () => {
     test("throw error when get blob from response fails", async () => {
         const mockResponse = {
             ok: true,
-            blob: async () => { throw Error("failed"); }
+            blob: async () => {
+                throw Error("failed");
+            }
         };
         setMockFetch(mockResponse);
 
-        await expect(downloadFile("/testUrl", "testFile.xlsx")).rejects.toEqual(new Error("Error retrieving data from response"));
+        await expect(downloadFile("/testUrl", "testFile.xlsx")).rejects.toEqual(
+            new Error("Error retrieving data from response")
+        );
     });
 });

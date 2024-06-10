@@ -1,14 +1,18 @@
 import { describe, it, expect } from "vitest";
-import {render, screen, waitFor} from "@testing-library/vue";
+import { render, screen, waitFor } from "@testing-library/vue";
 import { userEvent } from "@testing-library/user-event";
-import { mockDownloadGlobal, mockDownloadSelectedCountry, mockDownloadError } from "../mocks/composables/mockUseExcelDownload";
+import {
+    mockDownloadGlobal,
+    mockDownloadSelectedCountry,
+    mockDownloadError
+} from "../mocks/composables/mockUseExcelDownload";
 import ExcelDownloadButton from "../../../src/components/ExcelDownloadButton.vue";
 import { mockVuetify } from "../mocks/mockVuetify";
-import {mockMapSettings, mockPinia} from "../mocks/mockPinia";
+import { mockMapSettings, mockPinia } from "../mocks/mockPinia";
 
 const defaultStore = mockPinia();
 const selectedCountryStore = mockPinia({
-    mapSettings: mockMapSettings({country: "MWI"})
+    mapSettings: mockMapSettings({ country: "MWI" })
 });
 
 let user;
@@ -88,7 +92,6 @@ describe("ExcelDownloadButton", () => {
         expect(buttons.length).toBe(2);
         const closeButton = buttons[0] as HTMLElement;
         expect(closeButton.getElementsByTagName("i").item(0).className).toContain("mdi-close");
-        const user = userEvent.setup();
         await user.click(closeButton);
         expect(await screen.findByText(/Error downloading Excel file: oops/)).not.toBeVisible();
     });

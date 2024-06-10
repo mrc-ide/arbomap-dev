@@ -35,8 +35,8 @@ export const routerPush = (router: Router, path: string) => {
     debounce(() => router.push(path), routerDebounce)();
 };
 
-const getFileObjectUrl = async (url: string, filename: string)=> {
-     const res = await fetch(url, {
+const getFileObjectUrl = async (url: string) => {
+    const res = await fetch(url, {
         method: "GET"
     });
 
@@ -44,17 +44,19 @@ const getFileObjectUrl = async (url: string, filename: string)=> {
         throw new Error("Error fetching file");
     }
 
-    const blob = await res.blob().catch(() => { throw new Error("Error retrieving data from response"); });
+    const blob = await res.blob().catch(() => {
+        throw new Error("Error retrieving data from response");
+    });
     return URL.createObjectURL(blob);
-}
+};
 
 export const downloadFile = async (url: string, filename: string) => {
-    const fileUrl = await getFileObjectUrl(url, filename);
+    const fileUrl = await getFileObjectUrl(url);
     const fileLink = document.createElement("a");
     fileLink.href = fileUrl;
     fileLink.setAttribute("download", filename);
     document.body.appendChild(fileLink);
     fileLink.click();
     document.body.removeChild(fileLink);
-    window.URL.revokeObjectURL(fileUrl)
+    window.URL.revokeObjectURL(fileUrl);
 };
