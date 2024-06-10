@@ -20,7 +20,6 @@ type FillAndOutlineColor = {
 export const useIndicatorColors = (appConfig: Ref<AppConfig>, selectedIndicators: ComputedRef<FeatureIndicators>) => {
     // TODO: we currently just scale colours to min and max in data, but
     // we can also provide option to scale to config
-    //const { appConfig } = storeToRefs(useAppStore());
 
     const getIndicatorColorType = (indicator: string) => appConfig.value.indicators[indicator].colors.type;
 
