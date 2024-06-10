@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import {render, screen, waitFor, waitForElementToBeRemoved} from "@testing-library/vue";
+import {render, screen, waitFor} from "@testing-library/vue";
 import { userEvent } from "@testing-library/user-event";
 import { mockDownloadGlobal, mockDownloadSelectedCountry, mockDownloadError } from "../mocks/composables/mockUseExcelDownload";
 import ExcelDownloadButton from "../../../src/components/ExcelDownloadButton.vue";
