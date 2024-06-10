@@ -1,0 +1,1 @@
+export default {level1: 1.3, level2: 17.8};

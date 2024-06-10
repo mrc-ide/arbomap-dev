@@ -6,7 +6,13 @@
     <v-dialog v-model="dialogOpen" width="auto">
             <v-card title="Excel Download">
                 <v-card-text>
+                    <p>
                     Do you want to include Admin 2 region values in the download?
+                    </p>
+                    <p>
+                    (File size with Admin 2 values is {{ globalFileSizes.level2 }}MB, and without Admin 2 values
+                    is {{ globalFileSizes.level1 }}MB.)
+                    </p>
                 </v-card-text>
                 <template v-slot:actions>
                     <v-card-actions>
@@ -42,6 +48,7 @@ import { ref, watch } from "vue";
 import { useExcelDownload } from "../composables/useExcelDownload";
 import {storeToRefs} from "pinia";
 import {useAppStore} from "../stores/appStore";
+import globalFileSizes from "../excel/globalFileSizes";
 
 const { downloadSelectedCountry, downloadGlobal, downloadError } = useExcelDownload();
 const { mapSettings } = storeToRefs(useAppStore());

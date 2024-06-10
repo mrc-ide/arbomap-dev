@@ -33,14 +33,34 @@ console.log("Read all indicators and geojson");
 const builder = new BuildExcel(appConfig, countryNames, admin1Indicators, admin2Indicators,
     admin1Geojson, admin2Geojson);
 
+const getFullFilename = (filename: string) => {
+    return path.normalize(`${baseDir}/excel/${filename}`);
+};
+
 const writeGlobalWorkbook = (filename: string, includeAdmin2: boolean) => {
     const workbook = XLSX.utils.book_new();
     builder.buildGlobalIndicatorsWorkbook(workbook, includeAdmin2);
-    const fullFilename = path.normalize(`${baseDir}/excel/${filename}`);
-    XLSX.writeFile(workbook, fullFilename, { compression: true });
-    console.log(`Wrote ${fullFilename}`);
+    XLSX.writeFile(workbook, filename, { compression: true });
+    console.log(`Wrote ${filename}`);
 };
 
-writeGlobalWorkbook(excelFilename(null, AdminLevel.ONE), false);
-writeGlobalWorkbook(excelFilename(null, AdminLevel.TWO), true);
+const getFileSizeMB = (filename: string) => {
+    const stats = fs.statSync(filename);
+    const fileSizeInBytes = stats.size;
+    const fileSizeMB = fileSizeInBytes / (1000*1000);
+    return fileSizeMB.toFixed(1);
+};
+
+const level1Filename = getFullFilename(excelFilename(null, AdminLevel.ONE));
+writeGlobalWorkbook(level1Filename, false);
+const level2Filename = getFullFilename(excelFilename(null, AdminLevel.TWO));
+writeGlobalWorkbook(level2Filename, true);
+
+const level1Size = getFileSizeMB(level1Filename);
+const level2Size = getFileSizeMB(level2Filename);
+
+const fileSizesSrc = `export default {level1: ${level1Size}, level2: ${level2Size}};`;
+const sizesSrcPath = `${__dirname}/../../src/excel/globalFileSizes.ts`;
+fs.writeFileSync(sizesSrcPath, fileSizesSrc);
+console.log(`Wrote ${sizesSrcPath}`);
 
