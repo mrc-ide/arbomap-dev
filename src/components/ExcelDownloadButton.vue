@@ -17,10 +17,12 @@
                 <template v-slot:actions>
                     <v-card-actions>
                        <v-btn
+                            id="confirm-excel-admin-2"
                             text="Yes"
                             @click="handleDownloadGlobal(true)"
                         ></v-btn>
                         <v-btn
+                            id="confirm-excel-admin-1"
                             text="No"
                             @click="handleDownloadGlobal(false)"
                         ></v-btn>
