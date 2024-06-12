@@ -59,7 +59,7 @@ const countryItems = computed(() => {
             // 'Republic' lists 'Republic of the Congo' before 'Central African Republic'
             const query = normalizeCountryName(searchQuery.value);
             const firstStartsWithQuery = normalizeCountryName(firstName).startsWith(query);
-            const secondStartsWithQuery = secondName.startsWith(query);
+            const secondStartsWithQuery = normalizeCountryName(secondName).startsWith(query);
             if (firstStartsWithQuery && !secondStartsWithQuery) {
                 return -1;
             }
