@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/vue";
+import { render, screen, waitFor } from "@testing-library/vue";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, test } from "vitest";
 import { mockMapSettings, mockPinia } from "../../mocks/mockPinia";
@@ -30,15 +30,26 @@ describe("CountrySelector", () => {
         expect(await findByText("Malawi")).toBeVisible();
     });
 
-    test("items appear when click input", async () => {
+    test("items appear when click input, and it can filter options on user input", async () => {
         await renderComponent("");
         const user = userEvent.setup();
         const globalListItem = await screen.findByText("Global");
         expect(globalListItem).toBeVisible();
+        // Verify that it's the currently selected item
         expect((globalListItem as HTMLElement).className).toContain("v-autocomplete__selection-text");
+        expect(await screen.queryByText("Malawi")).toBeNull();
         await user.click(globalListItem);
         const mwiListItem = await screen.findByText("Malawi");
         expect(mwiListItem).toBeVisible();
         expect((mwiListItem as HTMLElement).className).toContain("v-list-item-title");
+
+        const input = await screen.findByPlaceholderText("Start typing to find a country");
+        user.click(input);
+        await user.type(input, "Tan");
+        const tnzListItem = await screen.findByText("Tanzania");
+        expect(tnzListItem).toBeVisible();
+        expect((tnzListItem as HTMLElement).className).toContain("v-list-item-title");
+
+        await waitFor(() => expect(screen.queryByText("Malawi")).toBe(null));
     });
 });
