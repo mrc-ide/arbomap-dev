@@ -2,7 +2,13 @@ import { computed, ComputedRef } from "vue";
 import { storeToRefs } from "pinia";
 import * as d3ScaleChromatic from "d3-scale-chromatic";
 import Color from "color";
-import { FeatureIndicatorValues, FeatureIndicators, IndicatorValue, ColorType } from "../types/resourceTypes";
+import {
+    FeatureIndicatorValues,
+    FeatureIndicators,
+    IndicatorValue,
+    ColorType,
+    IndicatorColorScale
+} from "../types/resourceTypes";
 import { Dict } from "../types/utilTypes";
 import { useAppStore } from "../stores/appStore";
 
@@ -88,7 +94,7 @@ export const useIndicatorColors = (selectedIndicators: ComputedRef<FeatureIndica
 
         const scale = getIndicatorColorScale(indicator);
 
-        const reverse = appConfig.value.indicators[indicator].colors.colorScale?.reverse;
+        const reverse = (appConfig.value.indicators[indicator].colors as IndicatorColorScale).colorScale?.reverse;
         if (reverse) {
             colorValue = 1 - colorValue;
         }

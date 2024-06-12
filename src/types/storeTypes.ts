@@ -4,9 +4,8 @@ import { Dict } from "./utilTypes";
 export interface AppState {
     // these state variables only get updated once on initialisation, we keep all data in
     // dictionaries with country ids as keys, mirroring the resources on disk
-    appConfig: AppConfig | null;
-
-    countryNames: Dict<string> | null;
+    appConfig: AppConfig;
+    countryNames: Dict<string>;
     countryBoundingBoxes: Dict<BoundingBox>;
     admin1Indicators: Dict<FeatureIndicators>;
     admin1Geojson: Dict<MapFeature[]>;
@@ -18,6 +17,8 @@ export interface AppState {
     admin2Geojson: Dict<MapFeature[]>;
 
     // these variables change every time there is an update to the map
-    mapSettings: MapSettings | null;
-    admin0GeojsonFeature: MapFeature | null;
+    mapSettings: MapSettings;
+    admin0GeojsonFeature: MapFeature;
+
+    mapLoading: boolean;
 }

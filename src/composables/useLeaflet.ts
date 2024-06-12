@@ -1,5 +1,5 @@
 import { LMap } from "@vue-leaflet/vue-leaflet";
-import { Feature, Geometry } from "geojson";
+import { Geometry } from "geojson";
 import {
     LatLngBounds,
     Map,
@@ -8,15 +8,16 @@ import {
     Polyline,
     Layer,
     polyline,
-    StyleFunction,
     TooltipOptions,
     LeafletEventHandlerFnMap,
-    GeoJSONOptions
+    GeoJSONOptions,
+    PathOptions
 } from "leaflet";
 import { storeToRefs } from "pinia";
 import { useAppStore } from "../stores/appStore";
 import { countryAdmin1OutlineStyle, countryOutlineStyle, minZoom } from "../components/utils";
 import { useDataSummary } from "./useDataSummary";
+import { MapFeature } from "../types/resourceTypes";
 
 type FeatureProperties = { GID_0: string; GID_1: string; NAME_1: string };
 type TooltipOptionAndContent = { content: string; options?: TooltipOptions };
@@ -24,9 +25,9 @@ type TooltipOptionAndContent = { content: string; options?: TooltipOptions };
 type GeojsonOptions = GeoJSONOptions<FeatureProperties, Geometry> & { smoothFactor: number };
 
 export const useLeaflet = (
-    style: StyleFunction,
-    getTooltip: (f: Feature) => TooltipOptionAndContent,
-    layerEvents: (f: Feature) => LeafletEventHandlerFnMap
+    style: (f: MapFeature) => PathOptions,
+    getTooltip: (f: MapFeature) => TooltipOptionAndContent,
+    layerEvents: (f: MapFeature) => LeafletEventHandlerFnMap
 ) => {
     // external refs: map related
 
@@ -110,7 +111,7 @@ export const useLeaflet = (
     // this is run for every single feature that we display, we can attach
     // tooltips and any events to our features, the user of useLeaflet can
     // attach events to features via layerEvents
-    const configureGeojsonLayer = (feature: Feature, layer: Layer) => {
+    const configureGeojsonLayer = (feature: MapFeature, layer: Layer) => {
         const tooltip = getTooltip(feature);
         layer.bindTooltip(tooltip?.content, tooltip?.options);
         layer.on({
@@ -130,7 +131,7 @@ export const useLeaflet = (
 
     // this is the main function that updates the map, should be called in an appropriate
     // watcher
-    const updateLeafletMap = (newFeatures: Feature[], regionId: string) => {
+    const updateLeafletMap = (newFeatures: MapFeature[], regionId: string) => {
         const leafletMap = getLeafletMap();
         if (!leafletMap) return;
 

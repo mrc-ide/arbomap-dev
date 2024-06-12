@@ -40,7 +40,6 @@ describe("Index page", () => {
 
     test("renders as expected", async () => {
         await renderPage("FOI");
-        expect(await screen.findByText("Force of infection")).toBeVisible();
         expect(await screen.findByTestId("choropleth")).toBeVisible();
     });
 

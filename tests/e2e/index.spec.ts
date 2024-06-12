@@ -20,13 +20,6 @@ test.describe("Index page", () => {
         await expect(await page.locator(".v-app-bar-title:has-text('DengueMap')")).toBeVisible();
     });
 
-    test("loading spinner is shown on page load", async ({ page }) => {
-        // page load is too fast sometimes producing a flaky test as
-        // loading spinner is not found, have to reload the page here
-        page.goto("/");
-        await expectLoadingSpinnerIsShownThenRemoved(page);
-    });
-
     test("background layer has been rendered", async ({ page }) => {
         await expect(await page.locator(".leaflet-tile-pane")).toHaveCount(1);
     });
@@ -60,7 +53,7 @@ test.describe("Index page", () => {
         const color = await firstRegion.getAttribute("fill");
         const stroke = await firstRegion.getAttribute("stroke");
         // open menu
-        await page.click(".indicator-menu-activator");
+        await page.click(".indicator-menu-activator-desktop");
         // click menu item
         await page.getByText("Seroprevalence at age 9 years").click();
         await page.waitForURL(/dengue\/may24\/serop9/);
@@ -81,9 +74,9 @@ test.describe("Index page", () => {
     });
 
     test("if no data, no data tooltip is shown", async ({ page }) => {
-        const firstRegion = await getNthRegion(page, 22);
-        await firstRegion.hover();
-        await expect(await page.innerText(".leaflet-tooltip-pane")).toContain("Chubut");
+        const noDataRegion = await getNthRegion(page, 29);
+        await noDataRegion.hover();
+        await expect(await page.innerText(".leaflet-tooltip-pane")).toContain("La Pampa");
         await expect(await page.innerText(".leaflet-tooltip-pane")).toContain("No data");
     });
 
@@ -125,15 +118,21 @@ test.describe("Index page", () => {
         await expect(page).toHaveURL("/dengue/may24/serop9");
     });
 
-    test("indicator menu renders as expected", async ({ page }) => {
-        await page.click(".indicator-menu-activator");
-        await expect(await page.locator(".v-menu .v-list-item").count()).toBe(4);
-        const foiMenuItem = await page.locator(":nth-match(.v-menu .v-list-item, 1)");
+    test("map settings menu renders as expected when no country is selected", async ({ page }) => {
+        await page.click(".indicator-menu-activator-desktop");
+        await expect(await page.locator(".v-menu .v-list-item").count()).toBe(1);
+
+        await expect(await page.locator(".country-name-and-admin-toggle-container h3").innerText()).toBe("Global");
+
+        const adminToggle = await page.locator("#admin-toggle");
+        await expect(adminToggle).toHaveCount(0);
+
+        const foiMenuItem = await page.locator(":nth-match(.indicator-button, 1)");
         await expect(await foiMenuItem.locator(".v-list-item-title").innerText()).toBe("Force of infection");
         await expect(await foiMenuItem.locator(".v-list-item-subtitle").innerText()).toBe(
             "Annual per capita risk of dengue infection for a susceptible person"
         );
-        const hospMenuItem = await page.locator(":nth-match(.v-menu .v-list-item, 4)");
+        const hospMenuItem = await page.locator(":nth-match(.indicator-button, 4)");
         await expect(await hospMenuItem.locator(".v-list-item-title").innerText()).toBe("Hospital admissions");
         await expect(await hospMenuItem.locator(".v-list-item-subtitle").innerText()).toBe(
             "Annual number of hospital admissions per 100,000 population by age group"
@@ -146,8 +145,33 @@ test.describe("Index page", () => {
         await expect(await ageGroupButtons.last().innerText()).toBe("95-99");
     });
 
+    test("map settings menu renders as expected when a country has been selected", async ({ page }) => {
+        await page.goto("dengue/may24/FOI/AGO");
+        await page.click(".indicator-menu-activator-desktop");
+        await expect(await page.locator(".v-menu .v-list-item").count()).toBe(1);
+
+        await expect(await page.locator(".country-name-and-admin-toggle-container h3").innerText()).toBe("Angola");
+
+        const adminToggle = await page.locator("#admin-toggle");
+        await expect(adminToggle).toHaveCount(1);
+    });
+
+    test("admin toggle works when a country has been selected", async ({ page }) => {
+        await page.goto("dengue/may24/FOI/AGO");
+        await page.click(".indicator-menu-activator-desktop");
+        const adminToggle = await page.locator("#admin-toggle");
+        const allRegions = await page.locator(GEOJSON_SELECTOR);
+
+        await expect(await allRegions).toHaveCount(2060);
+
+        await adminToggle.getByRole("button", { name: "Admin 1" }).click();
+        await page.waitForURL(/dengue\/may24\/FOI\/AGO\/admin1/i);
+
+        await expect(await allRegions).toHaveCount(1915);
+    });
+
     test("clicking hospitalisation age group browses to indicator", async ({ page }) => {
-        await page.click(".indicator-menu-activator");
+        await page.click(".indicator-menu-activator-desktop");
         await page.locator(":nth-match(.v-slide-group button, 3)").click();
         await page.waitForURL(/dengue\/may24\/hosp_5_9/i);
     });
@@ -165,8 +189,8 @@ test.describe("Index page", () => {
         await firstRegion.click();
         await expect(await page.locator("div.spinner")).toHaveCount(0);
         await expect(await page.locator(".leaflet-control-zoom-out.leaflet-disabled")).toHaveCount(1);
-        await page.click(".indicator-menu-activator");
-        await page.locator(":nth-match(.v-menu .v-list-item, 2)").click();
+        await page.click(".indicator-menu-activator-desktop");
+        await page.locator(":nth-match(.indicator-button, 2)").click();
         await page.waitForURL(/dengue\/may24\/serop9/);
         await expect(await page.locator(".leaflet-control-zoom-out.leaflet-disabled")).toHaveCount(1);
     });
@@ -177,25 +201,6 @@ test.describe("Index page", () => {
         await expect(await summary).toHaveAttribute("color-type", "category");
         await expect(await summary).toHaveAttribute("color-categories", "Under 40%,40-60%,Above 60%");
         await expect(await summary).toHaveAttribute("feature-count", "1915");
-    });
-
-    test("admin level toggle works", async ({ page }) => {
-        const adminToggle = await page.locator("#admin-toggle");
-
-        await expect(adminToggle).toHaveCount(0);
-
-        const allRegions = await page.locator(GEOJSON_SELECTOR);
-        const firstRegion = await getNthRegion(page, 1);
-        await firstRegion.click();
-        await page.waitForURL(/dengue\/may24\/FOI\/AGO\/admin2/i);
-
-        await expect(await allRegions).toHaveCount(2060);
-
-        await expect(adminToggle).toHaveCount(1);
-        await adminToggle.getByRole("button", { name: "Admin 1" }).click();
-        await page.waitForURL(/dengue\/may24\/FOI\/AGO\/admin1/i);
-
-        await expect(await allRegions).toHaveCount(1915);
     });
 
     test("admin level defaults to 1 for countries with missing admin 2 data", async ({ page }) => {

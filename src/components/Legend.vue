@@ -79,7 +79,7 @@ const scaleLevels = computed(() => {
             };
         });
     } else {
-        steps = getIndicatorColorCategories(indicator).map((category) => ({
+        steps = getIndicatorColorCategories(indicator)!.map((category) => ({
             label: category.name,
             style: stepStyle(category.color)
         }));

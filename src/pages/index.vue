@@ -2,9 +2,6 @@
     <template v-if="!unknownProps.length">
         <template v-if="mapSettings">
             <Choropleth v-if="mapSettings.indicator" data-testid="choropleth" />
-            <div class="sticky-footer">
-                <IndicatorMenu></IndicatorMenu>
-            </div>
         </template>
     </template>
     <not-found v-else :detail="notFoundDetail"></not-found>
@@ -128,12 +125,3 @@ watch([() => props, initialisationComplete], selectDataForRoute, { deep: true })
 
 onBeforeMount(selectDataForRoute);
 </script>
-<style lang="scss">
-.sticky-footer {
-    position: fixed;
-    top: calc(100dvh - (48px + 1.5rem));
-    left: 2rem;
-    background-color: rgba(0, 0, 0, 0);
-    z-index: 999;
-}
-</style>

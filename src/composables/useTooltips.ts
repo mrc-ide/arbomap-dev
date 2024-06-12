@@ -6,7 +6,7 @@ import { useIndicatorColors } from "./useIndicatorColors";
 
 export const useTooltips = (selectedIndicators: ComputedRef<FeatureIndicators>) => {
     const { mapSettings, appConfig } = storeToRefs(useAppStore());
-    const { getIndicatorColorType, getIndicatorValueColorCategory } = useIndicatorColors();
+    const { getIndicatorColorType, getIndicatorValueColorCategory } = useIndicatorColors(selectedIndicators);
 
     const sortedIndicators = computed(() => {
         // We show currently selected indicator first, then each configured indicator group's
