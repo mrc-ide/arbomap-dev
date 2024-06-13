@@ -1,9 +1,10 @@
 <template>
     <v-autocomplete
         label="Country"
-        :model-value="country"
-        @focus="clearSearchInput"
-        @update:model-value="handleChangeCountry"
+        :model-value="countrySelection"
+        @focus="clearSelection"
+        @blur="resetSelection"
+        @update:model-value="handleChangeSelection"
         @update:search="handleChangeSearchQuery"
         :items="countryItems"
         :custom-filter="customFilter"
@@ -27,8 +28,10 @@ import { routerPush } from "../../utils";
 const router = useRouter();
 
 const { mapSettings, countryNames, mapLoading } = storeToRefs(useAppStore());
+
 // A ref to be used for the v-autocomplete model (which tracks what option is currently selected)
-const country = ref<string | null>(mapSettings.value.country);
+const countrySelection = ref<string | null>(mapSettings.value.country);
+
 // A ref to be used as a copy of the v-autocomplete query (which tracks what has been typed in the input),
 // so that we can sort the options in the dropdown.
 const searchQuery = ref("");
@@ -77,9 +80,15 @@ const countryItems = computed(() => {
     return items;
 });
 
-const clearSearchInput = () => {
+const clearSelection = () => {
     // Use null rather than empty string because we generally use empty string to represent the 'global' option
-    country.value = null;
+    countrySelection.value = null;
+};
+
+const resetSelection = () => {
+    // Reset the input to the currently selected country.
+    // This avoids having an empty input if the user aborts from selecting.
+    countrySelection.value = mapSettings.value.country;
 };
 
 // A custom filter that matches on the starts of words, rather than including substrings, so that
@@ -105,7 +114,7 @@ const customFilter = (itemTitle: string, queryText: string) => {
     return words.some((word) => word.startsWith(query));
 };
 
-const handleChangeCountry = (countryCode: string | null) => {
+const handleChangeSelection = (countryCode: string | null) => {
     if (countryCode === null) {
         // User is probably just trying to clear the input field, not trying to go to a global view
         return;
