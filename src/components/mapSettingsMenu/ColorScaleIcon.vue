@@ -28,11 +28,12 @@ const props = defineProps({
 
 const halfway = computed(() => props.size / 2);
 
-
 const { appConfig } = storeToRefs(useAppStore());
 const { selectedIndicators } = useSelectedMapInfo();
-const { getIndicatorValueColor, getIndicatorColorType, getIndicatorColorCategories } =
-    useIndicatorColors(appConfig, selectedIndicators);
+const { getIndicatorValueColor, getIndicatorColorType, getIndicatorColorCategories } = useIndicatorColors(
+    appConfig,
+    selectedIndicators
+);
 
 const iconColors = computed(() => {
     if (getIndicatorColorType(props.indicator) === ColorType.Scale) {

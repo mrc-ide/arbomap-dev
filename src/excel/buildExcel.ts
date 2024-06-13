@@ -1,7 +1,7 @@
 import { WorkBook } from "xlsx";
 import * as XLSX from "xlsx";
+import { AppConfig, ColorType, FeatureIndicators, MapFeature } from "../types/resourceTypes";
 import { Dict } from "../types/utilTypes";
-import { ColorType, FeatureIndicators, MapFeature } from "../types/resourceTypes";
 import { useIndicatorColors } from "../composables/useIndicatorColors";
 
 export class BuildExcel {
@@ -33,7 +33,10 @@ export class BuildExcel {
         this._admin2Indicators = admin2Indicators;
         this._admin1Geojson = admin1Geojson;
         this._admin2Geojson = admin2Geojson;
-        this._indicatorColors = useIndicatorColors(ref(appConfig));
+        this._indicatorColors = useIndicatorColors(
+            ref(appConfig),
+            computed(() => ({}))
+        );
     }
 
     private _writeTab(
@@ -41,7 +44,7 @@ export class BuildExcel {
         level: number,
         indicatorValues: Dict<FeatureIndicators>,
         geojson: Dict<MapFeature[]>,
-        country?: string[]
+        country?: string
     ) {
         const sheetData = [];
 

@@ -56,7 +56,7 @@ remember to run scripts manually when required:
 - if admin1 geojson has changed: run `transform_adm_geojson_to_dict.cjs`
 - if there are any changes to the list of countries, or country names: run `generate_country_names_from_adm0_geojson.cjs`
 
-Remember to copy resulting data from the `data/processed` folder to the relevant part of `public/denuge/may24/resources`.
+Remember to copy resulting data from the `data/processed` folder to the relevant part of `public/dengue/may24/resources`.
 
 - After copying new indicator values to the resources folder, run `npm run generate:global-excel` to regenerate the 
 global Excel files. 

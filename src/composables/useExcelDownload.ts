@@ -17,32 +17,6 @@ export const useExcelDownload = () => {
 
     const downloadError: Ref<Error | null> = ref(null);
 
-    const doDownloadSelectedCountry = () => {
-        const workbook = XLSX.utils.book_new();
-        const { country } = mapSettings.value;
-        if (!country) {
-            throw Error("No selected country");
-        }
-        const fileName = excelFilename(country);
-        const builder = new BuildExcel(
-            appConfig.value,
-            countryNames.value,
-            admin1Indicators.value,
-            admin2Indicators.value,
-            admin1Geojson.value,
-            admin2Geojson.value
-        );
-
-        builder.buildCountryIndicatorsWorkbook(workbook, country);
-        XLSX.writeFile(workbook, fileName);
-    };
-
-    const doDownloadGlobal = async (includeAdmin2: boolean) => {
-        const filename = excelFilename(null, includeAdmin2 ? AdminLevel.TWO : AdminLevel.ONE);
-        const url = `${APP_BASE_URL}/resources/excel/${filename}`;
-        await downloadFile(url, filename);
-    };
-
     const download = (doDownload: () => void | Promise<void>) => {
         downloadError.value = null;
         debounce(async () => {
@@ -56,12 +30,32 @@ export const useExcelDownload = () => {
     };
 
     const downloadSelectedCountry = () => {
-        download(doDownloadSelectedCountry);
+        download(() => {
+            const workbook = XLSX.utils.book_new();
+            const { country } = mapSettings.value;
+            if (!country) {
+                throw Error("No selected country");
+            }
+            const fileName = excelFilename(country);
+            const builder = new BuildExcel(
+                appConfig.value,
+                countryNames.value,
+                admin1Indicators.value,
+                admin2Indicators.value,
+                admin1Geojson.value,
+                admin2Geojson.value
+            );
+
+            builder.buildCountryIndicatorsWorkbook(workbook, country);
+            XLSX.writeFile(workbook, fileName);
+        });
     };
 
-    const downloadGlobal = (includeAdmin2: bool) => {
+    const downloadGlobal = (includeAdmin2: boolean) => {
         download(async () => {
-            await doDownloadGlobal(includeAdmin2);
+            const filename = excelFilename(null, includeAdmin2 ? AdminLevel.TWO : AdminLevel.ONE);
+            const url = `${APP_BASE_URL}/resources/excel/${filename}`;
+            await downloadFile(url, filename);
         });
     };
 

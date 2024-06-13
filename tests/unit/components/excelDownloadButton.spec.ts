@@ -48,6 +48,7 @@ describe("ExcelDownloadButton", () => {
     it("clicking button calls download when a country is selected", async () => {
         renderComponent(selectedCountryStore);
         await clickButton();
+        await expect(screen.queryByText("Excel Download")).toBe(null);
         expect(mockDownloadSelectedCountry).toHaveBeenCalledTimes(1);
     });
 
