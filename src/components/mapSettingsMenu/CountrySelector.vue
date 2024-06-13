@@ -121,3 +121,17 @@ const handleChangeCountry = (countryCode: string | null) => {
     }
 };
 </script>
+
+<style lang="scss">
+.v-autocomplete {
+    .v-input__control,
+    .v-field__input,
+    .v-field__field {
+        min-height: unset;
+        height: 36px; // Reduce height from default to match style of admin toggle buttons
+    }
+    .v-autocomplete__selection {
+        padding-bottom: 4px; // Adjust padding to center text vertically
+    }
+}
+</style>
