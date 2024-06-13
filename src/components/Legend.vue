@@ -19,7 +19,7 @@ import { ColorType } from "../types/resourceTypes";
 const { appConfig, mapSettings } = storeToRefs(useAppStore());
 const { selectedIndicators } = useSelectedMapInfo();
 const { getIndicatorValueColor, indicatorExtremes, getIndicatorColorCategories, getIndicatorColorType } =
-    useIndicatorColors(selectedIndicators);
+    useIndicatorColors(appConfig, selectedIndicators);
 
 const props = defineProps({
     numberOfSteps: {

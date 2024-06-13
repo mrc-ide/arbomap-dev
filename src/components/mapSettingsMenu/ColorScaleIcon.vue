@@ -9,8 +9,10 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
+import { storeToRefs } from "pinia";
 import { useIndicatorColors } from "../../composables/useIndicatorColors";
 import { ColorType } from "../../types/resourceTypes";
+import { useAppStore } from "../../stores/appStore";
 import { useSelectedMapInfo } from "../../composables/useSelectedMapInfo";
 
 const props = defineProps({
@@ -25,9 +27,13 @@ const props = defineProps({
 });
 
 const halfway = computed(() => props.size / 2);
+
+const { appConfig } = storeToRefs(useAppStore());
 const { selectedIndicators } = useSelectedMapInfo();
-const { getIndicatorValueColor, getIndicatorColorType, getIndicatorColorCategories } =
-    useIndicatorColors(selectedIndicators);
+const { getIndicatorValueColor, getIndicatorColorType, getIndicatorColorCategories } = useIndicatorColors(
+    appConfig,
+    selectedIndicators
+);
 
 const iconColors = computed(() => {
     if (getIndicatorColorType(props.indicator) === ColorType.Scale) {

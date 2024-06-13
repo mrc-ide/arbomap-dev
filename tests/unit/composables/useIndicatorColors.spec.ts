@@ -1,8 +1,6 @@
-import { describe, test, expect, beforeAll } from "vitest";
+import { describe, test, expect } from "vitest";
 import * as d3ScaleChromatic from "d3-scale-chromatic";
 import { useIndicatorColors } from "../../../src/composables/useIndicatorColors";
-import { mockPinia } from "../mocks/mockPinia";
-import { useAppStore } from "../../../src/stores/appStore";
 import { ColorType } from "../../../src/types/resourceTypes";
 import { MOCK_APP_CONFIG } from "../mocks/mockObjects";
 
@@ -27,12 +25,12 @@ const indicatorValues = {
 };
 
 describe("useIndicatorColors", () => {
-    beforeAll(() => {
-        mockPinia();
-    });
+    const getSut = () => {
+        return useIndicatorColors(ref(MOCK_APP_CONFIG), indicatorValues as any);
+    };
 
     test("can get indicator value colour", () => {
-        const sut = useIndicatorColors(indicatorValues as any);
+        const sut = getSut();
         // scale indicator
         expect(sut.getIndicatorValueColor("FOI", 0.2)).toBe(d3ScaleChromatic.interpolateReds(0.5));
 
@@ -41,12 +39,12 @@ describe("useIndicatorColors", () => {
     });
 
     test("can get scale value colour, not scaled to extremes", () => {
-        const sut = useIndicatorColors(indicatorValues as any);
+        const sut = getSut();
         expect(sut.getIndicatorValueColor("FOI", 0.5, false)).toBe(d3ScaleChromatic.interpolateReds(0.5));
     });
 
     test("can get fill and outline colours for scale value", () => {
-        const sut = useIndicatorColors(indicatorValues as any);
+        const sut = getSut();
 
         // min value for FOI
         expect(sut.getFillAndOutlineColor("FOI", "123", false)).toStrictEqual({
@@ -68,7 +66,7 @@ describe("useIndicatorColors", () => {
     });
 
     test("can get fill and outline colours for categories value", () => {
-        const sut = useIndicatorColors(indicatorValues as any);
+        const sut = getSut();
         expect(sut.getFillAndOutlineColor("serop9_class", "123", false)).toStrictEqual({
             fillColor: "#dc143c",
             outlineColor: "rgba(170, 70, 90, 0.4)"
@@ -86,7 +84,7 @@ describe("useIndicatorColors", () => {
     });
 
     test("can get faded colour for value", () => {
-        const sut = useIndicatorColors(indicatorValues as any);
+        const sut = getSut();
 
         // min value for FOI
         expect(sut.getFillAndOutlineColor("FOI", "123", true)).toStrictEqual({
@@ -96,10 +94,23 @@ describe("useIndicatorColors", () => {
     });
 
     test("can get colour for value when scale is reversed", () => {
-        const { appConfig } = useAppStore();
-        appConfig.indicators.FOI.colors.colorScale.reverse = true;
+        const appConfig = {
+            ...MOCK_APP_CONFIG,
+            indicators: {
+                ...MOCK_APP_CONFIG.indicators,
+                FOI: {
+                    colors: {
+                        type: "scale",
+                        colorScale: {
+                            name: "interpolateReds",
+                            reverse: true
+                        }
+                    }
+                }
+            }
+        };
 
-        const sut = useIndicatorColors(indicatorValues as any);
+        const sut = useIndicatorColors(ref(appConfig), indicatorValues as any);
         // min value for FOI, should return max value for colour scale
         expect(sut.getFillAndOutlineColor("FOI", "123")).toStrictEqual({
             fillColor: "rgb(103, 0, 13)",
@@ -114,20 +125,20 @@ describe("useIndicatorColors", () => {
     });
 
     test("can get indicator color type", () => {
-        const sut = useIndicatorColors(indicatorValues as any);
+        const sut = getSut();
         expect(sut.getIndicatorColorType("FOI")).toBe(ColorType.Scale);
         expect(sut.getIndicatorColorType("serop9_class")).toBe(ColorType.Category);
     });
 
     test("can get indicator color categories", () => {
-        const sut = useIndicatorColors(indicatorValues as any);
+        const sut = getSut();
         expect(sut.getIndicatorColorCategories("serop9_class")).toStrictEqual(
             MOCK_APP_CONFIG.indicators.serop9_class.colors.categories
         );
     });
 
     test("can get indicator value colour category", () => {
-        const sut = useIndicatorColors(indicatorValues as any);
+        const sut = getSut();
         expect(sut.getIndicatorValueColorCategory("serop9_class", 50)).toStrictEqual({
             name: "40-60%",
             upperLimit: 60,
@@ -136,12 +147,12 @@ describe("useIndicatorColors", () => {
     });
 
     test("throws error if request colour categories for colour scale indicator", () => {
-        const sut = useIndicatorColors(indicatorValues as any);
+        const sut = getSut();
         expect(() => sut.getIndicatorColorCategories("FOI")).toThrow("Indicator colors are not category type");
     });
 
     test("throws error if request indicator value colour category for colour scale indicator", () => {
-        const sut = useIndicatorColors(indicatorValues as any);
+        const sut = getSut();
         expect(() => sut.getIndicatorValueColorCategory("FOI", 0.2)).toThrow("Indicator colors are not category type");
     });
 });

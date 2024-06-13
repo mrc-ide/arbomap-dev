@@ -58,7 +58,7 @@ const { selectedFeatures, selectedIndicators } = useSelectedMapInfo();
 const isLargeScreen = useMediaQuery("(min-width: 1024px)");
 
 const { tooltipForFeature } = useTooltips(selectedIndicators);
-const { getFillAndOutlineColor } = useIndicatorColors(selectedIndicators);
+const { getFillAndOutlineColor } = useIndicatorColors(appConfig, selectedIndicators);
 
 const featureInSelectedCountry = (feature: MapFeature) =>
     feature.properties[featureProperties.country] === mapSettings.value.country;

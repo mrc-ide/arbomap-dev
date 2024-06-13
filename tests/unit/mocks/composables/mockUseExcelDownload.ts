@@ -1,11 +1,13 @@
 import { vi } from "vitest";
 import { ref, Ref } from "vue";
 
-export const mockDownload = vi.fn();
+export const mockDownloadGlobal = vi.fn();
+export const mockDownloadSelectedCountry = vi.fn();
 export const mockDownloadError: Ref<Error | null> = ref(null);
 
 const mockUseExcelDownload = () => ({
-    download: mockDownload,
+    downloadGlobal: mockDownloadGlobal,
+    downloadSelectedCountry: mockDownloadSelectedCountry,
     downloadError: mockDownloadError
 });
 

@@ -46,6 +46,9 @@ the global view. Generated from the xlsx file in `data/raw` by the script `proce
 - `indicators/admin2`: admin2-level indicator values, one file per country, loaded when the country is selected. Generated 
 from the xlsx file in `data/raw` by the script `process-data.R`
 
+We also pre-generate the global Excel files available to download through the app. These can be found in the `excel`
+sub-folder of the resources folder. 
+
 All public data is committed to github, and is not currently automatically updated using the scripts. So you need to 
 remember to run scripts manually when required:
 
@@ -53,4 +56,7 @@ remember to run scripts manually when required:
 - if admin1 geojson has changed: run `transform_adm_geojson_to_dict.cjs`
 - if there are any changes to the list of countries, or country names: run `generate_country_names_from_adm0_geojson.cjs`
 
-Remember to copy resulting data from the `data/processed` folder to the relevant part of `public/denuge/may24/resources`.
+Remember to copy resulting data from the `data/processed` folder to the relevant part of `public/dengue/may24/resources`.
+
+- After copying new indicator values to the resources folder, run `npm run generate:global-excel` to regenerate the 
+global Excel files. 

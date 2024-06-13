@@ -1,4 +1,5 @@
 import { afterAll, beforeAll, beforeEach, describe, test, vi, expect } from "vitest";
+import { mockDownloadFile } from "../mocks/mockUtils";
 import { mockWriteFile } from "../mocks/mockXlsx";
 import { mockMapSettings, mockPinia } from "../mocks/mockPinia";
 import { MOCK_ADMIN2_GEOJSON, MOCK_ADMIN2_INDICATORS, MOCK_APP_CONFIG } from "../mocks/mockObjects";
@@ -22,41 +23,21 @@ describe("useExcelDownload", () => {
             mockPinia();
         });
 
-        const expectedSheet = {
-            name: "admin1",
-            data: [
-                [
-                    "shapeGroup",
-                    "countryName",
-                    "shapeID_1",
-                    "shapeName_1",
-                    "mean_FOI",
-                    "sd_FOI",
-                    "mean_serop9",
-                    "sd_serop9",
-                    "serop9_class",
-                    "mean_hosp_total",
-                    "sd_hosp_total",
-                    "mean_hosp_0_4",
-                    "sd_hosp_0_4",
-                    "mean_hosp_5_9",
-                    "sd_hosp_5_9"
-                ],
-                ["MWI", "Malawi", "123", "Test123", 0.1, 0.01, 0.2, 0.02, "Under 40%", 0.3, 0.03, 0.4, 0.04, 0.5, 0.05],
-                ["TZA", "Tanzania", "789", "Test789", 0.3, 0.03, 0.4, 0.04, "40-60%", 0.5, 0.05, 0.6, 0.06, 0.7, 0.07]
-            ]
+        const expectCanDownloadGlobal = (includeAdmin2: boolean) => {
+            const sut = useExcelDownload();
+            sut.downloadGlobal(includeAdmin2);
+            vi.runAllTimers();
+            const level = includeAdmin2 ? 2 : 1;
+            const filename = `arbomap_dengue_may24_GLOBAL_admin${level}.xlsx`;
+            expect(mockDownloadFile).toHaveBeenCalledWith(`/dengue/may24/resources/excel/${filename}`, filename);
         };
 
-        test("can write global indicators Excel file", () => {
-            const sut = useExcelDownload();
-            sut.download();
-            vi.runAllTimers();
-            expect(mockWriteFile).toHaveBeenCalledTimes(1);
-            expect(mockWriteFile.mock.calls[0][0]).toStrictEqual({
-                sheets: [expectedSheet]
-            });
-            expect(mockWriteFile.mock.calls[0][1]).toBe("arbomap_GLOBAL.xlsx");
-            expect(sut.downloadError.value).toBe(null);
+        test("can download global indicators file without indicators 2 values", () => {
+            expectCanDownloadGlobal(false);
+        });
+
+        test("can download global indicators file with indicators 2 values", () => {
+            expectCanDownloadGlobal(true);
         });
     });
 
@@ -160,13 +141,13 @@ describe("useExcelDownload", () => {
 
         test("can write country indicators Excel file", () => {
             const sut = useExcelDownload();
-            sut.download();
+            sut.downloadSelectedCountry();
             vi.runAllTimers();
             expect(mockWriteFile).toHaveBeenCalledTimes(1);
             expect(mockWriteFile.mock.calls[0][0]).toStrictEqual({
                 sheets: [expectedAdmin1Sheet, expectedAdmin2Sheet]
             });
-            expect(mockWriteFile.mock.calls[0][1]).toBe("arbomap_TZA.xlsx");
+            expect(mockWriteFile.mock.calls[0][1]).toBe("arbomap_dengue_may24_TZA.xlsx");
         });
     });
 
@@ -182,13 +163,13 @@ describe("useExcelDownload", () => {
 
         test("can write country indicators Excel file", () => {
             const sut = useExcelDownload();
-            sut.download();
+            sut.downloadSelectedCountry();
             vi.runAllTimers();
             expect(mockWriteFile).toHaveBeenCalledTimes(1);
             expect(mockWriteFile.mock.calls[0][0]).toStrictEqual({
                 sheets: [expectedAdmin1Sheet] // admin1 sheet only
             });
-            expect(mockWriteFile.mock.calls[0][1]).toBe("arbomap_TZA.xlsx");
+            expect(mockWriteFile.mock.calls[0][1]).toBe("arbomap_dengue_may24_TZA.xlsx");
         });
     });
 
@@ -202,7 +183,7 @@ describe("useExcelDownload", () => {
 
         test("sets downloadError", () => {
             const sut = useExcelDownload();
-            sut.download();
+            sut.downloadSelectedCountry();
             vi.runAllTimers();
             expect(mockWriteFile).toHaveBeenCalledTimes(0);
             expect(sut.downloadError.value.name).toBe("TypeError");
