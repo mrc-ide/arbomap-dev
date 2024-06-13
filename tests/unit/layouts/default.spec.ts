@@ -32,7 +32,7 @@ describe("default layout", () => {
     test("renders router view component", async () => {
         // root component in mock router is index page, which shows indicator buttons
         await renderLayout();
-        expect(await screen.findByText("Force of infection")).toBeVisible();
+        expect(await screen.findByTestId("choropleth")).toBeVisible();
     });
 
     test("initialises data on load", async () => {
@@ -60,7 +60,7 @@ describe("default layout", () => {
 
         const mapLink = await screen.findByRole("link", { name: /map/i });
         await user.click(mapLink);
-        expect(await screen.findByText("Force of infection")).toBeVisible();
+        expect(await screen.findByTestId("choropleth")).toBeVisible();
 
         const contactLink = await screen.findByRole("link", { name: /contact/i });
         expect(contactLink.getAttribute("href")).toBe("https://imperial.eu.qualtrics.com/jfe/form/SV_1OfpYMUpy4uHlRQ");

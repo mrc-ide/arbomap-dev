@@ -6,7 +6,8 @@ import {
     FeatureIndicators,
     IndicatorValue,
     ColorType,
-    AppConfig
+    AppConfig,
+    IndicatorColorScale
 } from "../types/resourceTypes";
 import { Dict } from "../types/utilTypes";
 
@@ -91,7 +92,7 @@ export const useIndicatorColors = (appConfig: Ref<AppConfig>, selectedIndicators
 
         const scale = getIndicatorColorScale(indicator);
 
-        const reverse = appConfig.value.indicators[indicator].colors.colorScale?.reverse;
+        const reverse = (appConfig.value.indicators[indicator].colors as IndicatorColorScale).colorScale?.reverse;
         if (reverse) {
             colorValue = 1 - colorValue;
         }

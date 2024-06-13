@@ -13,6 +13,7 @@ import { storeToRefs } from "pinia";
 import { useIndicatorColors } from "../../composables/useIndicatorColors";
 import { ColorType } from "../../types/resourceTypes";
 import { useAppStore } from "../../stores/appStore";
+import { useSelectedMapInfo } from "../../composables/useSelectedMapInfo";
 
 const props = defineProps({
     size: {
@@ -27,8 +28,11 @@ const props = defineProps({
 
 const halfway = computed(() => props.size / 2);
 
+
 const { appConfig } = storeToRefs(useAppStore());
-const { getIndicatorValueColor, getIndicatorColorType, getIndicatorColorCategories } = useIndicatorColors(appConfig);
+const { selectedIndicators } = useSelectedMapInfo();
+const { getIndicatorValueColor, getIndicatorColorType, getIndicatorColorCategories } =
+    useIndicatorColors(appConfig, selectedIndicators);
 
 const iconColors = computed(() => {
     if (getIndicatorColorType(props.indicator) === ColorType.Scale) {
@@ -36,7 +40,7 @@ const iconColors = computed(() => {
         return colorScaleSampleValues.map((value) => getIndicatorValueColor(props.indicator, value, false));
     }
     const result = [];
-    const categoryColors = getIndicatorColorCategories(props.indicator).map((cat) => cat.color);
+    const categoryColors = getIndicatorColorCategories(props.indicator)!.map((cat) => cat.color);
     if (categoryColors.length === 0) {
         throw new Error(`Empty color categories config for ${props.indicator}`);
     }

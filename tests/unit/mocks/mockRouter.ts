@@ -8,7 +8,7 @@ export const mockRouter = () =>
     createRouter({
         history: createWebHistory(),
         routes: [
-            { path: "/:pathogen?/:version?/:indicator?/:country?", component: index, props: true },
+            { path: "/:pathogen?/:version?/:indicator?/:country?/:adminLevel?", component: index, props: true },
             { path: "/:pathogen?/about", component: about },
             { path: "/:pathogen?/accessibility", component: accessibility },
             { path: "/:pathogen?/privacy", component: privacy }
