@@ -15,9 +15,9 @@
 
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
-import { useAppStore } from "../stores/appStore";
-import { AdminLevel, routerPush } from "../utils";
-import { APP_BASE_ROUTE } from "../router/utils";
+import { useAppStore } from "../../stores/appStore";
+import { AdminLevel, routerPush } from "../../utils";
+import { APP_BASE_ROUTE } from "../../router/utils";
 
 const router = useRouter();
 const { mapSettings, appConfig, mapLoading } = storeToRefs(useAppStore());

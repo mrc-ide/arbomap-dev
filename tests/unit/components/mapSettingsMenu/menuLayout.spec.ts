@@ -8,8 +8,7 @@ const spyRouterPush = vi.spyOn(router, "push");
 
 const renderComponent = (country = "") => {
     const store = mockPinia({
-        mapSettings: mockMapSettings(country ? { country, adminLevel: 2 } : { country, adminLevel: 1 }),
-        admin0GeojsonFeature: country ? ({ properties: { COUNTRY: "Tanzania" } } as any) : null
+        mapSettings: mockMapSettings(country ? { country, adminLevel: 2 } : { country, adminLevel: 1 })
     });
     return render(MenuLayout, {
         global: {

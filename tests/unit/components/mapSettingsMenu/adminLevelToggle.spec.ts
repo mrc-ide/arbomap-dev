@@ -1,10 +1,10 @@
 import { render } from "@testing-library/vue";
 import { describe, expect, test } from "vitest";
-import { mockMapSettings, mockPinia } from "../mocks/mockPinia";
-import AdminLevelToggle from "../../../src/components/AdminLevelToggle.vue";
-import { mockVuetify } from "../mocks/mockVuetify";
-import { mockRouter } from "../mocks/mockRouter";
-import { APP_BASE_ROUTE } from "../../../src/router/utils";
+import { mockMapSettings, mockPinia } from "../../mocks/mockPinia";
+import AdminLevelToggle from "../../../../src/components/mapSettingsMenu/AdminLevelToggle.vue";
+import { mockVuetify } from "../../mocks/mockVuetify";
+import { mockRouter } from "../../mocks/mockRouter";
+import { APP_BASE_ROUTE } from "../../../../src/router/utils";
 
 const router = mockRouter();
 

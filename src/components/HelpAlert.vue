@@ -14,8 +14,6 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from "vue";
-
 const helpText = `
     DengueMap provides high-resolution estimates of dengue transmission intensity in countries where
     dengue is endemic. View estimated values for a region by hovering your cursor over it on the map.

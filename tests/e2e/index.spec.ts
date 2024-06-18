@@ -122,7 +122,7 @@ test.describe("Index page", () => {
         await page.click(".indicator-menu-activator-desktop");
         await expect(await page.locator(".v-menu .v-list-item").count()).toBe(1);
 
-        await expect(await page.locator(".country-name-and-admin-toggle-container h3").innerText()).toBe("Global");
+        await expect(await page.locator(".v-autocomplete__selection-text").innerText()).toBe("Global");
 
         const adminToggle = await page.locator("#admin-toggle");
         await expect(adminToggle).toHaveCount(0);
@@ -150,7 +150,7 @@ test.describe("Index page", () => {
         await page.click(".indicator-menu-activator-desktop");
         await expect(await page.locator(".v-menu .v-list-item").count()).toBe(1);
 
-        await expect(await page.locator(".country-name-and-admin-toggle-container h3").innerText()).toBe("Angola");
+        await expect(await page.locator(".v-autocomplete__selection-text").innerText()).toBe("Angola");
 
         const adminToggle = await page.locator("#admin-toggle");
         await expect(adminToggle).toHaveCount(1);
@@ -226,5 +226,49 @@ test.describe("Index page", () => {
         await expect(await page.getByText("How to use this map")).not.toBeVisible();
         await page.goto("/dengue/may24/FOI/AGO/admin1");
         await expect(await page.getByText("How to use this map")).not.toBeVisible();
+    });
+
+    test("selecting a country or 'global' from the country-select navigates to the correct view", async ({ page }) => {
+        test.setTimeout(10000);
+
+        // currently just check that selecting a country increases the number of rendered regions
+        // (drills down to admin2 on selected country)
+        await page.waitForURL(/dengue\/may24\/FOI/i);
+        const allRegions = await page.locator(GEOJSON_SELECTOR);
+        await expect(await allRegions).toHaveCount(1915);
+        const summary = await page.locator(".choropleth-data-summary");
+        const globalBounds = await summary.getAttribute("bounds");
+
+        await page.click(".indicator-menu-activator-desktop");
+        await expect(page.locator(".indicator-menu-desktop")).toBeVisible();
+        await page.focus(".v-field__input input");
+        await page.keyboard.type("Indi");
+
+        // select India
+        await page.keyboard.press("ArrowDown");
+        await page.keyboard.press("Enter");
+
+        await page.waitForURL(/dengue\/may24\/FOI\/IND/i);
+        await expectLoadingSpinnerIsShownThenRemoved(page);
+
+        await expect(await allRegions).toHaveCount(2538, { timeout: 5000 }); // timeout required for Safari
+        const newBounds = await summary.getAttribute("bounds");
+        expect(newBounds).not.toEqual(globalBounds);
+
+        await expect(page.locator(".indicator-menu-desktop")).toBeVisible();
+        await page.locator(".v-field__input input").blur();
+        await page.focus(".v-field__input input");
+        await page.keyboard.type("Gl");
+
+        // select Global
+        await page.keyboard.press("ArrowDown");
+        await page.keyboard.press("Enter");
+
+        await page.waitForURL("/dengue/may24/FOI");
+        await expectLoadingSpinnerIsShownThenRemoved(page);
+
+        await expect(await allRegions).toHaveCount(1915, { timeout: 5000 }); // timeout required for Safari
+        const newerBounds = await summary.getAttribute("bounds");
+        expect(newerBounds).toEqual(globalBounds);
     });
 });
