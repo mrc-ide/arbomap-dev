@@ -115,8 +115,9 @@ const customFilter = (itemTitle: string, queryText: string) => {
 };
 
 const handleChangeSelection = (countryCode: string | null) => {
-    if (countryCode === null) {
-        // User is probably just trying to clear the input field, not trying to go to a global view
+    if (countryCode === null || countryCode === mapSettings.value.country) {
+        // If countryCode is null, the user is probably just trying to clear the input field, not trying to
+        // go to a global view.
         return;
     }
 
