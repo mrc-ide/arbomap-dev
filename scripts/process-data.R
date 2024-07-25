@@ -67,10 +67,10 @@ process <- function(path, dest, level) {
 }
 
 root <- here::here()
-process(file.path(root, "data/raw/Adm1_Estimates_v4_gadm41_filled_gaps.xlsx"),
+process(file.path(root, "data/raw/Adm1_Estimates_v5_gadm41_filled_gaps.xlsx"),
         file.path(root, "data/processed/admin1"),
         1)
-process(file.path(root, "data/raw/Adm2_Estimates_v4_gadm41_filled_gaps.xlsx"),
+process(file.path(root, "data/raw/Adm2_Estimates_v5_gadm41_filled_gaps.xlsx"),
         file.path(root, "data/processed/admin2"),
        2)
 
