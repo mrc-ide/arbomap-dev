@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+
+usage() {
+    echo "Usage: $0 [OPTIONS]"
+    echo "Options:"
+    echo " -h, --help            Show list of flags"
+    echo " --skip-process-data   Skip process-data R script"
+    echo " --skip-geo-to-dict    Skip transform_adm1_geojson_to_dict script"
+    echo " --skip-gen-names      Skip generate_country_names_from_adm0_geojson script"
+    echo " --skip-copy           Skip copying files to public folder"
+}
+
+SKIP_PROCESS_DATA=0
+SKIP_GEO_TO_DICT=0
+SKIP_GEN_NAMES=0
+SKIP_COPY=0
+
+handle_options() {
+  while [ $# -gt 0 ]; do
+    case $1 in
+      -h | --help)
+        usage
+        exit 0
+      ;;
+      --skip-process-data)
+        SKIP_PROCESS_DATA=1
+        ;;
+      --skip-geo-to-dict)
+        SKIP_GEO_TO_DICT=1
+        ;;
+      --skip-gen-names)
+        SKIP_GEN_NAMES=1
+        ;;
+      --skip-copy)
+        SKIP_COPY=1
+        ;;
+      *)
+        echo "Invalid option: $1" >&2
+        usage
+        exit 1
+        ;;
+    esac
+    shift
+  done
+}
+
+handle_options "$@"
+
+HERE=$(realpath "$(dirname $0)")
+
+if [ $SKIP_PROCESS_DATA -eq 0 ]; then
+    $HERE/process-data.R
+fi
+
+if [ $SKIP_GEO_TO_DICT -eq 0 ]; then
+    node "$HERE/transform_adm1_geojson_to_dict.cjs"
+fi
+
+if [ $SKIP_GEN_NAMES -eq 0 ]; then
+    node "$HERE/generate_country_names_from_adm0_geojson.cjs"
+fi
+
+if [ $SKIP_COPY -eq 0 ]; then
+    mkdir -p "$HERE/../public/dengue/may24/resources/indicators/admin1"
+    cp -r "$HERE/../data/processed/admin1/global_adm1.json" "$HERE/../public/dengue/may24/resources/indicators/admin1"
+    mkdir -p "$HERE/../public/dengue/may24/resources/indicators/admin2"
+    cp -r "$HERE/../data/processed/admin2" "$HERE/../public/dengue/may24/resources/indicators/"
+    cp "$HERE/../data/processed/all_adm1_0_5pc_by_iso.json" "$HERE/../public/dengue/may24/resources/geojson/"
+    cp "$HERE/../data/processed/countryNames.json" "$HERE/../public/dengue/may24/resources/"
+fi
