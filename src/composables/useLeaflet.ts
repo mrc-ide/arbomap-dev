@@ -11,8 +11,13 @@ import {
     TooltipOptions,
     LeafletEventHandlerFnMap,
     GeoJSONOptions,
-    PathOptions
+    PathOptions,
+    TileLayer
 } from "leaflet";
+import geojsonvt from "geojson-vt";
+// Make geojsonvt available to leaflet-geojson-vt
+window.geojsonvt = geojsonvt;
+import "leaflet-geojson-vt";
 import { storeToRefs } from "pinia";
 import { useAppStore } from "../stores/appStore";
 import { countryAdmin1OutlineStyle, countryOutlineStyle, minZoom } from "../components/utils";
@@ -49,7 +54,8 @@ export const useLeaflet = (
     // internal refs
 
     const emptyLayer = shallowRef<Polyline>(polyline([]));
-    const geoJsonLayer = shallowRef<GeoJSON<FeatureProperties, Geometry> | null>(null);
+    //const geoJsonLayer = shallowRef<GeoJSON<FeatureProperties, Geometry> | null>(null);
+    const tileLayer = shallowRef<TileLayer | null>(null);
     const countryOutlineLayer = shallowRef<Polyline | null>(null);
     const countryAdmin1OutlineLayer = shallowRef<(Polyline | null)[] | null>(null);
     const layerWithOpenTooltip = shallowRef<Layer | null>(null);
@@ -111,6 +117,7 @@ export const useLeaflet = (
     // this is run for every single feature that we display, we can attach
     // tooltips and any events to our features, the user of useLeaflet can
     // attach events to features via layerEvents
+    // TODO: how to do this with tile layer?
     const configureGeojsonLayer = (feature: MapFeature, layer: Layer) => {
         const tooltip = getTooltip(feature);
         layer.bindTooltip(tooltip?.content, tooltip?.options);
@@ -144,16 +151,30 @@ export const useLeaflet = (
         }
 
         // remove layers from map
-        geoJsonLayer.value?.remove();
+        //geoJsonLayer.value?.remove();
+        tileLayer.value?.remove();
         countryOutlineLayer.value?.remove();
         countryAdmin1OutlineLayer.value?.forEach((layer) => layer?.remove());
 
         // create new geojson and add to map
-        geoJsonLayer.value = geoJSON<FeatureProperties, Geometry>(newFeatures, {
-            style,
-            onEachFeature: configureGeojsonLayer,
-            smoothFactor: 0
-        } as GeojsonOptions).addTo(leafletMap);
+        //geoJsonLayer.value = geoJSON<FeatureProperties, Geometry>(newFeatures, {
+        //    style,
+        //    onEachFeature: configureGeojsonLayer,
+        //    smoothFactor: 0
+        //} as GeojsonOptions).addTo(leafletMap);
+
+        const options = {
+            maxZoom: 16,
+            tolerance: 3,
+            debug: 0,
+            style: {
+                fillColor: "#000000",
+                color: "#ffffff",
+            },
+        };
+        const geojson = { type: "FeatureCollection", features: newFeatures };
+        tileLayer.value = L.geoJson.vt(geojson, options).addTo(leafletMap);
+
 
         // adding country outline if we have a admin0GeojsonFeature
         if (admin0GeojsonFeature.value) {
