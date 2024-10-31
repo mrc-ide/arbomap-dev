@@ -1,5 +1,5 @@
 import { LMap } from "@vue-leaflet/vue-leaflet";
-import { Geometry } from "geojson";
+import { Feature, Geometry } from "geojson";
 import {
     LatLngBounds,
     Map,
@@ -119,6 +119,7 @@ export const useLeaflet = (
     // attach events to features via layerEvents
     // TODO: how to do this with tile layer?
     const configureGeojsonLayer = (feature: MapFeature, layer: Layer) => {
+        console.log("configuring")
         const tooltip = getTooltip(feature);
         layer.bindTooltip(tooltip?.content, tooltip?.options);
         layer.on({
@@ -167,10 +168,9 @@ export const useLeaflet = (
             maxZoom: 16,
             tolerance: 3,
             debug: 0,
-            style: {
-                fillColor: "#000000",
-                color: "#ffffff",
-            },
+            smoothFactor: 0,
+            style,
+            onEachFeature: configureGeojsonLayer
         };
         const geojson = { type: "FeatureCollection", features: newFeatures };
         tileLayer.value = L.geoJson.vt(geojson, options).addTo(leafletMap);

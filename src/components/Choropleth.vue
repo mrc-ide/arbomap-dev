@@ -60,26 +60,26 @@ const isLargeScreen = useMediaQuery("(min-width: 1024px)");
 const { tooltipForFeature } = useTooltips(selectedIndicators);
 const { getFillAndOutlineColor } = useIndicatorColors(appConfig, selectedIndicators);
 
-const featureInSelectedCountry = (feature: MapFeature) =>
-    feature.properties[featureProperties.country] === mapSettings.value.country;
+const featureInSelectedCountry = (properties: GeoJsonProperties) =>
+    properties[featureProperties.country] === mapSettings.value.country;
 
-const featureAdminLevel = (feature: MapFeature) =>
-    featureInSelectedCountry(feature) && mapSettings.value.adminLevel === 2 ? 2 : 1;
+const featureAdminLevel = (properties: GeoJsonProperties) =>
+    featureInSelectedCountry(properties) && mapSettings.value.adminLevel === 2 ? 2 : 1;
 
-const getFeatureId = (feature: MapFeature) =>
-    featureAdminLevel(feature) === 2
-        ? feature.properties[featureProperties.idAdm2]
-        : feature.properties[featureProperties.idAdm1];
+const getFeatureId = (properties: GeoJsonProperties) =>
+    featureAdminLevel(properties) === 2
+        ? properties[featureProperties.idAdm2]
+        : properties[featureProperties.idAdm1];
 
 const getFeatureName = (feature: MapFeature) =>
     featureAdminLevel(feature) === 2
         ? feature.properties[featureProperties.nameAdm2]
         : feature.properties[featureProperties.nameAdm1];
 
-const style = (f: MapFeature) => {
+const style = (p: GeoJsonProperties) => {
     const { country, indicator } = mapSettings.value;
-    const isFaded = !!country && !featureInSelectedCountry(f);
-    const styleColors = getFillAndOutlineColor(indicator, getFeatureId(f), isFaded);
+    const isFaded = !!country && !featureInSelectedCountry(p);
+    const styleColors = getFillAndOutlineColor(indicator, getFeatureId(p), isFaded);
     return { className: "geojson", fillColor: styleColors.fillColor, color: styleColors.outlineColor };
 };
 
