@@ -32,7 +32,7 @@
     </div>
 </template>
 <script setup lang="ts">
-import { watch } from "vue";
+import { watch, useTemplateRef } from "vue";
 import { storeToRefs } from "pinia";
 import { LMap, LTileLayer, LControl } from "@vue-leaflet/vue-leaflet";
 import { useRouter } from "vue-router";
@@ -50,6 +50,9 @@ import { useSelectedMapInfo } from "../composables/useSelectedMapInfo";
 import MapSettingsMenu from "./mapSettingsMenu/MapSettingsMenu.vue";
 import { MapFeature } from "../types/resourceTypes";
 import ExcelDownloadButton from "./ExcelDownloadButton.vue";
+import { GeoJsonProperties } from "geojson";
+import { LeafletMouseEvent } from "leaflet";
+import * as L from "leaflet";
 
 const router = useRouter();
 const { mapSettings, appConfig, mapLoading } = storeToRefs(useAppStore());
@@ -60,44 +63,54 @@ const isLargeScreen = useMediaQuery("(min-width: 1024px)");
 const { tooltipForFeature } = useTooltips(selectedIndicators);
 const { getFillAndOutlineColor } = useIndicatorColors(appConfig, selectedIndicators);
 
-const featureInSelectedCountry = (feature: MapFeature) =>
-    feature.properties[featureProperties.country] === mapSettings.value.country;
+const featureInSelectedCountry = (properties: GeoJsonProperties) =>
+    properties[featureProperties.country] === mapSettings.value.country;
 
-const featureAdminLevel = (feature: MapFeature) =>
-    featureInSelectedCountry(feature) && mapSettings.value.adminLevel === 2 ? 2 : 1;
+const featureAdminLevel = (properties: GeoJsonProperties) =>
+    featureInSelectedCountry(properties) && mapSettings.value.adminLevel === 2 ? 2 : 1;
 
-const getFeatureId = (feature: MapFeature) =>
-    featureAdminLevel(feature) === 2
-        ? feature.properties[featureProperties.idAdm2]
-        : feature.properties[featureProperties.idAdm1];
+const getFeatureId = (properties: GeoJsonProperties) =>
+    featureAdminLevel(properties) === 2
+        ? properties[featureProperties.idAdm2]
+        : properties[featureProperties.idAdm1];
 
-const getFeatureName = (feature: MapFeature) =>
-    featureAdminLevel(feature) === 2
-        ? feature.properties[featureProperties.nameAdm2]
-        : feature.properties[featureProperties.nameAdm1];
+const getFeatureName = (properties: GeoJsonProperties) =>
+    featureAdminLevel(properties) === 2
+        ? properties[featureProperties.nameAdm2]
+        : properties[featureProperties.nameAdm1];
 
-const style = (f: MapFeature) => {
+const style = (p: GeoJsonProperties) => {
     const { country, indicator } = mapSettings.value;
-    const isFaded = !!country && !featureInSelectedCountry(f);
-    const styleColors = getFillAndOutlineColor(indicator, getFeatureId(f), isFaded);
-    return { className: "geojson", fillColor: styleColors.fillColor, color: styleColors.outlineColor };
+    const isFaded = !!country && !featureInSelectedCountry(p);
+    const styleColors = getFillAndOutlineColor(indicator, getFeatureId(p), isFaded);
+    // TODO: can we use class? Needs to be svg?
+    return {
+        className: "geojson",
+        fillColor: styleColors.fillColor,
+        color: styleColors.outlineColor,
+        fillOpacity: 0.5,
+        stroke: true,
+        fill: true,
+        weight: 0,
+    };
 };
 
-const getTooltip = (feature: MapFeature) => tooltipForFeature(getFeatureId(feature), getFeatureName(feature));
+const getTooltip = (e: LeafletMouseEvent) => tooltipForFeature(getFeatureId(e.layer.properties), getFeatureName(e.layer.properties));
 
 // when rendering the geojson, leaflet will attach event listener specified here to each feature.
 // here we use it to control mapLoading element and changing the URL of the app when they click on
 // a feature based on what country it is
-const layerOnEvents = (feature: MapFeature) => {
-    return {
-        click: () => {
+const layerOnEvents = {
+        click: (e: LeafletMouseEvent) => {
+            console.log("clicked");
             mapLoading.value = true;
-            const country = feature.properties[featureProperties.country];
+            // TODO: layer is deprecated, what should we use?
+            const properties = e.layer.properties;
+            const country = properties[featureProperties.country];
             // select feature's country, or unselect if click on it when already selected
             const countryToSelect = country === mapSettings.value.country ? "" : country;
             routerPush(router, `/${APP_BASE_ROUTE}/${mapSettings.value.indicator}/${countryToSelect}`);
         }
-    };
 };
 
 const { map, dataSummary, lockBounds, updateLeafletMap, handleMapBoundsUpdated, updateRegionBounds } = useLeaflet(
@@ -106,6 +119,10 @@ const { map, dataSummary, lockBounds, updateLeafletMap, handleMapBoundsUpdated, 
     layerOnEvents
 );
 useLoadingSpinner(map, mapLoading);
+;
+const openTooltip = (e: LayerMouseEvent) => {}
+
+const closeTooltip = () => {};
 
 const updateMap = () => {
     lockBounds.value = !!mapSettings.value.country;

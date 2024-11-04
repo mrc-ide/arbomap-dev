@@ -33,10 +33,11 @@ export const useSelectedMapInfo = () => {
                 .filter(([countryId]) => countryId !== mapSettings.value.country)
                 .flatMap(([, geojson]) => geojson);
 
-            return [...admin2Geojson.value[mapSettings.value.country], ...filteredAdmin1];
+            // Map to raw to ensure Leaflet VectorGrid can handle features
+            return [...admin2Geojson.value[mapSettings.value.country], ...filteredAdmin1].map(f => toRaw<MapFeature>(f));
         }
 
-        return Object.values(admin1Geojson.value).flatMap((geojson) => geojson);
+        return Object.values(admin1Geojson.value).flatMap((geojson) => geojson).map(f => toRaw<MapFeature>(f));
     });
 
     return {
