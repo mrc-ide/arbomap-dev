@@ -94,15 +94,20 @@ const style = (p: GeoJsonProperties) => {
     };
 };
 
-const getTooltip = (e: LeafletMouseEvent) => tooltipForFeature(getFeatureId(e.layer.properties), getFeatureName(e.layer.properties));
+const getTooltip = (e: LeafletMouseEvent) => {
+    const properties = e.propagatedFrom.properties;
+    return tooltipForFeature(
+        getFeatureId(properties),
+        getFeatureName(properties)
+    );
+};
 
 // when rendering the geojson, leaflet will attach event listener specified here to each feature.
 // here we use it to control mapLoading element and changing the URL of the app when they click on
 // a feature based on what country it is
 const clickEvent = (e: LeafletMouseEvent) => {
     mapLoading.value = true;
-    // TODO: layer is deprecated, what should we use?
-    const properties = e.layer.properties;
+    const properties = e.propagatedFrom.properties;
     const country = properties[featureProperties.country];
     // select feature's country, or unselect if click on it when already selected
     const countryToSelect = country === mapSettings.value.country ? "" : country;

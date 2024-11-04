@@ -21,6 +21,12 @@ import { MapFeature } from "../types/resourceTypes";
 
 type TooltipOptionAndContent = { content: string; options?: TooltipOptions };
 
+// Need this to prevent "L.DomEvent.fakeStop is not a function" error with canvas mode VectorGrid
+//https://stackoverflow.com/questions/73833142/leaflet-vectorgrid-problem-with-click-event
+L.DomEvent.fakeStop = function () {
+    return true;
+}
+
 export const useLeaflet = (
     style: (f: GeoJsonProperties) => PathOptions,
     getTooltip: (e: LeafletMouseEvent) => TooltipOptionAndContent,
@@ -138,6 +144,7 @@ export const useLeaflet = (
 
         // TODO: fix up types again - shouldn't really need to use L
         vectorGridLayer.value = vectorGrid.slicer(geoJsonDocument, {
+            rendererFactory: L.canvas.tile, // or L.svg.tile
             interactive: true,
             vectorTileLayerStyles: {
                 sliced: style
