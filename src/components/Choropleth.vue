@@ -48,11 +48,9 @@ import { backgroundLayer } from "./utils";
 import { useLoadingSpinner } from "../composables/useLoadingSpinner";
 import { useSelectedMapInfo } from "../composables/useSelectedMapInfo";
 import MapSettingsMenu from "./mapSettingsMenu/MapSettingsMenu.vue";
-import { MapFeature } from "../types/resourceTypes";
 import ExcelDownloadButton from "./ExcelDownloadButton.vue";
 import { GeoJsonProperties } from "geojson";
 import { LeafletMouseEvent } from "leaflet";
-import * as L from "leaflet";
 
 const router = useRouter();
 const { mapSettings, appConfig, mapLoading } = storeToRefs(useAppStore());
@@ -83,7 +81,8 @@ const style = (p: GeoJsonProperties) => {
     const { country, indicator } = mapSettings.value;
     const isFaded = !!country && !featureInSelectedCountry(p);
     const styleColors = getFillAndOutlineColor(indicator, getFeatureId(p), isFaded);
-    // TODO: can we use class? Needs to be svg?
+    // TODO: Should be able to use class, but only if svg mode..
+    // TODO: prune this style?
     return {
         className: "geojson",
         fillColor: styleColors.fillColor,
@@ -100,29 +99,22 @@ const getTooltip = (e: LeafletMouseEvent) => tooltipForFeature(getFeatureId(e.la
 // when rendering the geojson, leaflet will attach event listener specified here to each feature.
 // here we use it to control mapLoading element and changing the URL of the app when they click on
 // a feature based on what country it is
-const layerOnEvents = {
-        click: (e: LeafletMouseEvent) => {
-            console.log("clicked");
-            mapLoading.value = true;
-            // TODO: layer is deprecated, what should we use?
-            const properties = e.layer.properties;
-            const country = properties[featureProperties.country];
-            // select feature's country, or unselect if click on it when already selected
-            const countryToSelect = country === mapSettings.value.country ? "" : country;
-            routerPush(router, `/${APP_BASE_ROUTE}/${mapSettings.value.indicator}/${countryToSelect}`);
-        }
+const clickEvent = (e: LeafletMouseEvent) => {
+    mapLoading.value = true;
+    // TODO: layer is deprecated, what should we use?
+    const properties = e.layer.properties;
+    const country = properties[featureProperties.country];
+    // select feature's country, or unselect if click on it when already selected
+    const countryToSelect = country === mapSettings.value.country ? "" : country;
+    routerPush(router, `/${APP_BASE_ROUTE}/${mapSettings.value.indicator}/${countryToSelect}`);
 };
 
 const { map, dataSummary, lockBounds, updateLeafletMap, handleMapBoundsUpdated, updateRegionBounds } = useLeaflet(
     style,
     getTooltip,
-    layerOnEvents
+    clickEvent
 );
 useLoadingSpinner(map, mapLoading);
-;
-const openTooltip = (e: LayerMouseEvent) => {}
-
-const closeTooltip = () => {};
 
 const updateMap = () => {
     lockBounds.value = !!mapSettings.value.country;

@@ -2,18 +2,13 @@ import * as L from "leaflet";
 const a = L.TileLayer
 console.log(typeof a)
 import "leaflet.vectorgrid";
-//import * as GJ from "geojson";
 import {
     LatLngBounds,
     Map,
-    geoJSON,
     GeoJSON,
     Polyline,
-    Layer,
     polyline,
     TooltipOptions,
-    LeafletEventHandlerFnMap,
-    GeoJSONOptions,
     PathOptions,
     vectorGrid, LeafletMouseEvent
 } from "leaflet";
@@ -24,13 +19,12 @@ import { countryAdmin1OutlineStyle, countryOutlineStyle, minZoom } from "../comp
 import { useDataSummary } from "./useDataSummary";
 import { MapFeature } from "../types/resourceTypes";
 
-type FeatureProperties = { GID_0: string; GID_1: string; NAME_1: string };
 type TooltipOptionAndContent = { content: string; options?: TooltipOptions };
 
 export const useLeaflet = (
     style: (f: GeoJsonProperties) => PathOptions,
     getTooltip: (e: LeafletMouseEvent) => TooltipOptionAndContent,
-    layerEvents: Record<(e: LeafletMouseEvent) => void>
+    clickEvent: (e: LeafletMouseEvent) => void
 ) => {
     // external refs: map related
 
@@ -53,11 +47,9 @@ export const useLeaflet = (
     // internal refs
 
     const emptyLayer = shallowRef<Polyline>(polyline([]));
-    //const geoJsonLayer = shallowRef<GeoJSON<FeatureProperties, Geometry> | null>(null);
     const vectorGridLayer = shallowRef<VectorGrid.Slicer | null>(null);
     const countryOutlineLayer = shallowRef<Polyline | null>(null);
     const countryAdmin1OutlineLayer = shallowRef<(Polyline | null)[] | null>(null);
-    const layerWithOpenTooltip = shallowRef<Layer | null>(null);
     const bounds = ref<LatLngBounds | null>(null);
 
     // external refs: e2e test related
@@ -113,26 +105,11 @@ export const useLeaflet = (
         }
     };
 
-    // this is run for every single feature that we display, we can attach
-    // tooltips and any events to our features, the user of useLeaflet can
-    // attach events to features via layerEvents
-    /*const configureGeojsonLayer = (feature: MapFeature, layer: Layer) => {
-        const tooltip = getTooltip(feature);
-        layer.bindTooltip(tooltip?.content, tooltip?.options);
-        layer.on({
-            ...layerEvents(feature),
-            tooltipopen: () => {
-                // in the past tooltips remained open when you clicked and dragged on the
-                // map while the bounds were locked, now we track each layer that will open a
-                // tooltip and close them if they are not the most recent layer to make sure
-                // no old tooltips remain open
-                if (layer !== layerWithOpenTooltip.value) {
-                    layerWithOpenTooltip.value?.closeTooltip();
-                    layerWithOpenTooltip.value = layer;
-                }
-            }
-        });
-    };*/
+    const closeTooltip = () => {
+        if (tooltip.value) {
+            getLeafletMap().closeTooltip(tooltip.value);
+        }
+    };
 
     // this is the main function that updates the map, should be called in an appropriate
     // watcher
@@ -154,17 +131,6 @@ export const useLeaflet = (
         countryOutlineLayer.value?.remove();
         countryAdmin1OutlineLayer.value?.forEach((layer) => layer?.remove());
 
-        // create new geojson and add to map
-        /*geoJsonLayer.value = geoJSON<FeatureProperties, Geometry>(newFeatures, {
-            style,
-            onEachFeature: configureGeojsonLayer,
-            smoothFactor: 0
-        } as GeojsonOptions).addTo(leafletMap);*/
-
-
-        // Examples of styling etc:
-        // https://github.com/Leaflet/Leaflet.VectorGrid/blob/master/docs/demo-geojson.html
-
         const geoJsonDocument = {
             type: 'FeatureCollection',
             features: newFeatures
@@ -175,41 +141,19 @@ export const useLeaflet = (
             interactive: true,
             vectorTileLayerStyles: {
                 sliced: style
-
             }
-        });
-        Object.keys(layerEvents).forEach((key: string) => {
-            vectorGridLayer.value.on(key, layerEvents[key]);
-        });
-
-        vectorGridLayer.value.on("mouseover", (e: LayerMouseEvent) => {
+        }).on("click",
+            clickEvent
+        ).on("mouseover", (e: LayerMouseEvent) => {
             const content = getTooltip(e);
-            if (tooltip.value) {
-                getLeafletMap().closeTooltip(tooltip.value);
-            }
+            closeTooltip(); //close any existing tooltip
             tooltip.value =  L.tooltip({ sticky: true, permanent: false})
                 .setContent(content)
                 .setLatLng(e.latlng)
-                .openOn(getLeafletMap());
-        });
-        vectorGridLayer.value.on("mouseout", () => {
-            // TODO: make closeTooltip  method
-            if (tooltip.value) {
-                getLeafletMap().closeTooltip(tooltip.value);
-            }
-        });
-
-        /*vectorGridLayer.value.on(
-            "mouseover", (e: LayerMouseEvent) => {
-                const content = getTooltip(e);
-                const lmap = L.map('map'); // TODO : sort this
-                L.popup()
-                    .setContent(content)
-                    .setLatLng(e.latlng)
-                    .openOn(lmap);
-            }
-        );*/
-        vectorGridLayer.value.addTo(leafletMap);
+                .openOn(leafletMap);
+        }).on("mouseout", () => {
+            closeTooltip();
+        }).addTo(leafletMap);
 
         // adding country outline if we have a admin0GeojsonFeature
         if (admin0GeojsonFeature.value) {
