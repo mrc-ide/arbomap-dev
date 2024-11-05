@@ -144,7 +144,7 @@ export const useLeaflet = (
 
         // TODO: fix up types again - shouldn't really need to use L
         vectorGridLayer.value = vectorGrid.slicer(geoJsonDocument, {
-            rendererFactory: L.canvas.tile, // or L.svg.tile
+            //rendererFactory: L.canvas.tile, // or L.svg.tile
             interactive: true,
             vectorTileLayerStyles: {
                 sliced: style
