@@ -42,7 +42,7 @@ import { useIndicatorColors } from "../composables/useIndicatorColors";
 import { useLeaflet } from "../composables/useLeaflet";
 import "leaflet/dist/leaflet.css";
 import { useTooltips } from "../composables/useTooltips";
-import { APP_BASE_ROUTE } from "../router/utils";
+import { APP_BASE_ROUTE, APP_BASE_URL } from "../router/utils";
 import { routerPush } from "../utils";
 import { backgroundLayer } from "./utils";
 import { useLoadingSpinner } from "../composables/useLoadingSpinner";

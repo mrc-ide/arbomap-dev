@@ -18,6 +18,8 @@ import { useAppStore } from "../stores/appStore";
 import { countryAdmin1OutlineStyle, countryOutlineStyle, minZoom } from "../components/utils";
 import { useDataSummary } from "./useDataSummary";
 import { MapFeature } from "../types/resourceTypes";
+import { APP_BASE_URL } from "../router/utils";
+import 'leaflet/dist/leaflet.css';
 
 type TooltipOptionAndContent = { content: string; options?: TooltipOptions };
 
@@ -62,7 +64,7 @@ export const useLeaflet = (
 
     const { dataSummary } = useDataSummary(bounds);
 
-    const { countryBoundingBoxes, admin0GeojsonFeature, admin1Geojson, mapSettings } = storeToRefs(useAppStore());
+    const { countryBoundingBoxes, admin0GeojsonFeature, admin1Geojson, admin2Geojson, mapSettings } = storeToRefs(useAppStore());
 
     const getRegionBounds = (countryId?: string) => {
         if (Object.keys(countryBoundingBoxes.value).length === 0) return null;
@@ -143,13 +145,44 @@ export const useLeaflet = (
         };
 
         // TODO: fix up types again - shouldn't really need to use L
-        vectorGridLayer.value = vectorGrid.slicer(geoJsonDocument, {
+        /*vectorGridLayer.value = vectorGrid.slicer(geoJsonDocument, {
             //rendererFactory: L.canvas.tile, // or L.svg.tile
             interactive: true,
             vectorTileLayerStyles: {
                 sliced: style
             }
-        }).on("click",
+        })
+        .on("click",
+            clickEvent
+        ).on("mouseover", (e: LayerMouseEvent) => {
+            const content = getTooltip(e);
+            closeTooltip(); //close any existing tooltip
+            tooltip.value =  L.tooltip({ sticky: true, permanent: false})
+                .setContent(content)
+                .setLatLng(e.latlng)
+                .openOn(leafletMap);
+        }).on("mouseout", () => {
+            closeTooltip();
+        })
+        .addTo(leafletMap);*/
+        const testBounds = getRegionBounds("BRA"); // set bounds on region2 tile layer to only get the tile(s) we need
+        // This is a bit tedious but doesn't seem to be any way around it - need to provide styles as a dictionary where
+        // keys are layer names i.e. IDs of each feature. They call all have the same value - the function to calculate
+        // feature style!
+        const vectorTileLayerStyles = Object.fromEntries(admin2Geojson.value["BRA"].map((feature) => [feature.properties.GID_2, style]));
+
+        const vectorTileOptions = {
+            vectorTileLayerStyles,
+           // rendererFactory: L.canvas.tile, // or L.svg.tile
+            interactive: true,
+            maxNativeZoom: 10,
+            tms: true, // y values are inverted without this!
+            bounds: [testBounds.getSouthWest(), testBounds.getNorthEast()]
+        }
+        const testTileUrl = `http://localhost:5000/testtiles/{z}/{x}/{y}`;
+
+        const pbfLayer=  vectorGrid.protobuf(testTileUrl,vectorTileOptions);
+        pbfLayer.on("click",
             clickEvent
         ).on("mouseover", (e: LayerMouseEvent) => {
             const content = getTooltip(e);
@@ -161,6 +194,7 @@ export const useLeaflet = (
         }).on("mouseout", () => {
             closeTooltip();
         }).addTo(leafletMap);
+
 
         // adding country outline if we have a admin0GeojsonFeature
         if (admin0GeojsonFeature.value) {
