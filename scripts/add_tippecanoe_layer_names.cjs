@@ -9,25 +9,30 @@
 const path = require("path");
 const fs = require("fs");
 
-const dir = `${__dirname}/../public/dengue/may24/resources/geojson/admin2/`;
-const inputFile = path.normalize(`${dir}gadm41_BRA_2_100pc.json`);
-const outputFile = path.normalize(`${dir}gadm41_BRA_2_100pc_for_tippecanoe.json`);
-console.log(`Transforming geojson at ${inputFile}`);
+const transformFile = (relativeDir, fileName, layerIdProp) => {
+    const dir = `${__dirname}${relativeDir}`;
+    const inputFile = path.normalize(`${dir}/${fileName}`);
+    const outputFile = path.normalize(`${dir}/tippecanoe_${fileName}`);
+    console.log(`Transforming geojson at ${inputFile}`);
 
-const input = require(inputFile);
-const features = input.features;
-console.log(`found ${features.length} features`);
-features.forEach((feature) => {
-    const id = feature.properties.GID_2;
-    feature.tippecanoe = {
-        layer: id
-    };
-});
+    const input = require(inputFile);
+    const features = input.features;
+    console.log(`found ${features.length} features`);
+    features.forEach((feature) => {
+        const id = feature.properties.GID_2;
+        feature.tippecanoe = {
+            layer: id
+        };
+    });
 
-const output = JSON.stringify(input);
-fs.writeFile(outputFile, output, (err) => {
-    if (err) {
-        throw err;
-    }
-    console.log(`Saved to ${outputFile}`);
-});
+    const output = JSON.stringify(input);
+    fs.writeFile(outputFile, output, (err) => {
+        if (err) {
+            throw err;
+        }
+        console.log(`Saved to ${outputFile}`);
+    });
+}
+
+transformFile("/../public/dengue/may24/resources/geojson/admin2/", "gadm41_BRA_2_100pc.json", "GID_2");
+transformFile("/../public/dengue/may24/resources/geojson/admin1/", "all_adm1_100pc.json", "GID_1");
