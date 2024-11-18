@@ -1,7 +1,7 @@
 import * as L from "leaflet";
 const a = L.TileLayer
 console.log(typeof a)
-import "leaflet.vectorgrid";
+import vectorTileLayer from "leaflet-vector-tile-layer";
 import {
     LatLngBounds,
     Map,
@@ -126,7 +126,7 @@ export const useLeaflet = (
     // This is exactly what we need to filter out non-selected country regions from admin2 tile.
     // Here we simply replace the affected method in the tile layer which implements the new filter method,
     // but we really ought to fork the repo as it is no longer being maintained..
-    const createTile = function(coords, done) {
+    /*const createTile = function(coords, done) {
         var storeFeatures = this.options.getFeatureId;
         var tileSize = this.getTileSize();
         var renderer = this.options.rendererFactory(coords, tileSize, this.options);
@@ -212,7 +212,7 @@ export const useLeaflet = (
             L.Util.requestAnimFrame(done.bind(coords, null, null));
         }.bind(this));
         return renderer.getContainer();
-    };
+    };*/
 
     // this is the main function that updates the map, should be called in an appropriate
     // watcher
@@ -240,47 +240,16 @@ export const useLeaflet = (
         };
 
         // TODO: fix up types again - shouldn't really need to use L
-        /*vectorGridLayer.value = vectorGrid.slicer(geoJsonDocument, {
-            //rendererFactory: L.canvas.tile, // or L.svg.tile
-            interactive: true,
-            vectorTileLayerStyles: {
-                sliced: style
-            }
-        })
-        .on("click",
-            clickEvent
-        ).on("mouseover", (e: LayerMouseEvent) => {
-            const content = getTooltip(e);
-            closeTooltip(); //close any existing tooltip
-            tooltip.value =  L.tooltip({ sticky: true, permanent: false})
-                .setContent(content)
-                .setLatLng(e.latlng)
-                .openOn(leafletMap);
-        }).on("mouseout", () => {
-            closeTooltip();
-        })
-        .addTo(leafletMap);*/
+
         const testBounds = getRegionBounds("BRA"); // set bounds on region2 tile layer to only get the tile(s) we need
-        // This is a bit tedious but doesn't seem to be any way around it - need to provide styles as a dictionary where
-        // keys are layer names i.e. IDs of each feature. They all have the same value - the function to calculate
-        // feature style!
-        // TODO: don't use geojson here as we want to get rid of it. Replace the geojson files with metadata files instead
-        // - once we have the real server, it will provide this metadara as well as the tiles
-        const vectorTileLayerStyles = Object.fromEntries(admin2Geojson.value["BRA"].map((feature) => [feature.properties.GID_2, style]));
-        const filter = (properties: geojsonvt.Feature, zoom: number) => {
-            console.log("filtering")
-            return (properties["GID_2"] as string)?.includes("BRA");
+        const filter = (properties: geojsonvt.Feature, layerName: string, zoom: number) => {
+            //console.log(`filtering ${layerName}`)
+            // TODO: use selected country to filter
+            return layerName.includes("BRA");
         };
 
         const vectorTileOptions = {
-            vectorTileLayerStyles,
-            style: {
-                fillColor: "#000",
-                color: "#ff0000",
-                fillOpacity: 0.5,
-                stroke: true,
-                fill: true,
-            },
+            style,
            // rendererFactory: L.canvas.tile, // or L.svg.tile
             interactive: true,
             maxNativeZoom: 10,
@@ -289,10 +258,11 @@ export const useLeaflet = (
             filter
         }
 
-        const testTileUrl = `http://localhost:5000/admin2/{z}/{x}/{y}`;
+        const testTileUrl = `http://localhost:5000/admin2/{z}/{x}/{-y}`;
 
-        const pbfLayer=  vectorGrid.protobuf(testTileUrl,vectorTileOptions);
-        pbfLayer.createTile = createTile;
+
+        const pbfLayer = vectorTileLayer(testTileUrl,vectorTileOptions);
+
         pbfLayer.on("click",
             clickEvent
         ).on("mouseover", (e: LayerMouseEvent) => {
@@ -304,14 +274,10 @@ export const useLeaflet = (
                 .openOn(leafletMap);
         }).on("mouseout", () => {
             closeTooltip();
-        }).on("tileload", function(e) {
-            const names = pbfLayer.getDataLayerNames();
-            console.log(`e: ${JSON.stringify(Object.keys(e.tile))}`)
-            console.log(`LOADED NAMES: ${JSON.stringify(names)}`)
         }).addTo(leafletMap);
 
-        const names = pbfLayer.getDataLayerNames();
-        console.log(`INITIAL NAMES: ${JSON.stringify(names)}`)
+        //const names = pbfLayer.getDataLayerNames();
+        //console.log(`INITIAL NAMES: ${JSON.stringify(names)}`)
 
 
         // adding country outline if we have a admin0GeojsonFeature

@@ -51,6 +51,7 @@ import MapSettingsMenu from "./mapSettingsMenu/MapSettingsMenu.vue";
 import ExcelDownloadButton from "./ExcelDownloadButton.vue";
 import { GeoJsonProperties } from "geojson";
 import { LeafletMouseEvent } from "leaflet";
+import * as geojsonvt from "geojson-vt";
 
 const router = useRouter();
 const { mapSettings, appConfig, mapLoading } = storeToRefs(useAppStore());
@@ -77,13 +78,13 @@ const getFeatureName = (properties: GeoJsonProperties) =>
         ? properties[featureProperties.nameAdm2]
         : properties[featureProperties.nameAdm1];
 
-const style = (p: GeoJsonProperties) => {
+const style = (properties: geojsonvt.Feature, layerName: string, zoom: number) => {
     const { country, indicator } = mapSettings.value;
-    const isFaded = !!country && !featureInSelectedCountry(p);
-    const styleColors = getFillAndOutlineColor(indicator, getFeatureId(p), isFaded);
+    const isFaded = !!country && !featureInSelectedCountry(properties);
+    const styleColors = getFillAndOutlineColor(indicator, layerName, isFaded);
     // TODO: Should be able to use class, but only if svg mode..
     // TODO: prune this style?
-    return {
+    const result =  {
         className: "geojson",
         fillColor: styleColors.fillColor,
         color: styleColors.outlineColor,
@@ -92,6 +93,7 @@ const style = (p: GeoJsonProperties) => {
         fill: true,
         weight: 0,
     };
+    return result;
 };
 
 const getTooltip = (e: LeafletMouseEvent) => {
