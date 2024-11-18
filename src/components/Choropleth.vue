@@ -68,38 +68,33 @@ const featureInSelectedCountry = (properties: GeoJsonProperties) =>
 const featureAdminLevel = (properties: GeoJsonProperties) =>
     featureInSelectedCountry(properties) && mapSettings.value.adminLevel === 2 ? 2 : 1;
 
-const getFeatureId = (properties: GeoJsonProperties) =>
+/*const getFeatureId = (properties: GeoJsonProperties) =>
     featureAdminLevel(properties) === 2
         ? properties[featureProperties.idAdm2]
-        : properties[featureProperties.idAdm1];
+        : properties[featureProperties.idAdm1];*/
 
 const getFeatureName = (properties: GeoJsonProperties) =>
     featureAdminLevel(properties) === 2
         ? properties[featureProperties.nameAdm2]
         : properties[featureProperties.nameAdm1];
 
-const style = (properties: geojsonvt.Feature, layerName: string, zoom: number) => {
+const style = (feature: MapFeature, layerName: string, zoom: number) => {
     const { country, indicator } = mapSettings.value;
-    const isFaded = !!country && !featureInSelectedCountry(properties);
+    const isFaded = !!country && !featureInSelectedCountry(feature.properties);
     const styleColors = getFillAndOutlineColor(indicator, layerName, isFaded);
-    // TODO: Should be able to use class, but only if svg mode..
-    // TODO: prune this style?
     const result =  {
         className: "geojson",
         fillColor: styleColors.fillColor,
         color: styleColors.outlineColor,
-        fillOpacity: 0.5,
-        stroke: true,
-        fill: true,
-        weight: 0,
     };
     return result;
 };
 
 const getTooltip = (e: LeafletMouseEvent) => {
-    const properties = e.propagatedFrom.properties;
+    console.log(`getting tooltip for ${JSON.stringify(Object.keys(e.propagatedFrom))}`)
+    const { layerName, properties } = e.propagatedFrom;
     return tooltipForFeature(
-        getFeatureId(properties),
+        layerName,
         getFeatureName(properties)
     );
 };

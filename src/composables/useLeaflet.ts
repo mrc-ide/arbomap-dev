@@ -56,7 +56,7 @@ export const useLeaflet = (
     // internal refs
 
     const emptyLayer = shallowRef<Polyline>(polyline([]));
-    const vectorGridLayer = shallowRef<VectorGrid.Slicer | null>(null);
+    const admin2TileLayer = shallowRef<VectorGrid.Slicer | null>(null);
     const countryOutlineLayer = shallowRef<Polyline | null>(null);
     const countryAdmin1OutlineLayer = shallowRef<(Polyline | null)[] | null>(null);
     const bounds = ref<LatLngBounds | null>(null);
@@ -120,100 +120,6 @@ export const useLeaflet = (
         }
     };
 
-    // MASSIVE HACK!
-    // A handy feature, allowing filtering of features on tiles was added to LeafletGrid *after* its last
-    // release on npm: https://github.com/Leaflet/Leaflet.VectorGrid/pull/165
-    // This is exactly what we need to filter out non-selected country regions from admin2 tile.
-    // Here we simply replace the affected method in the tile layer which implements the new filter method,
-    // but we really ought to fork the repo as it is no longer being maintained..
-    /*const createTile = function(coords, done) {
-        var storeFeatures = this.options.getFeatureId;
-        var tileSize = this.getTileSize();
-        var renderer = this.options.rendererFactory(coords, tileSize, this.options);
-        var tileBounds = this._tileCoordsToBounds(coords);
-        var vectorTilePromise = this._getVectorTilePromise(coords, tileBounds);
-        if (storeFeatures) {
-            this._vectorTiles[this._tileCoordsToKey(coords)] = renderer;
-            renderer._features = {};
-        }
-        vectorTilePromise.then( function renderTile(vectorTile) {
-            if (vectorTile.layers && vectorTile.layers.length !== 0) {
-                for (var layerName in vectorTile.layers) {
-                    this._dataLayerNames[layerName] = true;
-                    var layer = vectorTile.layers[layerName];
-
-                    var pxPerExtent = this.getTileSize().divideBy(layer.extent);
-
-                    var layerStyle = this.options.vectorTileLayerStyles[ layerName ] ||
-                        L.Path.prototype.options;
-
-                    for (var i = 0; i < layer.features.length; i++) {
-                        var feat = layer.features[i];
-                        var id;
-
-                        if (this.options.filter instanceof Function &&
-                            !this.options.filter(feat.properties, coords.z)) {
-                            continue;
-                        }
-
-                        var styleOptions = layerStyle;
-                        if (storeFeatures) {
-                            id = this.options.getFeatureId(feat);
-                            var styleOverride = this._overriddenStyles[id];
-                            if (styleOverride) {
-                                if (styleOverride[layerName]) {
-                                    styleOptions = styleOverride[layerName];
-                                } else {
-                                    styleOptions = styleOverride;
-                                }
-                            }
-                        }
-
-                        if (styleOptions instanceof Function) {
-                            styleOptions = styleOptions(feat.properties, coords.z);
-                        }
-
-                        if (!(styleOptions instanceof Array)) {
-                            styleOptions = [styleOptions];
-                        }
-
-                        if (!styleOptions.length) {
-                            continue;
-                        }
-
-                        var featureLayer = this._createLayer(feat, pxPerExtent);
-
-                        for (var j = 0; j < styleOptions.length; j++) {
-                            var style = L.extend({}, L.Path.prototype.options, styleOptions[j]);
-                            featureLayer.render(renderer, style);
-                            renderer._addPath(featureLayer);
-                        }
-
-                        if (this.options.interactive) {
-                            featureLayer.makeInteractive();
-                        }
-
-                        if (storeFeatures) {
-                            renderer._features[id] = {
-                                layerName: layerName,
-                                feature: featureLayer
-                            };
-                        }
-                    }
-
-                }
-
-            }
-
-            if (this._map != null) {
-                renderer.addTo(this._map);
-            }
-
-            L.Util.requestAnimFrame(done.bind(coords, null, null));
-        }.bind(this));
-        return renderer.getContainer();
-    };*/
-
     // this is the main function that updates the map, should be called in an appropriate
     // watcher
     const updateLeafletMap = (newFeatures: MapFeature[], regionId: string) => {
@@ -230,7 +136,7 @@ export const useLeaflet = (
 
         // remove layers from map
         //geoJsonLayer.value?.remove();
-        vectorGridLayer.value?.remove();
+        admin2TileLayer.value?.remove();
         countryOutlineLayer.value?.remove();
         countryAdmin1OutlineLayer.value?.forEach((layer) => layer?.remove());
 
@@ -240,12 +146,10 @@ export const useLeaflet = (
         };
 
         // TODO: fix up types again - shouldn't really need to use L
-
-        const testBounds = getRegionBounds("BRA"); // set bounds on region2 tile layer to only get the tile(s) we need
+        updateRegionBounds(regionId);
         const filter = (properties: geojsonvt.Feature, layerName: string, zoom: number) => {
             //console.log(`filtering ${layerName}`)
-            // TODO: use selected country to filter
-            return layerName.includes("BRA");
+            return layerName.includes(regionId);
         };
 
         const vectorTileOptions = {
@@ -254,17 +158,14 @@ export const useLeaflet = (
             interactive: true,
             maxNativeZoom: 10,
             tms: true, // y values are inverted without this!
-            bounds: [testBounds.getSouthWest(), testBounds.getNorthEast()],
+            bounds: [bounds.value.getSouthWest(), bounds.value.getNorthEast()],
             filter
         }
 
-        const testTileUrl = `http://localhost:5000/admin2/{z}/{x}/{-y}`;
-
-
-        const pbfLayer = vectorTileLayer(testTileUrl,vectorTileOptions);
-
-        pbfLayer.on("click",
-            clickEvent
+        admin2TileLayer.value = vectorTileLayer(
+            "http://localhost:5000/admin2/{z}/{x}/{-y}",
+            vectorTileOptions
+        ).on("click", clickEvent
         ).on("mouseover", (e: LayerMouseEvent) => {
             const content = getTooltip(e);
             closeTooltip(); //close any existing tooltip
@@ -303,7 +204,7 @@ export const useLeaflet = (
             countryAdmin1OutlineLayer.value = null;
         }
 
-        updateRegionBounds(regionId);
+
     };
 
     return {
