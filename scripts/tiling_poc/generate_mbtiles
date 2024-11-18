@@ -1,0 +1,9 @@
+# For the tiling proof of concept - generates a single mbtiles database from a folder containing geojson files
+# args are:
+# - output test file
+# - input folder name
+#
+# Prerequisite: tippecanoe must be installed before running this script
+output=$1
+folder=$2
+tippecanoe -z 10 -o $output $folder/*

@@ -20,6 +20,7 @@ import { useDataSummary } from "./useDataSummary";
 import { MapFeature } from "../types/resourceTypes";
 import { APP_BASE_URL } from "../router/utils";
 import 'leaflet/dist/leaflet.css';
+import * as geojsonvt from "geojson-vt";
 
 type TooltipOptionAndContent = { content: string; options?: TooltipOptions };
 
@@ -119,6 +120,100 @@ export const useLeaflet = (
         }
     };
 
+    // MASSIVE HACK!
+    // A handy feature, allowing filtering of features on tiles was added to LeafletGrid *after* its last
+    // release on npm: https://github.com/Leaflet/Leaflet.VectorGrid/pull/165
+    // This is exactly what we need to filter out non-selected country regions from admin2 tile.
+    // Here we simply replace the affected method in the tile layer which implements the new filter method,
+    // but we really ought to fork the repo as it is no longer being maintained..
+    const createTile = function(coords, done) {
+        var storeFeatures = this.options.getFeatureId;
+        var tileSize = this.getTileSize();
+        var renderer = this.options.rendererFactory(coords, tileSize, this.options);
+        var tileBounds = this._tileCoordsToBounds(coords);
+        var vectorTilePromise = this._getVectorTilePromise(coords, tileBounds);
+        if (storeFeatures) {
+            this._vectorTiles[this._tileCoordsToKey(coords)] = renderer;
+            renderer._features = {};
+        }
+        vectorTilePromise.then( function renderTile(vectorTile) {
+            if (vectorTile.layers && vectorTile.layers.length !== 0) {
+                for (var layerName in vectorTile.layers) {
+                    this._dataLayerNames[layerName] = true;
+                    var layer = vectorTile.layers[layerName];
+
+                    var pxPerExtent = this.getTileSize().divideBy(layer.extent);
+
+                    var layerStyle = this.options.vectorTileLayerStyles[ layerName ] ||
+                        L.Path.prototype.options;
+
+                    for (var i = 0; i < layer.features.length; i++) {
+                        var feat = layer.features[i];
+                        var id;
+
+                        if (this.options.filter instanceof Function &&
+                            !this.options.filter(feat.properties, coords.z)) {
+                            continue;
+                        }
+
+                        var styleOptions = layerStyle;
+                        if (storeFeatures) {
+                            id = this.options.getFeatureId(feat);
+                            var styleOverride = this._overriddenStyles[id];
+                            if (styleOverride) {
+                                if (styleOverride[layerName]) {
+                                    styleOptions = styleOverride[layerName];
+                                } else {
+                                    styleOptions = styleOverride;
+                                }
+                            }
+                        }
+
+                        if (styleOptions instanceof Function) {
+                            styleOptions = styleOptions(feat.properties, coords.z);
+                        }
+
+                        if (!(styleOptions instanceof Array)) {
+                            styleOptions = [styleOptions];
+                        }
+
+                        if (!styleOptions.length) {
+                            continue;
+                        }
+
+                        var featureLayer = this._createLayer(feat, pxPerExtent);
+
+                        for (var j = 0; j < styleOptions.length; j++) {
+                            var style = L.extend({}, L.Path.prototype.options, styleOptions[j]);
+                            featureLayer.render(renderer, style);
+                            renderer._addPath(featureLayer);
+                        }
+
+                        if (this.options.interactive) {
+                            featureLayer.makeInteractive();
+                        }
+
+                        if (storeFeatures) {
+                            renderer._features[id] = {
+                                layerName: layerName,
+                                feature: featureLayer
+                            };
+                        }
+                    }
+
+                }
+
+            }
+
+            if (this._map != null) {
+                renderer.addTo(this._map);
+            }
+
+            L.Util.requestAnimFrame(done.bind(coords, null, null));
+        }.bind(this));
+        return renderer.getContainer();
+    };
+
     // this is the main function that updates the map, should be called in an appropriate
     // watcher
     const updateLeafletMap = (newFeatures: MapFeature[], regionId: string) => {
@@ -167,21 +262,37 @@ export const useLeaflet = (
         .addTo(leafletMap);*/
         const testBounds = getRegionBounds("BRA"); // set bounds on region2 tile layer to only get the tile(s) we need
         // This is a bit tedious but doesn't seem to be any way around it - need to provide styles as a dictionary where
-        // keys are layer names i.e. IDs of each feature. They call all have the same value - the function to calculate
+        // keys are layer names i.e. IDs of each feature. They all have the same value - the function to calculate
         // feature style!
+        // TODO: don't use geojson here as we want to get rid of it. Replace the geojson files with metadata files instead
+        // - once we have the real server, it will provide this metadara as well as the tiles
         const vectorTileLayerStyles = Object.fromEntries(admin2Geojson.value["BRA"].map((feature) => [feature.properties.GID_2, style]));
+        const filter = (properties: geojsonvt.Feature, zoom: number) => {
+            console.log("filtering")
+            return (properties["GID_2"] as string)?.includes("BRA");
+        };
 
         const vectorTileOptions = {
             vectorTileLayerStyles,
+            style: {
+                fillColor: "#000",
+                color: "#ff0000",
+                fillOpacity: 0.5,
+                stroke: true,
+                fill: true,
+            },
            // rendererFactory: L.canvas.tile, // or L.svg.tile
             interactive: true,
             maxNativeZoom: 10,
             tms: true, // y values are inverted without this!
-            bounds: [testBounds.getSouthWest(), testBounds.getNorthEast()]
+            bounds: [testBounds.getSouthWest(), testBounds.getNorthEast()],
+            filter
         }
-        const testTileUrl = `http://localhost:5000/testtiles/{z}/{x}/{y}`;
+
+        const testTileUrl = `http://localhost:5000/admin2/{z}/{x}/{y}`;
 
         const pbfLayer=  vectorGrid.protobuf(testTileUrl,vectorTileOptions);
+        pbfLayer.createTile = createTile;
         pbfLayer.on("click",
             clickEvent
         ).on("mouseover", (e: LayerMouseEvent) => {
@@ -193,7 +304,14 @@ export const useLeaflet = (
                 .openOn(leafletMap);
         }).on("mouseout", () => {
             closeTooltip();
+        }).on("tileload", function(e) {
+            const names = pbfLayer.getDataLayerNames();
+            console.log(`e: ${JSON.stringify(Object.keys(e.tile))}`)
+            console.log(`LOADED NAMES: ${JSON.stringify(names)}`)
         }).addTo(leafletMap);
+
+        const names = pbfLayer.getDataLayerNames();
+        console.log(`INITIAL NAMES: ${JSON.stringify(names)}`)
 
 
         // adding country outline if we have a admin0GeojsonFeature
