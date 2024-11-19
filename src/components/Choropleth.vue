@@ -51,7 +51,6 @@ import MapSettingsMenu from "./mapSettingsMenu/MapSettingsMenu.vue";
 import ExcelDownloadButton from "./ExcelDownloadButton.vue";
 import { GeoJsonProperties } from "geojson";
 import { LeafletMouseEvent } from "leaflet";
-import * as geojsonvt from "geojson-vt";
 
 const router = useRouter();
 const { mapSettings, appConfig, mapLoading } = storeToRefs(useAppStore());
@@ -68,17 +67,13 @@ const featureInSelectedCountry = (properties: GeoJsonProperties) =>
 const featureAdminLevel = (properties: GeoJsonProperties) =>
     featureInSelectedCountry(properties) && mapSettings.value.adminLevel === 2 ? 2 : 1;
 
-/*const getFeatureId = (properties: GeoJsonProperties) =>
-    featureAdminLevel(properties) === 2
-        ? properties[featureProperties.idAdm2]
-        : properties[featureProperties.idAdm1];*/
-
 const getFeatureName = (properties: GeoJsonProperties) =>
     featureAdminLevel(properties) === 2
         ? properties[featureProperties.nameAdm2]
         : properties[featureProperties.nameAdm1];
 
 const style = (feature: MapFeature, layerName: string, zoom: number) => {
+    console.log(`getting style for ${layerName}`)
     const { country, indicator } = mapSettings.value;
     const isFaded = !!country && !featureInSelectedCountry(feature.properties);
     const styleColors = getFillAndOutlineColor(indicator, layerName, isFaded);
@@ -91,7 +86,6 @@ const style = (feature: MapFeature, layerName: string, zoom: number) => {
 };
 
 const getTooltip = (e: LeafletMouseEvent) => {
-    console.log(`getting tooltip for ${JSON.stringify(Object.keys(e.propagatedFrom))}`)
     const { layerName, properties } = e.propagatedFrom;
     return tooltipForFeature(
         layerName,
