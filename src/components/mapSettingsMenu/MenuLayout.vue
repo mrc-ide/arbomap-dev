@@ -1,7 +1,7 @@
 <template>
     <div class="menu-container">
         <div class="country-name-and-admin-toggle-container px-4">
-            <h3 class="max-bold-text">{{ admin0GeojsonFeature?.properties.COUNTRY || "Global" }}</h3>
+            <h3 class="max-bold-text">{{ countryProperties?.COUNTRY || "Global" }}</h3>
             <div v-if="mapSettings.country">
                 <AdminLevelToggle />
             </div>
@@ -55,7 +55,7 @@ import { storeToRefs } from "pinia";
 import { useAppStore } from "../../stores/appStore";
 import { APP_BASE_ROUTE } from "../../router/utils";
 
-const { admin0GeojsonFeature, appConfig, mapSettings } = storeToRefs(useAppStore());
+const { countryProperties, appConfig, mapSettings } = storeToRefs(useAppStore());
 const indicatorGroupIds = computed(() => appConfig.value.indicatorGroups.map((ig) => ig.mainIndicator));
 
 const isSelectedIndicator = (indicatorId: string, index: number) => {

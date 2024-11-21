@@ -28,14 +28,9 @@ export const useTooltips = (selectedIndicators: ComputedRef<FeatureIndicators>) 
     });
 
     const tooltipForFeature = (featureId: string, featureName: string) => {
-        const tooltipOptions = { sticky: true };
         if (!(featureId in selectedIndicators.value)) {
             const content = `<div class="text-body-1">${featureName}</div>
                           <div class="text-body-2 missing-data-tooltip-text">No data</div>`;
-            /*return {
-                content ,
-                options: tooltipOptions
-            };*/
             return content;
         }
         const featureValues = selectedIndicators.value[featureId];
@@ -63,10 +58,6 @@ export const useTooltips = (selectedIndicators: ComputedRef<FeatureIndicators>) 
         });
 
         const content = `<div class="text-body-1">${featureName}</div><div class="text-body-2">${indicatorValues}</div>`;
-        /*return {
-            content: `<div class="text-body-1">${featureName}</div><div class="text-body-2">${indicatorValues}</div>`,
-            options: tooltipOptions
-        };*/
         return content;
     };
 

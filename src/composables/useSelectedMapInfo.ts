@@ -3,7 +3,7 @@ import { useAppStore } from "../stores/appStore";
 import { FeatureIndicators } from "../types/resourceTypes";
 
 export const useSelectedMapInfo = () => {
-    const { mapSettings, admin1Indicators, admin2Indicators, admin1Geojson, admin2Geojson } =
+    const { mapSettings, admin1Indicators, admin2Indicators } =
         storeToRefs(useAppStore());
 
     const selectedIndicators = computed<FeatureIndicators>(() => {
@@ -25,23 +25,7 @@ export const useSelectedMapInfo = () => {
         return Object.assign({}, ...Object.values(admin1Indicators.value));
     });
 
-    const selectedFeatures = computed(() => {
-        // get single array of all selected features
-
-        if (mapSettings.value.adminLevel === 2 && mapSettings.value.country) {
-            const filteredAdmin1 = Object.entries(admin1Geojson.value)
-                .filter(([countryId]) => countryId !== mapSettings.value.country)
-                .flatMap(([, geojson]) => geojson);
-
-            // Map to raw to ensure Leaflet VectorGrid can handle features
-            return [...admin2Geojson.value[mapSettings.value.country], ...filteredAdmin1].map(f => toRaw<MapFeature>(f));
-        }
-
-        return Object.values(admin1Geojson.value).flatMap((geojson) => geojson).map(f => toRaw<MapFeature>(f));
-    });
-
     return {
-        selectedFeatures,
         selectedIndicators
     };
 };

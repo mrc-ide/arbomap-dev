@@ -2,7 +2,6 @@ import vectorTileLayer from "leaflet-vector-tile-layer";
 import {
     LatLngBounds,
     Map,
-    GeoJSON,
     Polyline,
     polyline,
     TooltipOptions,
@@ -12,20 +11,12 @@ import {
 import { LMap } from "@vue-leaflet/vue-leaflet";
 import { storeToRefs } from "pinia";
 import { useAppStore } from "../stores/appStore";
-import { countryAdmin1OutlineStyle, countryOutlineStyle, minZoom } from "../components/utils";
+import { countryOutlineStyle, minZoom } from "../components/utils";
 import { useDataSummary } from "./useDataSummary";
-import { MapFeature } from "../types/resourceTypes";
-import { APP_BASE_URL } from "../router/utils";
 import 'leaflet/dist/leaflet.css';
 import { GeoJsonProperties } from "geojson";
 
 type TooltipOptionAndContent = { content: string; options?: TooltipOptions };
-
-// Need this to prevent "L.DomEvent.fakeStop is not a function" error with canvas mode VectorGrid
-//https://stackoverflow.com/questions/73833142/leaflet-vectorgrid-problem-with-click-event
-//L.DomEvent.fakeStop = function () {
-//    return true;
-//}
 
 export const useLeaflet = (
     style: (f: GeoJsonProperties) => PathOptions,
@@ -53,17 +44,17 @@ export const useLeaflet = (
     // internal refs
 
     const emptyLayer = shallowRef<Polyline>(polyline([]));
-    // TODO: fix up this type!
     const admin1TileLayer = shallowRef<VectorTileLayer | null>(null);
     const admin2TileLayer = shallowRef<VectorTileLayer | null>(null);
-    const countryOutlineLayer = shallowRef<Polyline | null>(null);
+    const countryOutlineLayer = shallowRef<VectorTileLayer | null>(null);
     const bounds = ref<LatLngBounds | null>(null);
 
     // external refs: e2e test related
 
     const { dataSummary } = useDataSummary(bounds);
 
-    const { countryBoundingBoxes, admin0GeojsonFeature, mapSettings } = storeToRefs(useAppStore());
+    const { appConfig, countryBoundingBoxes, mapSettings, countryProperties } = storeToRefs(useAppStore());
+    const featureProperties = appConfig.value.geoJsonFeatureProperties;
 
     const getRegionBounds = (countryId?: string) => {
         if (Object.keys(countryBoundingBoxes.value).length === 0) return null;
@@ -134,9 +125,13 @@ export const useLeaflet = (
 
     // this is the main function that updates the map, should be called in an appropriate
     // watcher
-    const updateLeafletMap = (newFeatures: MapFeature[], regionId: string) => {
+    const updateLeafletMap = (country: string) => {
         const leafletMap = getLeafletMap();
         if (!leafletMap) return;
+
+        if (!country) {
+            countryProperties.value = null;
+        }
 
         resetMaxBoundsAndZoom();
 
@@ -151,7 +146,7 @@ export const useLeaflet = (
         admin2TileLayer.value?.remove();
         countryOutlineLayer.value?.remove();
 
-        updateRegionBounds(regionId);
+        updateRegionBounds(country);
 
         const vectorTileOptions = {
             style,
@@ -167,10 +162,9 @@ export const useLeaflet = (
         );
         addTileLayerToMap(admin1TileLayer.value, leafletMap);
 
-        if (!!regionId && mapSettings.value.adminLevel === 2) {
-            const admin2Filter = (properties: GeoJsonProperties, layerName: string, zoom: number) => {
-                // TODO: actually check COUNTRY property
-                return layerName.includes(regionId);
+       if (!!country && mapSettings.value.adminLevel === 2) {
+            const admin2Filter = (feature: MapFeature) => {
+                return feature.properties[featureProperties.country] === country;
             };
 
             admin2TileLayer.value = vectorTileLayer(
@@ -181,43 +175,26 @@ export const useLeaflet = (
         }
 
         // add country outline if we have a selected country
-        console.log(`regionId: ${regionId}`)
-        if (regionId) {
+        if (country) {
             countryOutlineLayer.value = vectorTileLayer(
                 "http://localhost:5000/admin0/{z}/{x}/{-y}",{
                 ...vectorTileOptions,
-                filter: (properties: GeoJsonProperties, layerName: string) => layerName === regionId,
+                filter: (feature: MapFeature, layerName: string) => {
+                    const result = layerName === country;
+                    if (result) {
+                        // A horrible hack to pull some minimal country metadata from the tile layer for the country and set it in the store
+                        // so we can show country name. In the real implementation we would have a geojson properties API
+                        // alongside the tile API.
+                        countryProperties.value = feature.properties;
+                    }
+                    return result;
+                },
                 style: countryOutlineStyle
             });
             countryOutlineLayer.value.addTo(leafletMap);
         } else {
             countryOutlineLayer.value = null;
         }
-
-        // adding country outline if we have a admin0GeojsonFeature
-        /*if (admin0GeojsonFeature.value) {
-            const latLngs = GeoJSON.coordsToLatLngs(admin0GeojsonFeature.value.geometry.coordinates, 2);
-            countryOutlineLayer.value = polyline(latLngs, countryOutlineStyle).addTo(leafletMap);
-        } else {
-            countryOutlineLayer.value = null;
-        }*/
-
-        // add admin 1 outlines if the selected admin level is 2
-        /*if (mapSettings.value.adminLevel === 2) {
-            const selectedAdmin1Features = admin1Geojson.value[regionId];
-            countryAdmin1OutlineLayer.value = selectedAdmin1Features?.map((f) => {
-                if (!f?.geometry?.type || !f?.geometry?.coordinates) return null;
-                const latLngs = GeoJSON.coordsToLatLngs(
-                    f.geometry.coordinates,
-                    f.geometry.type === "MultiPolygon" ? 2 : 1 // nesting level
-                );
-                return polyline(latLngs, countryAdmin1OutlineStyle).addTo(leafletMap);
-            });
-        } else {
-            countryAdmin1OutlineLayer.value = null;
-        }*/
-
-
     };
 
     return {

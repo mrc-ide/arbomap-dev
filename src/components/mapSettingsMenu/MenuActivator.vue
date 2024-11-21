@@ -50,7 +50,7 @@ import { storeToRefs } from "pinia";
 import { useAppStore } from "../../stores/appStore";
 
 const menuOpen = ref(false);
-const { appConfig, mapSettings, admin0GeojsonFeature } = storeToRefs(useAppStore());
+const { appConfig, mapSettings, countryProperties } = storeToRefs(useAppStore());
 
 const props = defineProps({
     isLargeScreen: {
@@ -59,10 +59,10 @@ const props = defineProps({
     }
 });
 
-const isGlobal = computed(() => !admin0GeojsonFeature.value?.properties.COUNTRY);
+const isGlobal = computed(() => !mapSettings.value.country);
 
 const buttonSummary = computed(() => {
-    const country = admin0GeojsonFeature.value?.properties.COUNTRY || "Global";
+    const country = countryProperties.value?.COUNTRY || "Global";
     const indicator = appConfig.value.indicators[mapSettings.value.indicator].humanReadableName;
     const adminLevel = mapSettings.value.adminLevel === 1 ? "Admin 1" : "Admin 2";
     return { country, indicator, adminLevel };

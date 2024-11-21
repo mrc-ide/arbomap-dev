@@ -55,7 +55,7 @@ import { LeafletMouseEvent } from "leaflet";
 const router = useRouter();
 const { mapSettings, appConfig, mapLoading } = storeToRefs(useAppStore());
 const featureProperties = appConfig.value.geoJsonFeatureProperties;
-const { selectedFeatures, selectedIndicators } = useSelectedMapInfo();
+const { selectedIndicators } = useSelectedMapInfo();
 const isLargeScreen = useMediaQuery("(min-width: 1024px)");
 
 const { tooltipForFeature } = useTooltips(selectedIndicators);
@@ -126,7 +126,7 @@ useLoadingSpinner(map, mapLoading);
 
 const updateMap = () => {
     lockBounds.value = !!mapSettings.value.country;
-    updateLeafletMap(selectedFeatures.value, mapSettings.value.country);
+    updateLeafletMap(mapSettings.value.country);
 };
 
 const finishUpdatingMap = () => {
