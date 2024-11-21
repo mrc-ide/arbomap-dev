@@ -17,10 +17,10 @@ export const countryOutlineStyle = {
     smoothFactor: 0
 };
 
-export const countryAdmin1OutlineStyle = {
+/*export const countryAdmin1OutlineStyle = {
     color: "grey",
     weight: 0.4,
     opacity: 0.75,
     className: "admin-1-outline",
     smoothFactor: 0
-};
+};*/

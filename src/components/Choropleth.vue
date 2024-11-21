@@ -64,8 +64,14 @@ const { getFillAndOutlineColor } = useIndicatorColors(appConfig, selectedIndicat
 const featureInSelectedCountry = (properties: GeoJsonProperties) =>
     properties[featureProperties.country] === mapSettings.value.country;
 
-const featureAdminLevel = (properties: GeoJsonProperties) =>
-    featureInSelectedCountry(properties) && mapSettings.value.adminLevel === 2 ? 2 : 1;
+const featureAdminLevel = (properties: GeoJsonProperties) => {
+    // featureInSelectedCountry(properties) && mapSettings.value.adminLevel === 2 ? 2 : 1;
+    const keys = Object.keys(properties);
+    if (keys.includes(featureProperties.idAdm2)) return 2;
+    if (keys.includes(featureProperties.idAdm1)) return 1;
+    return 0;
+}
+
 
 const getFeatureName = (properties: GeoJsonProperties) =>
     featureAdminLevel(properties) === 2
@@ -73,16 +79,27 @@ const getFeatureName = (properties: GeoJsonProperties) =>
         : properties[featureProperties.nameAdm1];
 
 const style = (feature: MapFeature, layerName: string, zoom: number) => {
-    console.log(`getting style for ${layerName}`)
     const { country, indicator } = mapSettings.value;
-    const isFaded = !!country && !featureInSelectedCountry(feature.properties);
-    const styleColors = getFillAndOutlineColor(indicator, layerName, isFaded);
-    const result =  {
-        className: "geojson",
-        fillColor: styleColors.fillColor,
-        color: styleColors.outlineColor,
-    };
-    return result;
+    const inSelectedCountry = featureInSelectedCountry(feature.properties);
+
+    // We show admin1 areas as outlines if they are in the selected country and selected level is 2
+    const outlineOnly = (mapSettings.value.adminLevel == 2) && inSelectedCountry && (featureAdminLevel(feature.properties) == 1);
+    if (outlineOnly) {
+        return {
+            className: "admin-1-outline",
+            color: "grey",
+            fillColor: "transparent",
+            weight: 0.6
+        };
+    } else {
+        const isFaded = !!country && !inSelectedCountry;
+        const styleColors = getFillAndOutlineColor(indicator, layerName, isFaded);
+        return {
+            className: "geojson",
+            fillColor: styleColors.fillColor,
+            color: styleColors.outlineColor,
+        };
+    }
 };
 
 const getTooltip = (e: LeafletMouseEvent) => {

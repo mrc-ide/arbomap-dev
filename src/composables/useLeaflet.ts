@@ -1,6 +1,3 @@
-//import * as L from "leaflet";
-//const a = L.TileLayer
-//console.log(typeof a)
 import vectorTileLayer from "leaflet-vector-tile-layer";
 import {
     LatLngBounds,
@@ -167,15 +164,17 @@ export const useLeaflet = (
             tms: true, // y values are inverted without this!
         }
 
-        const admin1Filter = (properties: GeoJsonProperties, layerName: string) => {
+        /*const admin1Filter = (properties: GeoJsonProperties, layerName: string) => {
             // TODO: actually check COUNTRY property
             // TODO: don't reproduce logic from below. We might already have a helper!
             // Do not include if area is in selected country and we're showing admin2 level
             return !regionId || mapSettings.value.adminLevel !== 2 || !layerName.includes(regionId);
-        };
+        };*/
+
+
         admin1TileLayer.value = vectorTileLayer(
             "http://localhost:5000/admin1/{z}/{x}/{-y}",
-            {...vectorTileOptions, filter: admin1Filter}
+            vectorTileOptions
         );
         addTileLayerToMap(admin1TileLayer.value, leafletMap);
 
@@ -193,6 +192,7 @@ export const useLeaflet = (
         }
 
 
+
         // adding country outline if we have a admin0GeojsonFeature
         if (admin0GeojsonFeature.value) {
             const latLngs = GeoJSON.coordsToLatLngs(admin0GeojsonFeature.value.geometry.coordinates, 2);
@@ -202,7 +202,7 @@ export const useLeaflet = (
         }
 
         // add admin 1 outlines if the selected admin level is 2
-        if (mapSettings.value.adminLevel === 2) {
+        /*if (mapSettings.value.adminLevel === 2) {
             const selectedAdmin1Features = admin1Geojson.value[regionId];
             countryAdmin1OutlineLayer.value = selectedAdmin1Features?.map((f) => {
                 if (!f?.geometry?.type || !f?.geometry?.coordinates) return null;
@@ -214,7 +214,7 @@ export const useLeaflet = (
             });
         } else {
             countryAdmin1OutlineLayer.value = null;
-        }
+        }*/
 
 
     };
