@@ -57,14 +57,13 @@ export const useLeaflet = (
     const admin1TileLayer = shallowRef<VectorTileLayer | null>(null);
     const admin2TileLayer = shallowRef<VectorTileLayer | null>(null);
     const countryOutlineLayer = shallowRef<Polyline | null>(null);
-    const countryAdmin1OutlineLayer = shallowRef<(Polyline | null)[] | null>(null);
     const bounds = ref<LatLngBounds | null>(null);
 
     // external refs: e2e test related
 
     const { dataSummary } = useDataSummary(bounds);
 
-    const { countryBoundingBoxes, admin0GeojsonFeature, admin1Geojson, mapSettings } = storeToRefs(useAppStore());
+    const { countryBoundingBoxes, admin0GeojsonFeature, mapSettings } = storeToRefs(useAppStore());
 
     const getRegionBounds = (countryId?: string) => {
         if (Object.keys(countryBoundingBoxes.value).length === 0) return null;
@@ -151,9 +150,7 @@ export const useLeaflet = (
         admin1TileLayer.value?.remove();
         admin2TileLayer.value?.remove();
         countryOutlineLayer.value?.remove();
-        countryAdmin1OutlineLayer.value?.forEach((layer) => layer?.remove());
 
-        // TODO: fix up types again - shouldn't really need to use L
         updateRegionBounds(regionId);
 
         const vectorTileOptions = {
@@ -164,14 +161,6 @@ export const useLeaflet = (
             tms: true, // y values are inverted without this!
         }
 
-        /*const admin1Filter = (properties: GeoJsonProperties, layerName: string) => {
-            // TODO: actually check COUNTRY property
-            // TODO: don't reproduce logic from below. We might already have a helper!
-            // Do not include if area is in selected country and we're showing admin2 level
-            return !regionId || mapSettings.value.adminLevel !== 2 || !layerName.includes(regionId);
-        };*/
-
-
         admin1TileLayer.value = vectorTileLayer(
             "http://localhost:5000/admin1/{z}/{x}/{-y}",
             vectorTileOptions
@@ -180,7 +169,7 @@ export const useLeaflet = (
 
         if (!!regionId && mapSettings.value.adminLevel === 2) {
             const admin2Filter = (properties: GeoJsonProperties, layerName: string, zoom: number) => {
-                // TODO: actually check COUNTRY property - could use util in Choropleth, passed as a prop
+                // TODO: actually check COUNTRY property
                 return layerName.includes(regionId);
             };
 
@@ -191,15 +180,27 @@ export const useLeaflet = (
             addTileLayerToMap(admin2TileLayer.value, leafletMap);
         }
 
-
+        // add country outline if we have a selected country
+        console.log(`regionId: ${regionId}`)
+        if (regionId) {
+            countryOutlineLayer.value = vectorTileLayer(
+                "http://localhost:5000/admin0/{z}/{x}/{-y}",{
+                ...vectorTileOptions,
+                filter: (properties: GeoJsonProperties, layerName: string) => layerName === regionId,
+                style: countryOutlineStyle
+            });
+            countryOutlineLayer.value.addTo(leafletMap);
+        } else {
+            countryOutlineLayer.value = null;
+        }
 
         // adding country outline if we have a admin0GeojsonFeature
-        if (admin0GeojsonFeature.value) {
+        /*if (admin0GeojsonFeature.value) {
             const latLngs = GeoJSON.coordsToLatLngs(admin0GeojsonFeature.value.geometry.coordinates, 2);
             countryOutlineLayer.value = polyline(latLngs, countryOutlineStyle).addTo(leafletMap);
         } else {
             countryOutlineLayer.value = null;
-        }
+        }*/
 
         // add admin 1 outlines if the selected admin level is 2
         /*if (mapSettings.value.adminLevel === 2) {

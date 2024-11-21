@@ -44,7 +44,7 @@ import "leaflet/dist/leaflet.css";
 import { useTooltips } from "../composables/useTooltips";
 import { APP_BASE_ROUTE, APP_BASE_URL } from "../router/utils";
 import { routerPush } from "../utils";
-import { backgroundLayer } from "./utils";
+import { backgroundLayer, countryAdmin1OutlineStyle } from "./utils";
 import { useLoadingSpinner } from "../composables/useLoadingSpinner";
 import { useSelectedMapInfo } from "../composables/useSelectedMapInfo";
 import MapSettingsMenu from "./mapSettingsMenu/MapSettingsMenu.vue";
@@ -85,12 +85,7 @@ const style = (feature: MapFeature, layerName: string, zoom: number) => {
     // We show admin1 areas as outlines if they are in the selected country and selected level is 2
     const outlineOnly = (mapSettings.value.adminLevel == 2) && inSelectedCountry && (featureAdminLevel(feature.properties) == 1);
     if (outlineOnly) {
-        return {
-            className: "admin-1-outline",
-            color: "grey",
-            fillColor: "transparent",
-            weight: 0.6
-        };
+        return countryAdmin1OutlineStyle;
     } else {
         const isFaded = !!country && !inSelectedCountry;
         const styleColors = getFillAndOutlineColor(indicator, layerName, isFaded);

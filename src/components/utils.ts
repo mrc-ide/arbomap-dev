@@ -10,17 +10,18 @@ export const backgroundLayer = {
 };
 
 export const countryOutlineStyle = {
+    className: "country-outline",
     color: "black",
+    fill: false,
     weight: 1.2,
     opacity: 0.9,
-    className: "country-outline",
     smoothFactor: 0
 };
 
-/*export const countryAdmin1OutlineStyle = {
-    color: "grey",
-    weight: 0.4,
-    opacity: 0.75,
+export const countryAdmin1OutlineStyle = {
     className: "admin-1-outline",
+    color: "grey",
+    fill: false,
+    weight: 0.6,
     smoothFactor: 0
-};*/
+};
