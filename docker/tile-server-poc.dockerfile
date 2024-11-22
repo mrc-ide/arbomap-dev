@@ -10,4 +10,4 @@ COPY arbomap/tiles/ src/tiles/
 
 WORKDIR /src
 
-ENTRYPOINT ls && node main.js --databases "admin0;tiles/admin0.mbtiles,admin1;tiles/admin1.mbtiles,admin2;tiles/admin2.mbtiles"
+ENTRYPOINT node main.js --databases "admin0;tiles/admin0.mbtiles,admin1;tiles/admin1.mbtiles,admin2;tiles/admin2.mbtiles"
