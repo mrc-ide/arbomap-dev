@@ -329,5 +329,6 @@
                               "hosp_60_64", "hosp_65_69", "hosp_70_74", "hosp_75_79", "hosp_80_84", "hosp_85_89",
                               "hosp_90_94", "hosp_95_99"]
         }
-    ]
+    ],
+    "tileServerUrl": "http://wpia-bots.dide.ic.ac.uk:5000"
 }
