@@ -157,6 +157,7 @@ export const useLeaflet = (
             interactive: true,
             maxNativeZoom: 10,
             tms: true, // y values are inverted without this!
+            referrerPolicy: "origin" // Shouldn't need to do this with proper server with https!
         }
 
         admin1TileLayer.value = vectorTileLayer(
