@@ -55,6 +55,7 @@ export const useLeaflet = (
 
     const { appConfig, countryBoundingBoxes, mapSettings, countryProperties } = storeToRefs(useAppStore());
     const featureProperties = appConfig.value.geoJsonFeatureProperties;
+    const tileServerUrl = appConfig.value.tileServerUrl;
 
     const getRegionBounds = (countryId?: string) => {
         if (Object.keys(countryBoundingBoxes.value).length === 0) return null;
@@ -123,6 +124,8 @@ export const useLeaflet = (
         }).addTo(map);
     }
 
+    const getTileLayerUrl = (adminLevel: number) => `${tileServerUrl}/admin${adminLevel}/{z}/{x}/{-y}`;
+
     // this is the main function that updates the map, should be called in an appropriate
     // watcher
     const updateLeafletMap = (country: string) => {
@@ -157,7 +160,7 @@ export const useLeaflet = (
         }
 
         admin1TileLayer.value = vectorTileLayer(
-            "http://localhost:5000/admin1/{z}/{x}/{-y}",
+            getTileLayerUrl(1),
             vectorTileOptions
         );
         addTileLayerToMap(admin1TileLayer.value, leafletMap);
@@ -168,7 +171,7 @@ export const useLeaflet = (
             };
 
             admin2TileLayer.value = vectorTileLayer(
-                "http://localhost:5000/admin2/{z}/{x}/{-y}",
+                getTileLayerUrl(2),
                 {...vectorTileOptions, filter: admin2Filter, bounds: [bounds.value.getSouthWest(), bounds.value.getNorthEast()]}
             );
             addTileLayerToMap(admin2TileLayer.value, leafletMap);
@@ -177,7 +180,7 @@ export const useLeaflet = (
         // add country outline if we have a selected country
         if (country) {
             countryOutlineLayer.value = vectorTileLayer(
-                "http://localhost:5000/admin0/{z}/{x}/{-y}",{
+                getTileLayerUrl(0),{
                 ...vectorTileOptions,
                 filter: (feature: MapFeature, layerName: string) => {
                     const result = layerName === country;
