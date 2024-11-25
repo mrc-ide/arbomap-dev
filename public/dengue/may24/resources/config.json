@@ -330,5 +330,5 @@
                               "hosp_90_94", "hosp_95_99"]
         }
     ],
-    "tileServerUrl": "http://wpia-bots.dide.ic.ac.uk:5000"
+    "tileServerUrl": "https://mrcdata.dide.ic.ac.uk/grout"
 }
