@@ -32,7 +32,7 @@
     </div>
 </template>
 <script setup lang="ts">
-import { watch } from "vue";
+import { watch, useTemplateRef } from "vue";
 import { storeToRefs } from "pinia";
 import { LMap, LTileLayer, LControl } from "@vue-leaflet/vue-leaflet";
 import { useRouter } from "vue-router";
@@ -42,74 +42,90 @@ import { useIndicatorColors } from "../composables/useIndicatorColors";
 import { useLeaflet } from "../composables/useLeaflet";
 import "leaflet/dist/leaflet.css";
 import { useTooltips } from "../composables/useTooltips";
-import { APP_BASE_ROUTE } from "../router/utils";
+import { APP_BASE_ROUTE, APP_BASE_URL } from "../router/utils";
 import { routerPush } from "../utils";
-import { backgroundLayer } from "./utils";
+import { backgroundLayer, countryAdmin1OutlineStyle } from "./utils";
 import { useLoadingSpinner } from "../composables/useLoadingSpinner";
 import { useSelectedMapInfo } from "../composables/useSelectedMapInfo";
 import MapSettingsMenu from "./mapSettingsMenu/MapSettingsMenu.vue";
-import { MapFeature } from "../types/resourceTypes";
 import ExcelDownloadButton from "./ExcelDownloadButton.vue";
+import { GeoJsonProperties } from "geojson";
+import { LeafletMouseEvent } from "leaflet";
 
 const router = useRouter();
 const { mapSettings, appConfig, mapLoading } = storeToRefs(useAppStore());
 const featureProperties = appConfig.value.geoJsonFeatureProperties;
-const { selectedFeatures, selectedIndicators } = useSelectedMapInfo();
+const { selectedIndicators } = useSelectedMapInfo();
 const isLargeScreen = useMediaQuery("(min-width: 1024px)");
 
 const { tooltipForFeature } = useTooltips(selectedIndicators);
 const { getFillAndOutlineColor } = useIndicatorColors(appConfig, selectedIndicators);
 
-const featureInSelectedCountry = (feature: MapFeature) =>
-    feature.properties[featureProperties.country] === mapSettings.value.country;
+const featureInSelectedCountry = (properties: GeoJsonProperties) =>
+    properties[featureProperties.country] === mapSettings.value.country;
 
-const featureAdminLevel = (feature: MapFeature) =>
-    featureInSelectedCountry(feature) && mapSettings.value.adminLevel === 2 ? 2 : 1;
+const featureAdminLevel = (properties: GeoJsonProperties) => {
+    const keys = Object.keys(properties);
+    if (keys.includes(featureProperties.idAdm2)) return 2;
+    if (keys.includes(featureProperties.idAdm1)) return 1;
+    return 0;
+}
 
-const getFeatureId = (feature: MapFeature) =>
-    featureAdminLevel(feature) === 2
-        ? feature.properties[featureProperties.idAdm2]
-        : feature.properties[featureProperties.idAdm1];
 
-const getFeatureName = (feature: MapFeature) =>
-    featureAdminLevel(feature) === 2
-        ? feature.properties[featureProperties.nameAdm2]
-        : feature.properties[featureProperties.nameAdm1];
+const getFeatureName = (properties: GeoJsonProperties) =>
+    featureAdminLevel(properties) === 2
+        ? properties[featureProperties.nameAdm2]
+        : properties[featureProperties.nameAdm1];
 
-const style = (f: MapFeature) => {
+const style = (feature: MapFeature, layerName: string, zoom: number) => {
     const { country, indicator } = mapSettings.value;
-    const isFaded = !!country && !featureInSelectedCountry(f);
-    const styleColors = getFillAndOutlineColor(indicator, getFeatureId(f), isFaded);
-    return { className: "geojson", fillColor: styleColors.fillColor, color: styleColors.outlineColor };
+    const inSelectedCountry = featureInSelectedCountry(feature.properties);
+
+    // We show admin1 areas as outlines if they are in the selected country and selected level is 2
+    const outlineOnly = (mapSettings.value.adminLevel == 2) && inSelectedCountry && (featureAdminLevel(feature.properties) == 1);
+    if (outlineOnly) {
+        return countryAdmin1OutlineStyle;
+    } else {
+        const isFaded = !!country && !inSelectedCountry;
+        const styleColors = getFillAndOutlineColor(indicator, layerName, isFaded);
+        return {
+            className: "geojson",
+            fillColor: styleColors.fillColor,
+            color: styleColors.outlineColor,
+        };
+    }
 };
 
-const getTooltip = (feature: MapFeature) => tooltipForFeature(getFeatureId(feature), getFeatureName(feature));
+const getTooltip = (e: LeafletMouseEvent) => {
+    const { layerName, properties } = e.propagatedFrom;
+    return tooltipForFeature(
+        layerName,
+        getFeatureName(properties)
+    );
+};
 
 // when rendering the geojson, leaflet will attach event listener specified here to each feature.
 // here we use it to control mapLoading element and changing the URL of the app when they click on
 // a feature based on what country it is
-const layerOnEvents = (feature: MapFeature) => {
-    return {
-        click: () => {
-            mapLoading.value = true;
-            const country = feature.properties[featureProperties.country];
-            // select feature's country, or unselect if click on it when already selected
-            const countryToSelect = country === mapSettings.value.country ? "" : country;
-            routerPush(router, `/${APP_BASE_ROUTE}/${mapSettings.value.indicator}/${countryToSelect}`);
-        }
-    };
+const clickEvent = (e: LeafletMouseEvent) => {
+    mapLoading.value = true;
+    const properties = e.propagatedFrom.properties;
+    const country = properties[featureProperties.country];
+    // select feature's country, or unselect if click on it when already selected
+    const countryToSelect = country === mapSettings.value.country ? "" : country;
+    routerPush(router, `/${APP_BASE_ROUTE}/${mapSettings.value.indicator}/${countryToSelect}`);
 };
 
 const { map, dataSummary, lockBounds, updateLeafletMap, handleMapBoundsUpdated, updateRegionBounds } = useLeaflet(
     style,
     getTooltip,
-    layerOnEvents
+    clickEvent
 );
 useLoadingSpinner(map, mapLoading);
 
 const updateMap = () => {
     lockBounds.value = !!mapSettings.value.country;
-    updateLeafletMap(selectedFeatures.value, mapSettings.value.country);
+    updateLeafletMap(mapSettings.value.country);
 };
 
 const finishUpdatingMap = () => {

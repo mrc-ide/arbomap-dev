@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -ex
+HERE=$(dirname $0)
+. $HERE/common
+
+# you'll need to be logged into the registry using a token with write:package permission
+# docker login ghcr.io
+
+docker push $TAG

@@ -1,7 +1,7 @@
 <template>
-    <v-btn id="download-excel-btn" aria-label="Download Excel" class="icon-button" @click="downloadOrOpenDialog()">
+    <v-btn id="download-excel-btn" aria-label="Download Excel" class="icon-button" @click="downloadOrOpenDialog()" disabled>
         <v-icon>mdi-download</v-icon>
-        <v-tooltip location="left" activator="parent">Download Excel</v-tooltip>
+        <v-tooltip location="left" activator="parent">Download Excel is disabled in tile server proof of concept</v-tooltip>
     </v-btn>
     <v-dialog v-model="dialogOpen" width="auto">
         <v-card title="Excel Download">

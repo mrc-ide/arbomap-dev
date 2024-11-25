@@ -34,3 +34,5 @@ data/processed
 /blob-report/
 /playwright/.cache/
 src/version.ts
+
+/tiles

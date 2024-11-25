@@ -54,6 +54,7 @@ export interface AppConfig {
     };
     indicators: Dict<IndicatorConfig>;
     indicatorGroups: IndicatorGroup[];
+    tileServerUrl: string;
 }
 
 export interface IndicatorValue {

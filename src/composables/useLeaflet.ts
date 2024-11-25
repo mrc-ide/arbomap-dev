@@ -1,37 +1,32 @@
-import { LMap } from "@vue-leaflet/vue-leaflet";
-import { Geometry } from "geojson";
+import vectorTileLayer from "leaflet-vector-tile-layer";
 import {
     LatLngBounds,
     Map,
-    geoJSON,
-    GeoJSON,
     Polyline,
-    Layer,
     polyline,
     TooltipOptions,
-    LeafletEventHandlerFnMap,
-    GeoJSONOptions,
-    PathOptions
+    PathOptions,
+    tooltip, LeafletMouseEvent
 } from "leaflet";
+import { LMap } from "@vue-leaflet/vue-leaflet";
 import { storeToRefs } from "pinia";
 import { useAppStore } from "../stores/appStore";
-import { countryAdmin1OutlineStyle, countryOutlineStyle, minZoom } from "../components/utils";
+import { countryOutlineStyle, minZoom } from "../components/utils";
 import { useDataSummary } from "./useDataSummary";
-import { MapFeature } from "../types/resourceTypes";
+import 'leaflet/dist/leaflet.css';
+import { GeoJsonProperties } from "geojson";
 
-type FeatureProperties = { GID_0: string; GID_1: string; NAME_1: string };
 type TooltipOptionAndContent = { content: string; options?: TooltipOptions };
-// leaflet geojson options do not include smoothFactor, probably outdated
-type GeojsonOptions = GeoJSONOptions<FeatureProperties, Geometry> & { smoothFactor: number };
 
 export const useLeaflet = (
-    style: (f: MapFeature) => PathOptions,
-    getTooltip: (f: MapFeature) => TooltipOptionAndContent,
-    layerEvents: (f: MapFeature) => LeafletEventHandlerFnMap
+    style: (f: GeoJsonProperties) => PathOptions,
+    getTooltip: (e: LeafletMouseEvent) => TooltipOptionAndContent,
+    clickEvent: (e: LeafletMouseEvent) => void
 ) => {
     // external refs: map related
 
     const map = shallowRef<typeof LMap | null>(null);
+    const featureTooltip = shallowRef<Toolip | null>(null);
     const getLeafletMap = () => map.value!.leafletObject as Map | undefined;
 
     // external refs: bounds related
@@ -49,17 +44,18 @@ export const useLeaflet = (
     // internal refs
 
     const emptyLayer = shallowRef<Polyline>(polyline([]));
-    const geoJsonLayer = shallowRef<GeoJSON<FeatureProperties, Geometry> | null>(null);
-    const countryOutlineLayer = shallowRef<Polyline | null>(null);
-    const countryAdmin1OutlineLayer = shallowRef<(Polyline | null)[] | null>(null);
-    const layerWithOpenTooltip = shallowRef<Layer | null>(null);
+    const admin1TileLayer = shallowRef<VectorTileLayer | null>(null);
+    const admin2TileLayer = shallowRef<VectorTileLayer | null>(null);
+    const countryOutlineLayer = shallowRef<VectorTileLayer | null>(null);
     const bounds = ref<LatLngBounds | null>(null);
 
     // external refs: e2e test related
 
     const { dataSummary } = useDataSummary(bounds);
 
-    const { countryBoundingBoxes, admin0GeojsonFeature, admin1Geojson, mapSettings } = storeToRefs(useAppStore());
+    const { appConfig, countryBoundingBoxes, mapSettings, countryProperties } = storeToRefs(useAppStore());
+    const featureProperties = appConfig.value.geoJsonFeatureProperties;
+    const tileServerUrl = appConfig.value.tileServerUrl;
 
     const getRegionBounds = (countryId?: string) => {
         if (Object.keys(countryBoundingBoxes.value).length === 0) return null;
@@ -108,32 +104,37 @@ export const useLeaflet = (
         }
     };
 
-    // this is run for every single feature that we display, we can attach
-    // tooltips and any events to our features, the user of useLeaflet can
-    // attach events to features via layerEvents
-    const configureGeojsonLayer = (feature: MapFeature, layer: Layer) => {
-        const tooltip = getTooltip(feature);
-        layer.bindTooltip(tooltip?.content, tooltip?.options);
-        layer.on({
-            ...layerEvents(feature),
-            tooltipopen: () => {
-                // in the past tooltips remained open when you clicked and dragged on the
-                // map while the bounds were locked, now we track each layer that will open a
-                // tooltip and close them if they are not the most recent layer to make sure
-                // no old tooltips remain open
-                if (layer !== layerWithOpenTooltip.value) {
-                    layerWithOpenTooltip.value?.closeTooltip();
-                    layerWithOpenTooltip.value = layer;
-                }
-            }
-        });
+    const closeTooltip = () => {
+        if (featureTooltip.value) {
+            getLeafletMap().closeTooltip(featureTooltip.value);
+        }
     };
+
+    const addTileLayerToMap = (layer: VectorTileLayer, map: Map) => {
+        layer.on("click", clickEvent
+        ).on("mouseover", (e: LayerMouseEvent) => {
+            const content = getTooltip(e);
+            closeTooltip(); //close any existing tooltip
+            featureTooltip.value = tooltip({ sticky: true, permanent: false })
+                .setContent(content)
+                .setLatLng(e.latlng)
+                .openOn(map);
+        }).on("mouseout", () => {
+            closeTooltip();
+        }).addTo(map);
+    }
+
+    const getTileLayerUrl = (adminLevel: number) => `${tileServerUrl}/admin${adminLevel}/{z}/{x}/{-y}`;
 
     // this is the main function that updates the map, should be called in an appropriate
     // watcher
-    const updateLeafletMap = (newFeatures: MapFeature[], regionId: string) => {
+    const updateLeafletMap = (country: string) => {
         const leafletMap = getLeafletMap();
         if (!leafletMap) return;
+
+        if (!country) {
+            countryProperties.value = null;
+        }
 
         resetMaxBoundsAndZoom();
 
@@ -144,41 +145,58 @@ export const useLeaflet = (
         }
 
         // remove layers from map
-        geoJsonLayer.value?.remove();
+        admin1TileLayer.value?.remove();
+        admin2TileLayer.value?.remove();
         countryOutlineLayer.value?.remove();
-        countryAdmin1OutlineLayer.value?.forEach((layer) => layer?.remove());
 
-        // create new geojson and add to map
-        geoJsonLayer.value = geoJSON<FeatureProperties, Geometry>(newFeatures, {
+        updateRegionBounds(country);
+
+        const vectorTileOptions = {
             style,
-            onEachFeature: configureGeojsonLayer,
-            smoothFactor: 0
-        } as GeojsonOptions).addTo(leafletMap);
+            interactive: true,
+            maxNativeZoom: 10,
+            tms: true, // y values are inverted without this!
+        }
 
-        // adding country outline if we have a admin0GeojsonFeature
-        if (admin0GeojsonFeature.value) {
-            const latLngs = GeoJSON.coordsToLatLngs(admin0GeojsonFeature.value.geometry.coordinates, 2);
-            countryOutlineLayer.value = polyline(latLngs, countryOutlineStyle).addTo(leafletMap);
+        admin1TileLayer.value = vectorTileLayer(
+            getTileLayerUrl(1),
+            vectorTileOptions
+        );
+        addTileLayerToMap(admin1TileLayer.value, leafletMap);
+
+       if (!!country && mapSettings.value.adminLevel === 2) {
+            const admin2Filter = (feature: MapFeature) => {
+                return feature.properties[featureProperties.country] === country;
+            };
+
+            admin2TileLayer.value = vectorTileLayer(
+                getTileLayerUrl(2),
+                {...vectorTileOptions, filter: admin2Filter, bounds: [bounds.value.getSouthWest(), bounds.value.getNorthEast()]}
+            );
+            addTileLayerToMap(admin2TileLayer.value, leafletMap);
+        }
+
+        // add country outline if we have a selected country
+        if (country) {
+            countryOutlineLayer.value = vectorTileLayer(
+                getTileLayerUrl(0),{
+                ...vectorTileOptions,
+                filter: (feature: MapFeature, layerName: string) => {
+                    const result = layerName === country;
+                    if (result) {
+                        // A horrible hack to pull some minimal country metadata from the tile layer for the country and set it in the store
+                        // so we can show country name. In the real implementation we would have a geojson properties API
+                        // alongside the tile API.
+                        countryProperties.value = feature.properties;
+                    }
+                    return result;
+                },
+                style: countryOutlineStyle
+            });
+            countryOutlineLayer.value.addTo(leafletMap);
         } else {
             countryOutlineLayer.value = null;
         }
-
-        // add admin 1 outlines if the selected admin level is 2
-        if (mapSettings.value.adminLevel === 2) {
-            const selectedAdmin1Features = admin1Geojson.value[regionId];
-            countryAdmin1OutlineLayer.value = selectedAdmin1Features?.map((f) => {
-                if (!f?.geometry?.type || !f?.geometry?.coordinates) return null;
-                const latLngs = GeoJSON.coordsToLatLngs(
-                    f.geometry.coordinates,
-                    f.geometry.type === "MultiPolygon" ? 2 : 1 // nesting level
-                );
-                return polyline(latLngs, countryAdmin1OutlineStyle).addTo(leafletMap);
-            });
-        } else {
-            countryAdmin1OutlineLayer.value = null;
-        }
-
-        updateRegionBounds(regionId);
     };
 
     return {
