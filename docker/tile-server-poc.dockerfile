@@ -1,5 +1,5 @@
-# This is a throwaway container just for the proof of concept. It assumes that you're building it wil the modified
-# node-mbtiles repo in a sibling folder, and with the built tile dbs in the tiles folder. (These can be obtained
+# This is a throwaway container just for the proof of concept. It assumes that you're building it with the modified
+# node-mbtiles repo in a sibling folder, and with the built tile dbs in the /tiles folder. (These can be obtained
 # by sftp from the arbomap server.)
 FROM node:20
 

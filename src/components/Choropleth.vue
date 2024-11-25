@@ -65,7 +65,6 @@ const featureInSelectedCountry = (properties: GeoJsonProperties) =>
     properties[featureProperties.country] === mapSettings.value.country;
 
 const featureAdminLevel = (properties: GeoJsonProperties) => {
-    // featureInSelectedCountry(properties) && mapSettings.value.adminLevel === 2 ? 2 : 1;
     const keys = Object.keys(properties);
     if (keys.includes(featureProperties.idAdm2)) return 2;
     if (keys.includes(featureProperties.idAdm1)) return 1;
