@@ -44,7 +44,23 @@ export const useLeaflet = (
     // internal refs
 
     const emptyLayer = shallowRef<Polyline>(polyline([]));
-    const admin1TileLayer = shallowRef<VectorTileLayer | null>(null);
+
+    const vectorTileOptions = {
+        style,
+        interactive: true,
+        maxNativeZoom: 10,
+        tms: true, // y values are inverted without this!
+    }
+
+    const { appConfig, countryBoundingBoxes, mapSettings, countryProperties } = storeToRefs(useAppStore());
+    const tileServerUrl = appConfig.value.tileServerUrl;
+    const getTileLayerUrl = (adminLevel: number) => `${tileServerUrl}/admin${adminLevel}/{z}/{x}/{-y}`;
+
+    const admin1TileLayer = shallowRef<VectorTileLayer>(vectorTileLayer(
+        getTileLayerUrl(1),
+        vectorTileOptions
+    ));
+
     const admin2TileLayer = shallowRef<VectorTileLayer | null>(null);
     const countryOutlineLayer = shallowRef<VectorTileLayer | null>(null);
     const bounds = ref<LatLngBounds | null>(null);
@@ -53,9 +69,7 @@ export const useLeaflet = (
 
     const { dataSummary } = useDataSummary(bounds);
 
-    const { appConfig, countryBoundingBoxes, mapSettings, countryProperties } = storeToRefs(useAppStore());
     const featureProperties = appConfig.value.geoJsonFeatureProperties;
-    const tileServerUrl = appConfig.value.tileServerUrl;
 
     const getRegionBounds = (countryId?: string) => {
         if (Object.keys(countryBoundingBoxes.value).length === 0) return null;
@@ -124,8 +138,6 @@ export const useLeaflet = (
         }).addTo(map);
     }
 
-    const getTileLayerUrl = (adminLevel: number) => `${tileServerUrl}/admin${adminLevel}/{z}/{x}/{-y}`;
-
     // this is the main function that updates the map, should be called in an appropriate
     // watcher
     const updateLeafletMap = (country: string) => {
@@ -144,25 +156,15 @@ export const useLeaflet = (
             emptyLayer.value.addTo(leafletMap);
         }
 
-        // remove layers from map
-        admin1TileLayer.value?.remove();
+        if (!leafletMap.hasLayer(admin1TileLayer.value)) {
+            addTileLayerToMap(admin1TileLayer.value, leafletMap);
+        }
+
+        // remove changeable layers from map
         admin2TileLayer.value?.remove();
         countryOutlineLayer.value?.remove();
 
         updateRegionBounds(country);
-
-        const vectorTileOptions = {
-            style,
-            interactive: true,
-            maxNativeZoom: 10,
-            tms: true, // y values are inverted without this!
-        }
-
-        admin1TileLayer.value = vectorTileLayer(
-            getTileLayerUrl(1),
-            vectorTileOptions
-        );
-        addTileLayerToMap(admin1TileLayer.value, leafletMap);
 
        if (!!country && mapSettings.value.adminLevel === 2) {
             const admin2Filter = (feature: MapFeature) => {
@@ -171,7 +173,10 @@ export const useLeaflet = (
 
             admin2TileLayer.value = vectorTileLayer(
                 getTileLayerUrl(2),
-                {...vectorTileOptions, filter: admin2Filter, bounds: [bounds.value.getSouthWest(), bounds.value.getNorthEast()]}
+                {
+                    ...vectorTileOptions, filter: admin2Filter,
+                    bounds: [bounds.value.getSouthWest(), bounds.value.getNorthEast()]
+                }
             );
             addTileLayerToMap(admin2TileLayer.value, leafletMap);
         }
